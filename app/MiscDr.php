@@ -620,13 +620,13 @@ class MiscDr extends Common
 		        $vl_sample = Viralsample::where($drSample->only(['datecollected', 'patient_id']))->first();
 		        if($vl_sample && is_numeric($vl_sample->result) && $vl_sample->result > 500) $valid_samples[] = $samples;
 			}
-			return ['samples' => $valid_samples, 'create' => true];
+			return ['samples' => $valid_samples, 'create' => true, 'limit' => $limit];
 		}
 
 		/*if($samples->count() == $limit || in_array(env('APP_LAB'), [7]) ){
 			return ['samples' => $samples, 'create' => true, 'limit' => $limit];
 		}*/
-		return ['samples' => $samples, 'create' => true];
+		return ['samples' => $samples, 'create' => true, 'limit' => $limit];
 	}
 
 	// public static function get_worksheet_samples($extraction_worksheet_id)
