@@ -857,7 +857,7 @@ class MiscDr extends Common
 	{
 		ini_set('memory_limit', '-1');
 
-		$path = storage_path('app/public/results');
+		$path = storage_path('app/public/results/dr_man');
 		$exFiles = scandir($path);
 		$primers = ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'];
 		$client = new Client(['base_uri' => self::$hyrax_url]);
@@ -866,11 +866,14 @@ class MiscDr extends Common
 
 		// Iterating through the root folder
 		// E.g. Worksheet 1
-		foreach ($exFiles as $exFile) {
-			if(in_array($exFile, ['.', '..', 'dr'])) continue;
+		/*foreach ($exFiles as $exFile) {
+			if(in_array($exFile, ['.', '..',])) continue;
 
 			$extractionWorksheetPath = $path . '/' . $exFile;
-			$seqFolders = scandir($extractionWorksheetPath);
+			$seqFolders = scandir($extractionWorksheetPath);*/
+
+			$extractionWorksheetPath = $path;
+			$seqFolders = scandir($path);
 
 			$drExtractionWorksheet = DrExtractionWorksheet::create(['status_id' => 1, 'lab_id' => env('APP_LAB'), 'createdby' => $user->id, 'date_gel_documentation' => date('Y-m-d')]);
 
@@ -879,6 +882,7 @@ class MiscDr extends Common
 				if(in_array($seqFolder, ['.', '..', ])) continue;
 
 				$seq_path = $extractionWorksheetPath . '/' . $seqFolder;
+				if(!is_dir($seq_path)) continue;
 				$seq_files = scandir($seq_path);
 
 				$drWorksheet = DrWorksheet::create(['status_id' => 1, 'lab_id' => env('APP_LAB'), 'dateuploaded' => date('Y-m-d'), 'createdby' => $user->id, 'extraction_worksheet_id' => $drExtractionWorksheet->id]);
@@ -987,7 +991,7 @@ class MiscDr extends Common
 				self::processResponse($drWorksheet, $response);
 			}
 			// End of Iterating through sequencing folders
-		}
+		// }
 		// End of iterating through root folder
 		return false;
 	}
