@@ -615,7 +615,7 @@ class MiscDr extends Common
 
 		$valid_samples = [];
 
-		if(env('APP_LAB') == 7){
+		if(env('APP_LAB') == 700){
 			foreach ($samples as $key => $drSample) {
 		        $vl_sample = Viralsample::where($drSample->only(['datecollected', 'patient_id']))->first();
 		        if($vl_sample && is_numeric($vl_sample->result) && $vl_sample->result > 500) $valid_samples[] = $samples;
