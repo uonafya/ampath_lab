@@ -864,7 +864,10 @@ class MiscDr extends Common
 		'CCC1410311244' => 'CCC 11244',
 		'CCC141031997' => 'CCC1997',
 		'CCC141034788' => 'CCC4788',
-		'CCC141034878' => 'CCC4878'
+		'CCC141034878' => 'CCC4878',
+		'CCC141038263' => 'CCC8263',
+		'CCC21478CH2' => 'CCC21478-CH2',
+		'CCCTI1947CH355' => 'CCCT.I947(CH355)'
 	];
 
 	public static function nhrl_worksheets()
@@ -877,6 +880,8 @@ class MiscDr extends Common
 		$client = new Client(['base_uri' => self::$hyrax_url]);
 
 		$user = User::where('email', 'like', 'joelkith%')->first();
+
+		$matches = self::$matches;
 
 		// Iterating through the root folder
 		// E.g. Worksheet 1
@@ -924,7 +929,8 @@ class MiscDr extends Common
 
 					$patient=null;
 
-					if(Str::contains($lowered_identifier, 'ccc')) $patient = Viralpatient::where('patient', 'like', "%{$id}%")->first();
+					if(isset($matches[$identifier])) $patient = Viralpatient::where('patient', $identifier)->first();
+					else if(Str::contains($lowered_identifier, 'ccc')) $patient = Viralpatient::where('patient', 'like', "%{$id}%")->first();
 					else if(Str::contains($lowered_identifier, 'nat')) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->first();
 					else if(Str::contains($lowered_identifier, 'cnt')){
 						$patient = Viralpatient::where('patient', 'like', "%{$id}%")->first();
