@@ -853,6 +853,20 @@ class MiscDr extends Common
 		}
 	}
 
+	public static $matches = [
+		'6255' => 'CCC1412006255',
+		'CCC13218002765' => 'CCC13218_002765',
+		'CCC136041554' => 'CCC1360401554',
+		'CCC1601200633' => 'CCC633',
+
+		'CCC1307701837' => 'CCC13077-01837',
+		'CCC13642467' => 'CCC136042467',
+		'CCC1410311244' => 'CCC 11244',
+		'CCC141031997' => 'CCC1997',
+		'CCC141034788' => 'CCC4788',
+		'CCC141034878' => 'CCC4878'
+	];
+
 	public static function nhrl_worksheets()
 	{
 		ini_set('memory_limit', '-1');
@@ -916,11 +930,16 @@ class MiscDr extends Common
 						$patient = Viralpatient::where('patient', 'like', "%{$id}%")->first();
 						if(!$patient) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->first();
 					}
+					else{
+						$patient = Viralpatient::where('patient', 'like', "%ccc{$id}%")->first();
+						if(!$patient) $patient = Viralpatient::where('patient', 'like', "%cnt{$id}%")->first();
+						// if(!$patient) $patient = Viralpatient::where('patient', 'like', "%{$id}%")->first();
+					}
 
 					if(!$patient) continue;
 					// if(!$patient) dd('Patient ' . $seq_file . ' ID ' . $id . ' not found');
 
-					$sample = $patient->dr_sample()->whereNull('worksheet_id')->first();
+					$sample = $patient->dr_sample()->whereNull('worksheet_id')->where(['repeatt' => 0])->first();
 					if(!$sample) continue;	
 					// $sample = $patient->dr_sample()->first();	
 					$sample->extraction_worksheet_id = $drExtractionWorksheet->id;
