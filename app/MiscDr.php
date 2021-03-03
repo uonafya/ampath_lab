@@ -929,7 +929,7 @@ class MiscDr extends Common
 
 					$patient=null;
 
-					if(isset($matches[$identifier])) $patient = Viralpatient::where('patient', $identifier)->first();
+					if(isset($matches[$identifier])) $patient = Viralpatient::where('patient', $matches[$identifier])->first();
 					else if(Str::contains($lowered_identifier, 'ccc')) $patient = Viralpatient::where('patient', 'like', "%{$id}%")->first();
 					else if(Str::contains($lowered_identifier, 'nat')) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->first();
 					else if(Str::contains($lowered_identifier, 'cnt')){
