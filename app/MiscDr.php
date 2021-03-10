@@ -352,12 +352,12 @@ class MiscDr extends Common
 
 		$body = json_decode($response->getBody());
 
-		$included = print_r($body, true);
+		/*$included = print_r($body, true);
 
 		$file = fopen(public_path('dr_res.json'), 'w+');
 		fwrite($file, $included);
 		fclose($file);
-		die();
+		die();*/
 
 		// dd($body);
 
