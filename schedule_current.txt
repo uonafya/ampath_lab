@@ -1,6 +1,7 @@
 # Being the crontab to be installed
 
-labexec="kubectl exec -it lab-app-app-deployment --container app -n lab-app -- php artisan "
+#labexec="kubectl exec -it lab-app-app-deployment --container app -n lab-app -- php artisan "
+labexec="/usr/share/nginx/html/lab/artisan "
 
 * * * * * $labexec synch:covid
 
