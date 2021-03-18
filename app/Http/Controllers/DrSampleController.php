@@ -12,7 +12,7 @@ use App\Lookup;
 use App\MiscDr;
 
 use DB;
-use Excel;
+use Maatwebsite\Excel\Facades\Excel;
 use Exception;
 use Mpdf\Mpdf;
 
@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DrugResistanceResult;
 use App\Mail\DrugResistance;
+
+use App\Exports\DrSusceptabilityExport;
 
 
 class DrSampleController extends Controller
@@ -459,10 +461,9 @@ class DrSampleController extends Controller
             $rows[] = $row;
         }
 
-        // dd($rows);
-        // dd($call_array);
+        return new DrSusceptabilityExport($request);
 
-        Excel::create("susceptability_report", function($excel) use($rows, $call_array) {
+        /*Excel::create("susceptability_report", function($excel) use($rows, $call_array) {
             $excel->sheet('Sheetname', function($sheet) use($rows, $call_array) {
                 $sheet->fromArray($rows);
 
@@ -474,7 +475,7 @@ class DrSampleController extends Controller
                     }
                 }
             });
-        })->download('xlsx');
+        })->download('xlsx');*/
     }
 
     public function search(Request $request)
