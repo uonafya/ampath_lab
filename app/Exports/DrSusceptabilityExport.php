@@ -25,6 +25,7 @@ class DrSusceptabilityExport implements FromArray, WithEvents, Responsable
 
 	public function __construct($request)
 	{
+        ini_set('memory_limit', '-1');
         $this->fileName = $this->get_name('DR Susceptablity Report', $request) . '.xlsx';
         Sheet::macro('styleCells', function (Sheet $sheet, string $cellRange, array $style) {
             $sheet->getDelegate()->getStyle($cellRange)->applyFromArray($style);
