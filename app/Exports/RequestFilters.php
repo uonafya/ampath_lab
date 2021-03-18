@@ -101,7 +101,7 @@ trait RequestFilters{
 
         $period = $request->input('period');
 
-        if(!$period || $period == 'range'){
+        if((!$period || $period == 'range') && $request->input('fromDate')){
             $title  .= date('d-M-Y', strtotime($request->input('fromDate')))." - ".date('d-M-Y', strtotime($request->input('toDate')));
         }else if($period == 'monthly'){
             $title .= date("F", mktime(null, null, null, $request->input('month'))).' - '.$request->input('year');
@@ -109,6 +109,9 @@ trait RequestFilters{
             $title .= $request->input('quarter').' - '.$request->input('year');
         }else if ($request->input('period') == 'annually') {
             $title .= $request->input('year');            
+        }
+        else if($request->input('from_date')){
+            $title  .= date('d-M-Y', strtotime($request->input('from_date')))." - ".date('d-M-Y', strtotime($request->input('to_date')));
         }
         return $title;
     }

@@ -39,7 +39,7 @@ class DrSusceptabilityExport implements FromArray, WithEvents, Responsable
         $cell_array = MiscDr::$call_array;
         // dd($cell_array);
         $regimen_classes = DB::table('regimen_classes')->get();
-        $date_column = "datedispatched";
+        $date_column = "datetested";
         $user = auth()->user();
         $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
 
