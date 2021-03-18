@@ -43,11 +43,11 @@ class DrSusceptabilityExport implements FromArray, WithEvents, Responsable
         $user = auth()->user();
         $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
 
-        $samples = DrSample::select('dr_samples.*')
+        $samples = DrSample::select('dr_samples.*', 'viralpatients.patient', 'viralpatients.nat', 'dr_samples.age', 'facilitycode', 'view_facilitys.name AS facility', 'view_facilitys.county')
             ->where(['status_id' => 1, 'control' => 0, 'repeatt' => 0])
             ->leftJoin('viralpatients', 'dr_samples.patient_id', '=', 'viralpatients.id')
             ->leftJoin('view_facilitys', 'viralpatients.facility_id', '=', 'view_facilitys.id')
-            ->with(['dr_call.call_drug', 'patient'])
+            ->with(['dr_call.call_drug'])
             ->when(($user->user_type_id == 5), function($query) use ($string){
                 return $query->whereRaw($string);
             })
@@ -55,8 +55,8 @@ class DrSusceptabilityExport implements FromArray, WithEvents, Responsable
             ->when(true, $this->divisions_filter($request))
             ->get();
 
-        $top = ['', 'Drug Classes', ];
-        $second = ['Sequence ID', 'Original Sample ID', ];
+        $top = ['', '', '', '', '', '', 'Drug Classes', ];
+        $second = ['Sequence ID', 'Original Sample ID', 'Nat Number', 'Age', 'MFL Code', 'Facility', 'County',];
 
         foreach ($regimen_classes as $key => $value) {
             $top[] = $value->drug_class;
@@ -66,29 +66,27 @@ class DrSusceptabilityExport implements FromArray, WithEvents, Responsable
         $rows[0] = $top;
         $rows[1] = $second;
 
+        $other_columns = 8;
+
         foreach ($samples as $sample_key => $sample) {
-            $patient_string = $sample->patient->patient ?? '';
-            $row = [$sample->id, $patient_string];
+            $row = [$sample->id, $sample->patient, $sample->nat, $sample->age, $sample->facilitycode, $sample->facility, $sample->county, ];
 
             foreach ($regimen_classes as  $regimen_key => $regimen) {
                 $call = '';
 
+                $regimen_index = $regimen_key + $other_columns;
+
                 foreach ($sample->dr_call as $dr_call) {
                     foreach ($dr_call->call_drug as $call_drug) {
-                        if($call_drug->short_name_id == $regimen->id){
-                            $call = $call_drug->call;
-                            $cell_array[$call]['cells'][] = chr(64 + 3 + $regimen_key) . ($sample_key + 3);
-                            
-                            // $beginning = '';
+                        if($call_drug->short_name_id != $regimen->id) continue;
 
-                            // $char_key = $regimen_key + 3;
-                            // if($char_key > 26){
-                            //     $a = (int) ($char_key / 26);
-                            //     $beginning = chr(64 + $a);
-                            //     $char_key = $char_key % 26;
-                            // }
-
-                            // $call_array[$call]['cells'][] = $beginning . chr(64 + $char_key) . ($sample_key + 4);
+                        $call = $call_drug->call;
+                        if($regimen_index < 27){
+                            $cell_array[$call]['cells'][] = chr(64 + $regimen_index) . ($sample_key + 3);
+                        }
+                        else{
+                            $new_key = $regimen_index - 26;
+                            $cell_array[$call]['cells'][] = 'A' . chr(64 + $new_key) . ($sample_key + 3);
                         }
                     }
                 }

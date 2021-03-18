@@ -36,17 +36,10 @@ class DrDetailedReportExport implements FromArray, Responsable
 
 		$this->request = $request;
 
-		/*$this->sql = "
-            facilitycode AS `MFL Code`, view_facilitys.name AS `Facility`, patient AS `CCC Number`, dob AS `Date of Birth`,
-            age, 
-            datecollected AS `Date Collected`, datereceived AS `Date Received`, datetested AS `Date Tested`, datedispatched AS `Date Dispatched`
-		";*/
-
-        $this->sql = "
-            dr_samples.id, viralpatients.nat, viralpatients.patient, 
-            datecollected, datetested
-
-        ";
+		$this->sql = "
+            facilitycode, view_facilitys.name AS `facility`, view_facilitys.county, patient, viralpatients.nat, dob, age, 
+            datecollected, datereceived, datetested, datedispatched
+		";
     }
 
     /*public function headings() : array
@@ -83,7 +76,10 @@ class DrDetailedReportExport implements FromArray, Responsable
 
         $rows = [];
         $rows[] = [
-            'CCC Lab ID', 'Original Specimen ID', 'Date of Collection', 'Date Tested', 'Final Result', 'HIV-1 Subtype',
+            'CCC Lab ID', 'Original Specimen ID', 'NAT Number', 'Age',
+            'MFL Code', 'Facility', 'County',
+            'Date of Collection', 'Date Received', 'Date Tested', 
+            'Final Result', 'HIV-1 Subtype',
             'NRTI Mutation(s)', 'NNRTI Mutation(s)', 'PI Mutation(s)', 'INSTI Mutation(s)', 'Comments'
         ];
 
@@ -94,7 +90,13 @@ class DrDetailedReportExport implements FromArray, Responsable
             $pi = $sample->dr_call->where('drug_class_id', 4)->first()->mutations_string ?? '';
             $insti = $sample->dr_call->where('drug_class_id', 1)->first()->mutations_string ?? '';
 
-            $rows[] = [$sample->nat, $sample->patient, $sample->datecollected, $sample->datetested, '', '', $nrti, $nnrti, $pi, $insti, ''];
+            $rows[] = [
+                $sample->nat, $sample->patient, $sample->nat, $sample->age,
+                $sample->facilitycode, $sample->facility, $sample->county, 
+                $sample->datecollected, $sample->datereceived, $sample->datetested, 
+                '', '', 
+                $nrti, $nnrti, $pi, $insti, ''
+            ];
         }
         return $rows;
     }
