@@ -32,6 +32,9 @@ trait RequestFilters{
                     return $query->whereBetween($column, \App\Lookup::date_range_month($request->input('year')));
                 }
             }
+            else if($request->input('from_date')){
+                return $query->whereBetween($column, [$request->input('from_date'), $request->input('to_date')]);
+            }
         };
     }
 
