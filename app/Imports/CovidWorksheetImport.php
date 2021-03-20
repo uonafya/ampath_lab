@@ -50,19 +50,20 @@ class CovidWorksheetImport implements ToCollection
                 $control = $value[4];
 
                 $target = $value[5];
+                $result = $value[6];
                 $target1 = $target2 = null;
 
                 if(Str::contains($target, '1')){
-                    session(['roche_sample_id' => $sample_id, 'roche_target1' => $target]);
+                    session(['roche_sample_id' => $sample_id, 'roche_target1' => $result]);
                     continue;
                 }else{
-                    $target2 = $target;
+                    $target2 = $result;
                     $target1 = session()->pull('roche_target1');
                 }
 
                 $result_array = MiscCovid::roche_sample_result($target1, $target2, $flag);
 
-                MiscCovid::dup_worksheet_rows($doubles, $sample_array, $sample_id, $result_array['result']);
+                // MiscCovid::dup_worksheet_rows($doubles, $sample_array, $sample_id, $result_array['result']);
 
                 if(!is_numeric($sample_id)){
                     $control = $value[4];
