@@ -33,15 +33,61 @@ class CovidWorksheetImport implements ToCollection
     	$worksheet = $this->worksheet;
     	$cancelled = $this->cancelled;
 
-
         $today = $datemodified = $datetested = $this->daterun;
         $positive_control = $negative_control = null;
 
         $sample_array = $doubles = $wrong_worksheet = [];
 
 
+        // New C8800
+        if($worksheet->machine_type == 3
+            foreach ($collection as $key => $value) 
+            {
+                if(!isset($value[1])) break;
+                if($value[0] == 'Test') continue;
+                $sample_id = $value[1];
+                $flag = $value[3];
+                $control = $value[4];
+
+                $target = $value[5];
+                $result = $value[6];
+                $target1 = $target2 = null;
+
+                if(Str::contains($target, '1')){
+                    session(['roche_sample_id' => $sample_id, 'roche_target1' => $result]);
+                    continue;
+                }else{
+                    $target2 = $result;
+                    $target1 = session()->pull('roche_target1');
+                }
+
+                $result_array = MiscCovid::roche_sample_result($target1, $target2, $flag);
+
+                // MiscCovid::dup_worksheet_rows($doubles, $sample_array, $sample_id, $result_array['result']);
+
+                if(!is_numeric($sample_id)){
+                    $control = $value[4];
+                    if(Str::contains($control, ['+'])){
+                        $positive_control = $result_array;                       
+                    }else if(Str::contains($control, ['-'])){
+                        $negative_control = $result_array; 
+                    }
+                    continue;
+                }
+
+                $sample_id = (int) $sample_id;
+                $sample = CovidSample::find($sample_id);
+                if(!$sample) continue;
+
+                $sample->datetested = $datetested;
+                $sample->fill($result_array);
+                if($cancelled) $sample->worksheet_id = $worksheet->id;
+                else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
+                $sample->save();
+            }            
+        }
         // C8800
-        if($worksheet->machine_type == 3){
+        /*else if($worksheet->machine_type == 3){
             foreach ($collection as $key => $value) 
             {
                 if(!isset($value[1])) break;
@@ -76,7 +122,7 @@ class CovidWorksheetImport implements ToCollection
                 else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
                 $sample->save();
             }
-        }
+        }*/
         // Abbott
         else if($worksheet->machine_type == 2){
             $bool = false;

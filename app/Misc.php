@@ -353,7 +353,7 @@ class Misc extends Common
 				$message = $sample->patient_name . " Jambo, kuja kliniki na mtoto utakapoweza. Asante";
 			}
             if($sample->result == 1){
-                $message = $sample->patient_name . "  Jambo, matokeo ya mtoto tayari. Kumbuka tarehe yako ya kuja cliniki. Asante";
+                $message = $sample->patient_name . " Jambo, matokeo ya mtoto tayari. Kumbuka tarehe yako ya kuja cliniki. Asante";
             }
 			else{
 				if($sample->receivedstatus == 2){

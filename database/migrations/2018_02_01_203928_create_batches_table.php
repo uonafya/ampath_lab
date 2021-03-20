@@ -48,6 +48,7 @@ class CreateBatchesTable extends Migration
             $table->date('datereceived')->nullable()->index();
             $table->date('datedispatched')->nullable()->index();
 
+            // Receipt at the lab to dispatch
             $table->tinyInteger('tat5')->unsigned()->nullable();
 
             $table->date('dateindividualresultprinted')->nullable();

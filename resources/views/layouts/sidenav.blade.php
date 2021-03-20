@@ -235,12 +235,12 @@
                 @if(env('APP_LAB') != 7)
                     <li><a href="{{ url('viralsample/potential_dr') }}">Potential DR Patients List</a></li>
                     <hr />
-                    <li><a href="{{ url('dr_extraction_worksheet/set_sampletype/24') }}">Create Extraction Worksheet (24)</a></li>
+                    <li><a href="{{ url('dr_extraction_worksheet/create/24') }}">Create Extraction Worksheet (24)</a></li>
                     <hr />
                 @endif
-                <li><a href="{{ url('dr_extraction_worksheet/set_sampletype/48') }}">Create Extraction Worksheet (48)</a></li>
+                <li><a href="{{ url('dr_extraction_worksheet/create/48') }}">Create Extraction Worksheet (48)</a></li>
                 <hr />
-                <li><a href="{{ url('dr_extraction_worksheet/set_sampletype/96') }}">Create Extraction Worksheet (96)</a></li>
+                <li><a href="{{ url('dr_extraction_worksheet/create/96') }}">Create Extraction Worksheet (96)</a></li>
                 <hr />
                 <li><a href="{{ url('dr_extraction_worksheet') }}">Extraction Worksheet List</a></li>
                 <hr />

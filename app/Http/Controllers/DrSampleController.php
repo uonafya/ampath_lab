@@ -12,7 +12,7 @@ use App\Lookup;
 use App\MiscDr;
 
 use DB;
-use Excel;
+use Maatwebsite\Excel\Facades\Excel;
 use Exception;
 use Mpdf\Mpdf;
 
@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DrugResistanceResult;
 use App\Mail\DrugResistance;
+
+use App\Exports\DrSusceptabilityExport;
 
 
 class DrSampleController extends Controller
@@ -104,7 +106,11 @@ class DrSampleController extends Controller
         if($subcounty_id == '') $subcounty_id = 0;
         if($facility_id == '') $facility_id = 0;
 
-        if($submit_type == 'excel') return $this->susceptability($date_start, $date_end, $facility_id, $subcounty_id, $partner_id);
+
+        if($submit_type == 'excel') return new DrSusceptabilityExport($request);
+
+
+        // if($submit_type == 'excel') return $this->susceptability($date_start, $date_end, $facility_id, $subcounty_id, $partner_id);
 
         return redirect("dr_sample/index/{$sample_status}/{$date_start}/{$date_end}/{$facility_id}/{$subcounty_id}/{$partner_id}");
     }
@@ -458,9 +464,6 @@ class DrSampleController extends Controller
             }
             $rows[] = $row;
         }
-
-        // dd($rows);
-        // dd($call_array);
 
         Excel::create("susceptability_report", function($excel) use($rows, $call_array) {
             $excel->sheet('Sheetname', function($sheet) use($rows, $call_array) {

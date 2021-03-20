@@ -24,6 +24,7 @@ class DrCall extends BaseModel
     public function getMutationsStringAttribute()
     {
         $str = '';
+        if(!is_array($this->mutations)) return $str;
         foreach ($this->mutations as $key => $mutation) {
             $str .= $mutation . ', ';
         }

@@ -71,9 +71,9 @@ class MiscDr extends Common
     {
     	if(!is_dir(storage_path('app/logs/'))) mkdir(storage_path('app/logs/'), 0777);
 
-		if($encode_it) $postData = json_encode($postData);
+		if($encode_it) $postData = json_encode($postData, JSON_PRETTY_PRINT);
 		
-		$file = fopen(storage_path('app/logs/' . 'dr_logs2' .'.txt'), "a");
+		$file = fopen(storage_path('app/logs/' . 'dr_logs3' .'.txt'), "a");
 		if(fwrite($file, $postData) === FALSE) fwrite("Error: no data written");
 		fwrite($file, "\r\n");
 		fclose($file);
@@ -235,10 +235,6 @@ class MiscDr extends Common
 
 		foreach ($samples as $key => $sample) {
 
-			// if($key == 4) break;
-
-			// if($key != 4) continue;
-
 			$s = [
 				'type' => 'sample_create',
 				'attributes' => [
@@ -356,12 +352,12 @@ class MiscDr extends Common
 
 		$body = json_decode($response->getBody());
 
-		// $included = print_r($body->included, true);
+		/*$included = print_r($body, true);
 
-		// $file = fopen(public_path('res.json'), 'w+');
-		// fwrite($file, $included);
-		// fclose($file);
-		// die();
+		$file = fopen(public_path('dr_res.json'), 'w+');
+		fwrite($file, $included);
+		fclose($file);
+		die();*/
 
 		// dd($body);
 
@@ -615,18 +611,18 @@ class MiscDr extends Common
 
 		$valid_samples = [];
 
-		if(env('APP_LAB') == 7){
-			foreach ($samples as $key => $sample) {
+		if(env('APP_LAB') == 700){
+			foreach ($samples as $key => $drSample) {
 		        $vl_sample = Viralsample::where($drSample->only(['datecollected', 'patient_id']))->first();
 		        if($vl_sample && is_numeric($vl_sample->result) && $vl_sample->result > 500) $valid_samples[] = $samples;
 			}
-			return ['samples' => $valid_samples, 'create' => true];
+			return ['samples' => $valid_samples, 'create' => true, 'limit' => $limit];
 		}
 
 		/*if($samples->count() == $limit || in_array(env('APP_LAB'), [7]) ){
 			return ['samples' => $samples, 'create' => true, 'limit' => $limit];
 		}*/
-		return ['samples' => $samples, 'create' => true];
+		return ['samples' => $samples, 'create' => true, 'limit' => $limit];
 	}
 
 	// public static function get_worksheet_samples($extraction_worksheet_id)
@@ -853,24 +849,46 @@ class MiscDr extends Common
 		}
 	}
 
+	public static $matches = [
+		'6255' => 'CCC1412006255',
+		'CCC13218002765' => 'CCC13218_002765',
+		'CCC136041554' => 'CCC1360401554',
+		'CCC1601200633' => 'CCC633',
+
+		'CCC1307701837' => 'CCC13077-01837',
+		'CCC13642467' => 'CCC136042467',
+		'CCC1410311244' => 'CCC 11244',
+		'CCC141031997' => 'CCC1997',
+		'CCC141034788' => 'CCC4788',
+		'CCC141034878' => 'CCC4878',
+		'CCC141038263' => 'CCC8263',
+		'CCC21478CH2' => 'CCC21478-CH2',
+		'CCCTI1947CH355' => 'CCCT.I947(CH355)'
+	];
+
 	public static function nhrl_worksheets()
 	{
 		ini_set('memory_limit', '-1');
 
-		$path = storage_path('app/public/results');
+		$path = storage_path('app/public/results/dr_man');
 		$exFiles = scandir($path);
 		$primers = ['F1', 'F2', 'F3', 'R1', 'R2', 'R3'];
 		$client = new Client(['base_uri' => self::$hyrax_url]);
 
 		$user = User::where('email', 'like', 'joelkith%')->first();
 
+		$matches = self::$matches;
+
 		// Iterating through the root folder
 		// E.g. Worksheet 1
-		foreach ($exFiles as $exFile) {
-			if(in_array($exFile, ['.', '..', 'dr'])) continue;
+		/*foreach ($exFiles as $exFile) {
+			if(in_array($exFile, ['.', '..',])) continue;
 
 			$extractionWorksheetPath = $path . '/' . $exFile;
-			$seqFolders = scandir($extractionWorksheetPath);
+			$seqFolders = scandir($extractionWorksheetPath);*/
+
+			$extractionWorksheetPath = $path;
+			$seqFolders = scandir($path);
 
 			$drExtractionWorksheet = DrExtractionWorksheet::create(['status_id' => 1, 'lab_id' => env('APP_LAB'), 'createdby' => $user->id, 'date_gel_documentation' => date('Y-m-d')]);
 
@@ -879,6 +897,7 @@ class MiscDr extends Common
 				if(in_array($seqFolder, ['.', '..', ])) continue;
 
 				$seq_path = $extractionWorksheetPath . '/' . $seqFolder;
+				if(!is_dir($seq_path)) continue;
 				$seq_files = scandir($seq_path);
 
 				$drWorksheet = DrWorksheet::create(['status_id' => 1, 'lab_id' => env('APP_LAB'), 'dateuploaded' => date('Y-m-d'), 'createdby' => $user->id, 'extraction_worksheet_id' => $drExtractionWorksheet->id]);
@@ -906,17 +925,23 @@ class MiscDr extends Common
 
 					$patient=null;
 
-					if(Str::contains($lowered_identifier, 'ccc')) $patient = Viralpatient::where('patient', 'like', "%{$id}%")->first();
+					if(isset($matches[$identifier])) $patient = Viralpatient::where('patient', $matches[$identifier])->first();
+					else if(Str::contains($lowered_identifier, 'ccc')) $patient = Viralpatient::where('patient', 'like', "%{$id}%")->first();
 					else if(Str::contains($lowered_identifier, 'nat')) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->first();
 					else if(Str::contains($lowered_identifier, 'cnt')){
 						$patient = Viralpatient::where('patient', 'like', "%{$id}%")->first();
 						if(!$patient) $patient = Viralpatient::where('nat', 'like', "%{$id}%")->first();
 					}
+					else{
+						$patient = Viralpatient::where('patient', 'like', "%ccc{$id}%")->first();
+						if(!$patient) $patient = Viralpatient::where('patient', 'like', "%cnt{$id}%")->first();
+						// if(!$patient) $patient = Viralpatient::where('patient', 'like', "%{$id}%")->first();
+					}
 
 					if(!$patient) continue;
 					// if(!$patient) dd('Patient ' . $seq_file . ' ID ' . $id . ' not found');
 
-					$sample = $patient->dr_sample()->whereNull('worksheet_id')->first();
+					$sample = $patient->dr_sample()->whereNull('worksheet_id')->where(['repeatt' => 0])->first();
 					if(!$sample) continue;	
 					// $sample = $patient->dr_sample()->first();	
 					$sample->extraction_worksheet_id = $drExtractionWorksheet->id;
@@ -987,7 +1012,7 @@ class MiscDr extends Common
 				self::processResponse($drWorksheet, $response);
 			}
 			// End of Iterating through sequencing folders
-		}
+		// }
 		// End of iterating through root folder
 		return false;
 	}
