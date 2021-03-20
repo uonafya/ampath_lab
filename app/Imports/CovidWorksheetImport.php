@@ -54,6 +54,7 @@ class CovidWorksheetImport implements ToCollection
 
                 if(Str::contains($target, '1')){
                     session(['roche_sample_id' => $sample_id, 'roche_target1' => $target]);
+                    continue;
                 }else{
                     $target2 = $target;
                     $target1 = session()->pull('roche_target1');
