@@ -40,7 +40,7 @@ class CovidWorksheetImport implements ToCollection
 
 
         // New C8800
-        if($worksheet->machine_type == 3
+        if($worksheet->machine_type == 3){
             foreach ($collection as $key => $value) 
             {
                 if(!isset($value[1])) break;
