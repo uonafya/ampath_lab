@@ -537,6 +537,11 @@ class MiscDr extends Common
 		// dd($body);
 	}
 
+	public static function get_job_status($id)
+	{
+		return DB::table('dr_job_statuses')->where(['name' => $id])->first()->id;
+	}
+
 	public static function get_worksheet_status($id)
 	{
 		return DB::table('dr_plate_statuses')->where(['name' => $id])->first()->id;
@@ -545,6 +550,11 @@ class MiscDr extends Common
 	public static function get_sample_status($id)
 	{
 		return DB::table('dr_sample_statuses')->where(['other_id' => $id])->first()->id;
+	}
+
+	public static function get_contig_status($id)
+	{
+		return DB::table('dr_contig_statuses')->where(['other_id' => $id])->first()->id;
 	}
 
 	public static function get_sample_warning($error_name)

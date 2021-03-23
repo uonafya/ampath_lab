@@ -72,6 +72,16 @@ class DrSample extends BaseModel
 
 
 
+    public function contig()
+    {
+        return $this->hasMany('App\DrContig', 'sample_id');
+    }
+
+    public function ab_file()
+    {
+        return $this->hasMany('App\DrSampleFile', 'sample_id');
+    }
+
     public function warning()
     {
         return $this->hasMany('App\DrWarning', 'sample_id');

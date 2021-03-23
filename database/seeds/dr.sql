@@ -13,7 +13,45 @@ INSERT INTO `dr_plate_statuses` (`id`, `other_id`, `name`, `output`) VALUES
 	(2, 2101, 'error','<strong><div style=\'color: #FF0000;\'>Error</div></strong>'),
 	(3, 2102, 'failed','<strong><div style=\'color: #FF0000;\'>Failed</div></strong>'),
 	(4, 2110, 'pending','<strong><div style=\'color: #0000FF;\'>Pending</div></strong>'),
-	(5, 2120, 'action_required','<strong><div style=\'color: #FFD324;\'>Action Required</div></strong>');
+	(5, 2120, 'action_required','<strong><div style=\'color: #FFD324;\'>Action Required</div></strong>'),
+  (6, 2119, 'finalising','<strong><div style=\'color: #0000FF;\'>In Process</div></strong>');
+
+DROP TABLE IF EXISTS `dr_job_statuses`;
+CREATE TABLE  `dr_job_statuses` (
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
+  `other_id` INT unsigned NOT NULL,
+  `name` varchar(30) DEFAULT NULL,
+  `output` varchar(70) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+
+
+INSERT INTO `dr_job_statuses` (`id`, `other_id`, `name`, `output`) VALUES
+  (1, 4100, 'completed','<strong><div style=\'color: #339900;\'>Completed</div></strong>'),
+  (2, 4101, 'error','<strong><div style=\'color: #FF0000;\'>Error</div></strong>'),
+  (3, 4102, 'failed','<strong><div style=\'color: #FF0000;\'>Failed</div></strong>'),
+  (4, 4110, 'pending','<strong><div style=\'color: #0000FF;\'>Pending</div></strong>'),
+  (5, 4120, 'action_required','<strong><div style=\'color: #FFD324;\'>Action Required</div></strong>'),
+  (6, 4119, 'finalising','<strong><div style=\'color: #0000FF;\'>In Process</div></strong>');
+
+DROP TABLE IF EXISTS `dr_contig_statuses`;
+CREATE TABLE  `dr_contig_statuses` (
+  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
+  `other_id` INT unsigned NOT NULL,
+  `name` varchar(30) DEFAULT NULL,
+  `output` varchar(70) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+
+
+INSERT INTO `dr_contig_statuses` (`id`, `other_id`, `name`, `output`) VALUES
+  (1, 6100, 'completed','<strong><div style=\'color: #339900;\'>Completed</div></strong>'),
+  (2, 6101, 'error','<strong><div style=\'color: #FF0000;\'>Error</div></strong>'),
+  (3, 6102, 'failed','<strong><div style=\'color: #FF0000;\'>Failed</div></strong>'),
+  (4, 6110, 'pending','<strong><div style=\'color: #0000FF;\'>Pending</div></strong>'),
+  (5, 6120, 'action_required','<strong><div style=\'color: #FFD324;\'>Action Required</div></strong>'),
+  (6, 6119, 'finalising','<strong><div style=\'color: #0000FF;\'>In Process</div></strong>');
+  (6, 6111, 'processing','<strong><div style=\'color: #0000FF;\'>Processing</div></strong>');
 
 
 DROP TABLE IF EXISTS `dr_sample_statuses`;
@@ -21,7 +59,7 @@ CREATE TABLE  `dr_sample_statuses` (
   `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
   `other_id` INT unsigned NOT NULL,
   `name` varchar(70) DEFAULT NULL,
-  `output` varchar(150) DEFAULT NULL,
+  `output` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
@@ -33,7 +71,10 @@ INSERT INTO `dr_sample_statuses` (`id`, `other_id`, `name`, `output`) VALUES
 	(4, 1110, 'pending','<strong><div style=\'color: #0000FF;\'>Pending</div></strong>'),
 	(5, 1111, 'processing','<strong><div style=\'color: #0000FF;\'>Processing</div></strong>'),
 	(6, 1120, 'action_required','<strong><div style=\'color: #FFD324;\'>Action Required</div></strong>'),
-	(7, 1112, 'qc_pending','<strong><div style=\'color: #FFD324;\'>Quality Control Pending</div></strong>');
+	(7, 1112, 'qc_pending','<strong><div style=\'color: #FFD324;\'>Quality Control Pending</div></strong>'),
+  (8, 1610, 'pending_contig','<strong><div style=\'color: #FFD324;\'>At least one contig is still pending</div></strong>'),
+  (9, 1113, 'constructing','<strong><div style=\'color: #FFD324;\'>The job is still being constructed</div></strong>'),
+  (10, 1119, 'discordant','<strong><div style=\'color: #FFD324;\'>Two or more contigs in this sample have different statuses</div></strong>'),
 
 -- DROP TABLE IF EXISTS `calls`;
 -- CREATE TABLE  `calls` (
@@ -50,10 +91,13 @@ INSERT INTO `dr_sample_statuses` (`id`, `other_id`, `name`, `output`) VALUES
 
 DROP TABLE IF EXISTS `dr_warning_codes`;
 CREATE TABLE  `dr_warning_codes` (
-  `id` TINYINT unsigned NOT NULL AUTO_INCREMENT,
+  `id` smallint unsigned NOT NULL AUTO_INCREMENT,
   `error` TINYINT unsigned NOT NULL DEFAULT 0,
+  `code` int unsigned DEFAULT 0,
   `name` varchar(30) DEFAULT NULL,
   `description` varchar(80) DEFAULT NULL,
+  `type` varchar(150) DEFAULT NULL,
+  `message` varchar(150) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
