@@ -40,7 +40,7 @@ class CovidWorksheetImport implements ToCollection
 
 
         // New C8800
-        if($worksheet->machine_type == 3){
+        if($worksheet->machine_type == 3 && in_array(env('APP_LAB'), [1])){
             foreach ($collection as $key => $value) 
             {
                 if(!isset($value[1])) break;
@@ -87,7 +87,7 @@ class CovidWorksheetImport implements ToCollection
             }            
         }
         // C8800
-        /*else if($worksheet->machine_type == 3){
+        else if($worksheet->machine_type == 3){
             foreach ($collection as $key => $value) 
             {
                 if(!isset($value[1])) break;
@@ -122,7 +122,7 @@ class CovidWorksheetImport implements ToCollection
                 else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
                 $sample->save();
             }
-        }*/
+        }
         // Abbott
         else if($worksheet->machine_type == 2){
             $bool = false;
