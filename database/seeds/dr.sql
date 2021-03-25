@@ -91,7 +91,7 @@ INSERT INTO `dr_sample_statuses` (`id`, `other_id`, `name`, `output`) VALUES
 
 DROP TABLE IF EXISTS `dr_warning_codes`;
 CREATE TABLE  `dr_warning_codes` (
-  `id` smallint unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `error` TINYINT unsigned NOT NULL DEFAULT 0,
   `code` int unsigned DEFAULT 0,
   `name` varchar(30) DEFAULT NULL,
