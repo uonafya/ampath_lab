@@ -17,6 +17,8 @@ class CreateDrWorksheetsTable extends Migration
             $table->increments('id');
             $table->tinyInteger('lab_id')->unsigned();
 
+            // This is the exatype job id
+            $table->bigInteger('exatype_job_id')->unsigned()->nullable()->index();
             // This is the exatype id
             $table->bigInteger('plate_id')->unsigned()->nullable()->index();
             $table->integer('extraction_worksheet_id')->nullable()->unsigned()->index();
@@ -29,7 +31,10 @@ class CreateDrWorksheetsTable extends Migration
             // 6 is result sent back by exatype
             $table->tinyInteger('status_id')->unsigned()->default(1)->index();
 
-            // Exatype status
+
+            // Exatype Job status
+            $table->tinyInteger('exatype_job_status_id')->unsigned()->default(4)->index();
+            // Exatype Plate status
             $table->tinyInteger('exatype_status_id')->unsigned()->default(4)->index();
 
             $table->date('dateuploaded')->nullable();

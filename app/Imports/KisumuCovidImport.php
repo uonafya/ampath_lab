@@ -73,7 +73,8 @@ class KisumuCovidImport implements OnEachRow, WithHeadingRow
             'residence' => $row->residence ?? null,  
             'occupation' => $row->occupation ?? null,    
             'justification' => $row->justification ?? 3,  
-            'date_symptoms' => $date_symptoms,           
+            'date_symptoms' => $date_symptoms,     
+            'email_address' => $row->email_address ?? null,         
         ]);
         $p->save();
 

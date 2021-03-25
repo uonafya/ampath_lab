@@ -779,6 +779,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::prefix('datatable')->name('datatable.')->group(function () {	
 			Route::post('sms_log/{param}', 'DatatableController@sms_log');
+			Route::post('download_sms_excel/{param}', 'DatatableController@download_sms_excel');
 		});
 
 

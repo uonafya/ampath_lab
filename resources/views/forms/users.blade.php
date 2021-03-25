@@ -217,6 +217,18 @@
             $("#quarantines").hide();
             $("#lab_row").hide();
 
+            @if(isset($user) && $user->user_type_id == 11)
+                $("#quarantines").show();
+                $('#quarantine_select').attr("required", "required");
+                $('#quarantine_select').removeAttr("disabled");
+            @endif
+
+            @if(isset($user) && in_array($user->user_type_id, [12, 15])
+                $("#lab_row").show();
+                $('#lab_select').attr("required", "required");
+                $('#lab_select').removeAttr("disabled");  
+            @endif
+
             $("#user_type_id").change(function(){
                 val = $(this).val();
                 if(val == 10){
