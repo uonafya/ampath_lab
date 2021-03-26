@@ -118,4 +118,35 @@ class DatatableController extends Controller
         ];
     }
 
+    public function download_sms_excel(Request $request, $param)
+    {
+        $user = auth()->user();
+        $string = "1";
+        if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+
+        $class = \App\Synch::$synch_arrays[$param]['sampleview_class'];
+        $query = $class::select(array_column($this->patient_sms_columns, 'db'))
+            ->whereRaw($string)
+            ->whereNotNull('time_result_sms_sent')
+            ->whereBetween('time_result_sms_sent', [$request->input('from_date'), $request->input('to_date')])
+            ->get();
+
+        $data = [];
+
+        foreach ($rows as $row) {
+            $d = [];
+            foreach ($row->toArray() as $key => $value) {
+                if($key == 'id'){
+                    $d['Lab ID'] = $value; 
+                }
+                else{
+                    $d[$key] = $value;
+                }
+            }
+            if($param == 'eid') $d['result'] = $results[$row->result] ?? '';
+            $data[] = $d;
+        }
+        return \App\Common::csv_download($data, $type . '-sms-log');
+    }
+
 }

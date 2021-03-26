@@ -515,7 +515,7 @@ class ViralworksheetController extends Controller
 
         foreach ($samples as $key => $value) {
 
-            if(in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby && !$worksheet->reviewedby2){
+            if(in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby && !$worksheet->reviewedby2 && $worksheet->datereviewed){
                 $data = [
                     'approvedby2' => $approver,
                     'dateapproved2' => $today,
@@ -579,7 +579,7 @@ class ViralworksheetController extends Controller
         // $random_var = true;
 
         if(in_array(env('APP_LAB'), $double_approval)){
-            if($worksheet->reviewedby && $worksheet->reviewedby != $approver){
+            if($worksheet->reviewedby && $worksheet->reviewedby != $approver && $worksheet->datereviewed){
 
                 $worksheet->status_id = 3;
                 $worksheet->datereviewed2 = $today;
@@ -624,7 +624,6 @@ class ViralworksheetController extends Controller
             'datecut', 'datereviewed', 'datereviewed2', 'dateuploaded', 'datecancelled', 'daterun',
         ]);
         $new_worksheet->save();
-
         
         $samples = Viralsample::where(['worksheet_id' => $worksheet->id])
                     ->where('site_entry', '!=', 2) 

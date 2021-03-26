@@ -79,7 +79,11 @@ p.breakhere {page-break-before: always}
 					<strong> Batch No.: {{ $sample->batch->id }} &nbsp;&nbsp; {{ $sample->batch->facility->name ?? '' }} </strong> 
 				</td>
 				<td colspan="3" class="comment style1 style4" align="right">
-					<strong>Testing Lab: {{ $sample->batch->lab->name ?? '' }}</strong>
+					@if($sample->batch->site_entry == 2)
+						<strong>Testing Facility: {{ $sample->batch->facility_lab->name ?? '' }}</strong>
+					@else
+						<strong>Testing Lab: {{ $sample->batch->lab->name ?? '' }}</strong>
+					@endif
 				</td>
 			</tr>
 

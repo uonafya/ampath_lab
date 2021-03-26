@@ -81,7 +81,7 @@
         </div>
     </div>
 
-    @if(!in_array(auth()->user()->user_type_id, [5, 11]))
+    @if(!in_array(auth()->user()->user_type_id, [5]))
 
         <form action="{{ url($myurl2) }}" method="POST" class="my_form">
             @csrf

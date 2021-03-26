@@ -71,9 +71,9 @@ class MiscDr extends Common
     {
     	if(!is_dir(storage_path('app/logs/'))) mkdir(storage_path('app/logs/'), 0777);
 
-		if($encode_it) $postData = json_encode($postData);
+		if($encode_it) $postData = json_encode($postData, JSON_PRETTY_PRINT);
 		
-		$file = fopen(storage_path('app/logs/' . 'dr_logs2' .'.txt'), "a");
+		$file = fopen(storage_path('app/logs/' . 'dr_logs3' .'.txt'), "a");
 		if(fwrite($file, $postData) === FALSE) fwrite("Error: no data written");
 		fwrite($file, "\r\n");
 		fclose($file);
@@ -235,10 +235,6 @@ class MiscDr extends Common
 
 		foreach ($samples as $key => $sample) {
 
-			// if($key == 4) break;
-
-			// if($key != 4) continue;
-
 			$s = [
 				'type' => 'sample_create',
 				'attributes' => [
@@ -356,12 +352,12 @@ class MiscDr extends Common
 
 		$body = json_decode($response->getBody());
 
-		// $included = print_r($body->included, true);
+		/*$included = print_r($body, true);
 
-		// $file = fopen(public_path('res.json'), 'w+');
-		// fwrite($file, $included);
-		// fclose($file);
-		// die();
+		$file = fopen(public_path('dr_res.json'), 'w+');
+		fwrite($file, $included);
+		fclose($file);
+		die();*/
 
 		// dd($body);
 
@@ -541,6 +537,11 @@ class MiscDr extends Common
 		// dd($body);
 	}
 
+	public static function get_job_status($id)
+	{
+		return DB::table('dr_job_statuses')->where(['name' => $id])->first()->id;
+	}
+
 	public static function get_worksheet_status($id)
 	{
 		return DB::table('dr_plate_statuses')->where(['name' => $id])->first()->id;
@@ -549,6 +550,11 @@ class MiscDr extends Common
 	public static function get_sample_status($id)
 	{
 		return DB::table('dr_sample_statuses')->where(['other_id' => $id])->first()->id;
+	}
+
+	public static function get_contig_status($id)
+	{
+		return DB::table('dr_contig_statuses')->where(['other_id' => $id])->first()->id;
 	}
 
 	public static function get_sample_warning($error_name)

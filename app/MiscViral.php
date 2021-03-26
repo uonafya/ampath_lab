@@ -653,7 +653,7 @@ class MiscViral extends Common
                     $message = $sample->patient_name . ", Congratulations your VL is good, remember to keep your appointment date!!!";
                 }
                 else{
-                    $message = $sample->patient_name . ", Congratulations!Your VL is good! Continue taking your drugs and keeping your appointment as instructed by the doctor.";                        
+                    $message = $sample->patient_name . ", Congratulations! Your VL is good! Continue taking your drugs and keeping your appointment as instructed by the doctor.";                        
                 }
             }
             else if(in_array($sample->rcategory, [2, 3, 4])){
