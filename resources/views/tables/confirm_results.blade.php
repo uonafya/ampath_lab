@@ -22,6 +22,11 @@
                         <a href="{{ url($worksheet->route_name . '/cancel_upload/' . $worksheet->id) }} ">
                             <button class="btn btn-danger">Cancel Upload</button>
                         </a>
+                        @if($worksheet->reversible)
+                            <a href="{{ url($worksheet->route_name . '/reverse_upload/' . $worksheet->id) }} ">
+                                <button class="btn btn-danger">Reverse Upload</button>
+                            </a>
+                        @endif
                     </div>
                     
                 </div>
