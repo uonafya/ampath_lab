@@ -223,7 +223,7 @@
                 $('#quarantine_select').removeAttr("disabled");
             @endif
 
-            @if(isset($user) && in_array($user->user_type_id, [12, 15])
+            @if(isset($user) && in_array($user->user_type_id, [12, 15]))
                 $("#lab_row").show();
                 $('#lab_select').attr("required", "required");
                 $('#lab_select').removeAttr("disabled");  

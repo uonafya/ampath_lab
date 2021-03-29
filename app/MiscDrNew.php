@@ -128,57 +128,73 @@ class MiscDrNew extends Common
 		$print_data = [];
 		$errors = [];
 
-		foreach ($samples as $key => $sample) {
-
-			$s = [
-				'sample_name' => "{$sample->mid}",
-				'sample_type' => 'data',
-				'contigs' => [
+		$contigs = [
+			'PRRT' => [
+				'contig_array' => [
+					'contig_name' => 'PRRT',
+					'contig_alias' => 'PRRT',
+					'contig_code' => 'PRRT',
+					'plate_name' => "plate_{$worksheet->id}",
+					'ab1s' => null,
+				],
+				'primers' => ['F1', 'F2', 'F3', 'R1', 'R2', 'R3']
+			],
+			'INT' => [
+				'contig_array' => [
 					'contig_name' => 'IN',
 					'contig_alias' => 'INT',
 					'contig_code' => 'IN',
 					'plate_name' => "plate_{$worksheet->id}",
 					'ab1s' => null,
 				],
-			];
+				'primers' => ['F1', 'F2', 'R1', 'R2']
+			],
+		];
 
-			if($sample->control == 1) $s['sample_type'] = 'negative';
-			if($sample->control == 2) $s['sample_type'] = 'positive';
+		foreach ($samples as $key => $sample) {
+			foreach ($contigs as $contig_key => $contig) {
 
-			$abs = [];
-			$abs2 = [];
+				$s = [
+					'sample_name' => "{$sample->mid}",
+					'sample_type' => 'data',
+					'contigs' => $contig->contig_array,
+				];
 
-			foreach ($primers as $primer) {
-				$sample_file = self::find_ab_file($path, $sample, $primer);
-				// if($ab) $abs[] = $ab;
-				if($sample_file){
-					$abs[] = [
-						'primer_name' => $sample_file->primer_name,
-						'file_link_id' => $sample_file->exatype_file_id,
-						'path' => $sample_file->file_name,
-					];
-				}
-				else{
-					// $errors[] = "Sample {$sample->id} ({$sample->mid}) Primer {$primer} could not be found.";
-					if(env('APP_LAB') == 1) $errors[] = "Sample {$sample->id} ({$sample->mid}) Primer {$primer} could not be found.";
+				if($sample->control == 1) $s['sample_type'] = 'negative';
+				if($sample->control == 2) $s['sample_type'] = 'positive';
+
+				$abs = [];
+				$abs2 = [];
+
+				foreach ($primers as $primer) {
+					$sample_file = self::find_ab_file($path, $sample, $primer);
+					// if($ab) $abs[] = $ab;
+					if($sample_file){
+						$abs[] = [
+							'primer_name' => $sample_file->primer_name,
+							'file_link_id' => $sample_file->exatype_file_id,
+							'path' => $sample_file->file_name,
+						];
+					}
 					else{
-						$errors[] = "Sample {$sample->id} ({$sample->nat}) Primer {$primer} could not be found.";
+						// $errors[] = "Sample {$sample->id} ({$sample->mid}) Primer {$primer} could not be found.";
+						if(env('APP_LAB') == 1) $errors[] = "Sample {$sample->id} ({$sample->mid}) Primer {$primer} could not be found.";
+						else{
+							$errors[] = "Sample {$sample->id} ({$sample->nat}) Primer {$primer} could not be found.";
+						}
 					}
 				}
+				if(!$abs) continue;
+				$s['contigs']['ab1s'] = $abs;
+				$sample_data[] = $s;
 			}
-			if(!$abs) continue;
-			$s['contigs']['ab1s'] = $abs;
-			$sample_data[] = $s;
-
-			// $s['attributes']['ab1s'] = $abs2;
-			// $print_data[] = $s;
 		}
 		// self::dump_log($print_data);
 		// die();
 		return ['sample_data' => $sample_data, 'errors' => $errors];
 	}
 
-	public static function find_ab_file($path, $sample, $primer)
+	public static function find_ab_file($path, $sample, $primer, $contig)
 	{
 		$files = scandir($path);
 		if(!$files) return null;
@@ -191,7 +207,7 @@ class MiscDrNew extends Common
 
 			$new_path = $path . '/' . $file;
 			if(is_dir($new_path)){
-				$a = self::find_ab_file($new_path, $sample, $primer);
+				$a = self::find_ab_file($new_path, $sample, $primer, $contig);
 
 				if(!$a) continue;
 				return $a;
@@ -263,7 +279,7 @@ class MiscDrNew extends Common
 			foreach ($value->contigs as $contig) {
 				$sample->contig()->create([
 					'exatype_id' => $contig->id,
-					'code' => $contig->contig_code,
+					'contig' => $contig->contig_alias,
 				]);
 			}
 		}

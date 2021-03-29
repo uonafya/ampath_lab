@@ -77,6 +77,16 @@ class CovidWorksheet extends BaseModel
         return false;
     }
 
+    public function getReversibleAttribute()
+    {
+        if(!in_array($this->status_id, [3,7]) || $this->daterun->lessThan(date('Y-m-d', strtotime('-2 days')))){
+            return false;
+        }
+        if(!in_array(auth()->user()->id, [$this->reviewedby, $this->reviewedby2])) return false;
+
+        return true;
+    }
+
 	public function other_samples($id = null){
 		if(!$this->combined) return null;
 		if($this->combined == 1){
