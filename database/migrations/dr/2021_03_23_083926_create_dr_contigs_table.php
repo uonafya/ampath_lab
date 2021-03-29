@@ -18,7 +18,7 @@ class CreateDrContigsTable extends Migration
             $table->integer('sample_id')->unsigned()->index();
             $table->bigInteger('exatype_id')->unsigned()->index()->nullable();
             $table->tinyInteger('exatype_status_id')->nullable()->unsigned()->index()->default(4);
-            $table->string('code', 10)->nullable();
+            $table->string('contig', 10)->nullable();
             $table->string('chromatogram_id')->nullable();
             $table->timestamps();
         });

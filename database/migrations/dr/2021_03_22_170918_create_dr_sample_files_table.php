@@ -18,6 +18,7 @@ class CreateDrSampleFilesTable extends Migration
             $table->integer('sample_id')->unsigned()->index();
             $table->bigInteger('exatype_file_id')->unsigned()->index()->nullable();
             $table->string('primer', 5);
+            $table->string('contig', 10);
             $table->timestamps();
         });
     }
