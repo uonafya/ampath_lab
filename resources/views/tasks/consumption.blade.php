@@ -41,10 +41,10 @@
                             <select class="form-control input-sm" required name="platform" id="platform">
                                 <option value="" selected>Select Platform</option>
                                 {{-- @if($data->taqproc == 0) --}}
-                                <option value="1">COBAS/TAQMAN @if($data->taqproc > 0) <i>(Entry made for {{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ $prevyear }} )</i> @endif</option>
+                                <option value="1">COBAS/TAQMAN @if($data->taqproc > 0) <i>(Entry made for {{ date("F", mktime(0, 0, 0, $prevmonth, 1, Date('Y'))) }}, {{ $prevyear }} )</i> @endif</option>
                                 {{-- @endif
                                 @if($data->abbottproc == 0) --}}
-                                <option value="2">ABBOTT @if($data->abbottproc > 0) <i>(Entry made for {{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ $prevyear }} )</i> @endif</option>
+                                <option value="2">ABBOTT @if($data->abbottproc > 0) <i>(Entry made for {{ date("F", mktime(0, 0, 0, $prevmonth, 1, Date('Y'))) }}, {{ $prevyear }} )</i> @endif</option>
                                 {{-- @endif --}}
                             </select>
                         </div>

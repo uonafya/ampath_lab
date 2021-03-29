@@ -39,7 +39,7 @@
             <div class="alert alert-warning">
                 <center>
                     <font color="#4183D7">
-                    Please Fill Out any Equipment Breakdown Details below for <strong>({{ date("F", mktime(null, null, null, $month)) }}, @if(isset($now)) {{ date('Y') }} @else {{ $prevyear }} @endif )</strong>. @if(!isset($now)) If none brokedown , Go to Comments and Write that then Click Submit. @endif
+                    Please Fill Out any Equipment Breakdown Details below for <strong>({{ date("F", mktime(0, 0, 0, $month, 1, Date('Y'))) }}, @if(isset($now)) {{ date('Y') }} @else {{ $prevyear }} @endif )</strong>. @if(!isset($now)) If none brokedown , Go to Comments and Write that then Click Submit. @endif
                     </font>
                 </center>
             </div>

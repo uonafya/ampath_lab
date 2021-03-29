@@ -42,8 +42,8 @@
 	        </div>
             <div class="hpanel">
                 <ul class="nav nav-tabs">
-                    <li class="active"><a data-toggle="tab" href="#labs-performance"><strong>A.) Lab Performance Report ({{ date("F", mktime(null, null, null, $data->month)) }}, {{ $data->year }})</strong></a></li>
-                    <li class=""><a data-toggle="tab" href="#labs-equipment"><strong>B.) Lab Equipment Reports ({{ date("F", mktime(null, null, null, $data->month)) }}, {{ $data->year }})</strong></a></li>
+                    <li class="active"><a data-toggle="tab" href="#labs-performance"><strong>A.) Lab Performance Report ({{ date("F", mktime(0, 0, 0, $data->month, 1, Date('Y'))) }}, {{ $data->year }})</strong></a></li>
+                    <li class=""><a data-toggle="tab" href="#labs-equipment"><strong>B.) Lab Equipment Reports ({{ date("F", mktime(0, 0, 0, $data->month, 1, Date('Y'))) }}, {{ $data->year }})</strong></a></li>
                 </ul>
                 <div class="tab-content">
                     <div id="labs-performance" class="tab-pane active">
@@ -75,7 +75,7 @@
 			                    <tbody>
 			                        <tr>
 			                            <th>
-			                                {{ date("F", mktime(null, null, null, $performance->month)) }}, {{ $performance->year }}
+			                                {{ date("F", mktime(0, 0, 0, $performance->month, 1, Date('Y'))) }}, {{ $performance->year }}
 			                            </th>
 			                            <td>
 			                                {{ $performance->received }}
