@@ -14,7 +14,7 @@ class CovidAntigenUpdates extends Migration
     public function up()
     {
         Schema::table('covid_samples', function (Blueprint $table) {
-            $table->tinyint('antigen')->nullable()->default(0)->after('worksheet_id');
+            $table->tinyInteger('antigen')->nullable()->default(0)->after('worksheet_id');
             $table->string('assay_kit_name', 100)->nullable()->after('antigen');
             $table->string('lot_no', 50)->nullable()->after('assay_kit_name');
             $table->date('kit_expiry')->nullable()->after('lot_no');
