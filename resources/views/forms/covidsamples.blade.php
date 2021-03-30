@@ -27,7 +27,7 @@
         @else
             <form method="POST" class="form-horizontal" action='{{ url("/covid_sample/") }}'>
         @endif
-            <?php $m = $sample ?? null; ?>
+            <?php $m = $sample ?? null; $model = $sample ?? null; ?>
 
         @csrf
 
@@ -321,26 +321,21 @@
 
                             @endif
 
-                            {{--<div class="form-group" id="rejection" >
-                                <label class="col-sm-4 control-label">Rejected Reason</label>
-                                <div class="col-sm-8">
-                                        <select class="form-control" required name="rejectedreason" id="rejectedreason" disabled>
+                            @if(Str::contains(url()->current(), 'antigen') || ($m && $m->antigen))
 
-                                        <option></option>
-                                        @foreach ($viralrejectedreasons as $rejectedreason)
-                                            <option value="{{ $rejectedreason->id }}"
+                                <input type="hidden" name="antigen" value="1">
 
-                                            @if (isset($sample) && $sample->rejectedreason == $rejectedreason->id)
-                                                selected
-                                            @endif
+                                @include('partial.input', ['prop' => 'assay_kit_name', 'label' => 'Assay Kit Name'])
+                                @include('partial.input', ['prop' => 'lot_no', 'label' => 'Lot Number'])
 
-                                            > {{ $rejectedreason->name }}
-                                            </option>
-                                        @endforeach
+                                @include('partial.date', ['prop' => 'kit_expiry', 'label' => 'Kit Expiry',])
 
-                                    </select>
-                                </div>
-                            </div>--}}
+                                @include('partial.date', ['prop' => 'datetested', 'label' => 'Date Tested', 'required' => true])
+
+                                @include('partial.select', ['prop' => 'result', 'label' => 'Result', 'items' => $results, 'required' => true])
+
+                            @endif
+
                         @endif
                         
                         @if(!auth()->user()->is_covid_lab_user())

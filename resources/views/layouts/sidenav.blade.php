@@ -205,6 +205,10 @@
                 <hr />
                 <li><a href="{{ url('covid_sample/create') }}">Add Samples</a></li>
                 <hr />
+                @if(in_array(env('APP_LAB'), [23]))
+                    <li><a href="{{ url('covid_sample/create/antigen') }}">Add Antigen Samples</a></li>
+                    <hr />
+                @endif
                 <li><a href="{{ url('covid_sample/index/0') }}">Verify Site Entry Samples</a></li>
                 <hr />
                 <li><a href="{{ url('covid_worksheet/set_details') }}">Create Worksheet</a></li>

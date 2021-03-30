@@ -340,7 +340,7 @@ class MiscDrNew extends Common
 			else if($value->type == 'drug-call-result'){
 				$sample = DrSample::where(['exatype_id' => $value->id])->first();
 				foreach ($value->attributes->drug_calls as $drug_call) {	
-					$c = DrCall::firstOrCreate([
+					$c = DrCall::firstOrCreate(['sample_id' => $sample->id, 'drug_class' => $drug_call->drug_class,], [
 						'sample_id' => $sample->id,
 						'drug_class' => $drug_call->drug_class,
 						'drug_class_id' => self::get_drug_class($drug_call->drug_class),
@@ -353,7 +353,7 @@ class MiscDrNew extends Common
 					}
 
 					foreach ($drug_call->drugs as $drug) {						
-						$d = DrCallDrug::firstOrCreate([
+						$d = DrCallDrug::firstOrCreate(['call_id' => $c->id, 'call' => $drug->call,], [
 							'call_id' => $c->id,
 							'short_name' => $drug->short_name,
 							'short_name_id' => MiscDr::get_short_name_id($drug->short_name),
