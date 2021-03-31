@@ -125,7 +125,7 @@ class DatatableController extends Controller
         if($user->user_type_id == 5) $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
 
         $class = \App\Synch::$synch_arrays[$param]['sampleview_class'];
-        $query = $class::select(array_column($this->patient_sms_columns, 'db'))
+        $rows = $class::select(array_column($this->patient_sms_columns, 'db'))
             ->whereRaw($string)
             ->whereNotNull('time_result_sms_sent')
             ->whereBetween('time_result_sms_sent', [$request->input('from_date'), $request->input('to_date')])
