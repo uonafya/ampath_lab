@@ -380,6 +380,7 @@ class ViralsampleController extends Controller
 
         $new_patient = $request->input('new_patient');
         $viralpatient = Viralpatient::existing($request->input('facility_id'), $patient_string)->first();
+        if(!$viralpatient) $viralpatient = new Viralpatient;
 
         /*if($new_patient == 0){
 
