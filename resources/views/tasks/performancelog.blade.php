@@ -56,7 +56,7 @@
                     <tbody>
                         <tr>
                             <th>
-                                {{ date("F", mktime(0, 0, 0, $prevmont, 1, Date('Y'))) }}, {{ $prevyear }}
+                                {{ date("F", mktime(0, 0, 0, $prevmonth, 1, Date('Y'))) }}, {{ $prevyear }}
                             </th>
                             <td>
                                 <input class="form-control input-sm" id="{{ $sampletype }}received" name="{{ $sampletype }}received" type="text" value="{{ $data->logs->$sampletype->received }}" disabled="true">
