@@ -318,7 +318,7 @@ class ViralsampleController extends Controller
 
         $data_existing['patient'] = $patient_string;
 
-        $existing = ViralsampleView::existing( $data_existing )->get()->first();
+        $existing = ViralsampleView::existing( $data_existing )->first();
         if($existing && !$request->input('reentry')){
             session(['toast_message' => "The sample already exists in batch {$existing->batch_id} and has therefore not been saved again"]);
             session(['toast_error' => 1]);
@@ -380,7 +380,6 @@ class ViralsampleController extends Controller
 
         $new_patient = $request->input('new_patient');
         $viralpatient = Viralpatient::existing($request->input('facility_id'), $patient_string)->first();
-        if(!$viralpatient) $viralpatient = new Viralpatient;
 
         /*if($new_patient == 0){
 
@@ -406,6 +405,7 @@ class ViralsampleController extends Controller
             $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
         $viralpatient->fill($data);
         $viralpatient->patient = $patient_string;
+        if(!$viralpatient->patient) $viralpatient->patient = '';
         $viralpatient->pre_update();
         
 
@@ -586,7 +586,7 @@ class ViralsampleController extends Controller
 
         $viralpatient = $viralsample->patient;
 
-        if($viralpatient->patient != $request->input('patient')){
+        if($viralpatient->patient != $request->input('patient') && $request->justification != 12){
             $viralpatient = Viralpatient::existing($request->input('facility_id'), $request->input('patient'))->first();
             $different_patient = true;
 
@@ -919,7 +919,7 @@ class ViralsampleController extends Controller
         }
         else{
             $run = $sample->run - 1;
-            $prev_sample = Viralsample::where(['parentid' => $sample->parentid, 'run' => $run])->get()->first();
+            $prev_sample = Viralsample::where(['parentid' => $sample->parentid, 'run' => $run])->first();
         }
         
         $sample->delete();
@@ -1011,14 +1011,14 @@ class ViralsampleController extends Controller
 
         if(env('APP_LAB') == 8){
             while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE){
-                $facility = Facility::locate($row[4])->get()->first();
+                $facility = Facility::locate($row[4])->first();
                 if(!$facility || !is_numeric($row[4])) continue;
 
                 $datecollected = Lookup::other_date($row[9]);
                 $datereceived = Lookup::other_date($row[13]);
                 if(!$datereceived) $datereceived = date('Y-m-d');
                 $patient_string = $row[2];
-                $existing = ViralsampleView::where(['facility_id' => $facility->id, 'patient' => $patient_string, 'datecollected' => $datecollected])->get()->first();
+                $existing = ViralsampleView::where(['facility_id' => $facility->id, 'patient' => $patient_string, 'datecollected' => $datecollected])->first();
 
                 if($existing){
                     $existing_rows[] = $existing->toArray();
@@ -1031,7 +1031,7 @@ class ViralsampleController extends Controller
                                         ->where('input_complete', 0)
                                         ->where('site_entry', 1)
                                         ->where('facility_id', $facility->id)
-                                        ->get()->first();
+                                        ->first();
 
                 if($batch){
                     if($batch->sample_count > 9){
@@ -1087,7 +1087,7 @@ class ViralsampleController extends Controller
 
                 $sample = $patient = $batch = null;
 
-                $facility = Facility::locate($row[3])->get()->first();
+                $facility = Facility::locate($row[3])->first();
                 if(!$facility) continue;
                 $datecollected = Lookup::other_date($row[8]);
                 $datereceived = Lookup::other_date($row[15]);
@@ -1122,7 +1122,7 @@ class ViralsampleController extends Controller
                                             ->where('input_complete', 0)
                                             ->where('site_entry', $site_entry)
                                             ->where('facility_id', $facility->id)
-                                            ->get()->first();
+                                            ->first();
 
                     if($batch){
                         if($batch->sample_count > 9){
@@ -1145,7 +1145,7 @@ class ViralsampleController extends Controller
                     $batch->save();
                 }
 
-                if(!$patient) $patient = Viralpatient::existing($facility->id, $row[1])->get()->first();
+                if(!$patient) $patient = Viralpatient::existing($facility->id, $row[1])->first();
                 if(!$patient){
                     $patient = new Viralpatient;
                 }
