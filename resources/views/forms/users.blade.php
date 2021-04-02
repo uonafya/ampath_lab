@@ -73,7 +73,7 @@
                                         <select class="form-control" name="facility_id" id="quarantine_select" disabled="disabled">
                                             <option value="" selected disabled>Select Quarantine Site</option>
                                         @forelse ($quarantine_sites as $quarantine_site)
-                                            <option value="{{ $quarantine_site->id }}">{{ $quarantine_site->name }}</option>
+                                            <option value="{{ $quarantine_site->id }}" @if(isset($user) && $quarantine_site->id == $user->facility_id) selected  @endif >{{ $quarantine_site->name }}</option>
                                         @empty
                                             <option value="" disabled="true">No Quarantine Sites available</option>
                                         @endforelse
