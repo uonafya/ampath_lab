@@ -146,7 +146,7 @@ class DatatableController extends Controller
             if($param == 'eid') $d['result'] = $results[$row->result] ?? '';
             $data[] = $d;
         }
-        return \App\Common::csv_download($data, $type . '-sms-log');
+        return \App\Common::csv_download($data, $param . '-sms-log');
     }
 
 }
