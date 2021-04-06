@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Excel;
 use DB;
 use Illuminate\Http\Request;
+use App\Exports\CovidAntigenExport;
 
 class CovidReportsController extends Controller
 {
@@ -39,6 +40,7 @@ class CovidReportsController extends Controller
 		if($request->input('types') == 'nphl_api_submission') return $this->nphl_api_download();
 		if($request->input('types') == 'worksheet_machines') return $this->worksheet_report();
 		if($request->input('types') == 'worksheet_report') return $this->worksheets_no_reruns($date, $date_to);
+		if($request->input('types') == 'nphl_antigen_submission') return new CovidAntigenExport($request);
 
 		
 		// Get the data from the database
@@ -394,6 +396,94 @@ class CovidReportsController extends Controller
 		return MiscCovid::csv_download($data, 'COVID-19 LABORATORY RESULTS FOR NPHL UPLOAD FOR ' . $date, false);
 	}
 
+
+	private function nphl_upload_antigen($date)
+	{
+		$user = auth()->user();
+		$lab = Lab::find(env('APP_LAB'))->labdesc;
+		$samples = CovidSampleView::whereIn('result', [1,2,5])
+						->where(['repeatt' => 0, 'antigen' => true, 'datedispatched' => $date])
+						->get();
+						
+
+		$data = [];
+
+		$a = ['nationalities', 'covid_sample_types', 'covid_symptoms'];
+		$lookups = [];
+		foreach ($a as $value) {
+			$lookups[$value] = DB::table($value)->get();
+		}
+
+		$data[] = [];
+
+		$data[] = [
+			'REASON FOR TESTING', 'CASE ID', 'TYPE OF CASE (INITIAL/REPEAT)', 'SAMPLE NUMBER', 'NAME', 'ID/PASSPORT NUMBER', 'AGE', 'AGE UNIT (DAYS/MONTHS/YEAR)', 'GENDER (M/F)','PHONE NUMBER', 'OCCUPATION', 'NATIONALITY', 'COUNTY OF RESIDENCE', 'SUB COUNTY OF RESIDENCE', 'VILLAGE/ESTATE OF RESIDENCE', 'WARD', 'COUNTY OF DIAGNOSIS', 'HAS TRAVEL HISTORY (LAST 14 DAYS) Y/N', 'TRAVEL FROM', 'CONTACT WITH CASE (Y/N)', 'CONFIRMED CASE NAME', 'QUARANTINE FACILITY/HOSPITAL/HOMESTEAD', 'HAS SYMPTOMS (Y/N)', 'DATE OF ONSET OF SYMPTOMS', 'SYMPTOMS SHOWN (COUGH;FEVER;ETC)', 'SAMPLE TYPE (NP SWAB, OP SWAB, SERUM, SPUTUM ETC)', 'DATE OF SAMPLE COLLECTION', 'RESULT', 'LAB CONFIRMATION DATE', 'EMAIL ADDRESS',
+		];
+
+		// $symptoms_array = [];
+		foreach ($lookups['covid_symptoms'] as $key => $value) {
+			$symptoms_array[$key] = $value;
+		}
+
+
+		foreach ($samples as $key => $sample) {
+			$travelled = 'N';
+			$history = '';
+			if (!$sample->patient->travel->isEmpty()){
+				$travelled = 'Y';
+				foreach ($sample->patient->travel as $key => $travel) {
+					if(!$travel->town) continue;
+					$history .= $travel->town->name . ', ' . $travel->town->country . '\n';
+				}
+			}
+
+			$has_symptoms = 'N';
+			$symptoms = '';
+			if($sample->date_symptoms){
+				$has_symptoms = 'Y';
+				foreach ($sample->symptoms as $value) {
+					$symptoms .= $symptoms_array[$value] . ';';
+				}
+			}
+			$current_lab = null;
+			if($sample->lab_id != env('APP_LAB')) $current_lab = Lab::find(env('APP_LAB'))->labdesc;
+
+			$data[] = [
+				// $current_lab ?? $lab,
+				$sample->nphl_justification,
+				$sample->identifier,
+				$sample->sample_type == 1 ? 'Initial' : 'Repeat',
+				$sample->id,
+				$sample->patient_name,
+				$sample->national_id,
+				$sample->age,
+				'Years',
+				substr($sample->gender, 0, 1),
+				$sample->phone_no,
+				$sample->occupation,
+				$sample->get_prop_name($lookups['nationalities'], 'nationality'),
+				$sample->countyname ?? $sample->county,
+				$sample->subcountyname ?? $sample->sub_county ?? $sample->subcounty ?? '',
+				$sample->residence,
+				'',
+				$sample->countyname ?? $sample->county,
+				$travelled,
+				$history,
+				'',
+				'',
+				$sample->quarantine_site ?? $sample->facilityname ?? '',
+				$has_symptoms,
+				$sample->date_symptoms,
+				$symptoms,
+				$sample->get_prop_name($lookups['covid_sample_types'], 'sample_type'),
+				$sample->datecollected,
+				$sample->result_name,
+				$sample->datedispatched,
+				$sample->email_address,
+			];
+		}
+		return MiscCovid::csv_download($data, 'COVID-19 LABORATORY RESULTS FOR NPHL UPLOAD FOR ' . $date, false);
+	}
 
 	public function nphl_api_download()
 	{
