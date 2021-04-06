@@ -18,7 +18,7 @@
             <div class="col-sm-4">
                 <div class="input-group date">
                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                    <input type="text" id="from_date" required class="form-control">
+                    <input type="text" id="from_date" name="from_date" required class="form-control">
                 </div>
             </div> 
 
@@ -26,7 +26,7 @@
             <div class="col-sm-4">
                 <div class="input-group date">
                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                    <input type="text" id="to_date" required class="form-control">
+                    <input type="text" id="to_date" name="to_date" required class="form-control">
                 </div>
             </div> 
 
