@@ -133,6 +133,13 @@ class DatatableController extends Controller
 
         $data = [];
 
+        $results = [
+            '1' => 'Negative',
+            '2' => 'Positive',
+            '3' => 'Failed',
+            '5' => 'Collect New Sample',
+        ];
+
         foreach ($rows as $row) {
             $d = [];
             foreach ($row->toArray() as $key => $value) {
