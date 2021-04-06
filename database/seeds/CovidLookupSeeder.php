@@ -15,34 +15,59 @@ class CovidLookupSeeder extends Seeder
 
 		// return;
 
+		DB::statement("DROP TABLE IF EXISTS `covid_sample_types`;");
+		DB::statement("
+			CREATE TABLE `covid_sample_types` (
+				`id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+				`name` varchar(50) DEFAULT NULL,
+				`nphl_name` varchar(50) DEFAULT NULL,
+				PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+		");
+
+		DB::table('covid_sample_types')->insert([
+			['id' => 1, 'name' => 'Nasopharygneal & Oropharygneal swabs', 'nphl_name' => 'NP/OP Swab'],
+			['id' => 2, 'name' => 'Nasopharygneal swab in UTM', 'nphl_name' => 'NP Swab'],
+			['id' => 3, 'name' => 'Oropharygneal swab in UTM', 'nphl_name' => 'OP Swab'],
+			['id' => 4, 'name' => 'Serum', 'nphl_name' => 'Serum'],
+			['id' => 5, 'name' => 'Sputum', 'nphl_name' => 'Sputum'],
+			['id' => 6, 'name' => 'Tracheal Aspirate', 'nphl_name' => 'Tracheal Aspirate'],
+			['id' => 7, 'name' => 'Other', 'nphl_name' => 'Other'],
+		]);
+
 
 		DB::statement("DROP TABLE IF EXISTS `covid_justifications`;");
 		DB::statement("
 			CREATE TABLE `covid_justifications` (
 				`id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
 				`name` varchar(150) DEFAULT NULL,
+				`nphl_code` tinyint DEFAULT NULL,
 				PRIMARY KEY (`id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 		");
 
 		DB::table('covid_justifications')->insert([
-			['id' => 1, 'name' => 'Contact with confirmed case'],
-			['id' => 2, 'name' => 'Presented at health facility'],
-			['id' => 3, 'name' => 'Surveillance'],
-			['id' => 4, 'name' => 'Point of entry detection'],
-			['id' => 5, 'name' => 'Repatriation'],
-			['id' => 6, 'name' => 'Other'],
-			['id' => 7, 'name' => 'Surveillance and Quarantine'],
-			['id' => 8, 'name' => 'Recent travel'],
-			['id' => 9, 'name' => 'Health Care Worker'],
-			['id' => 10, 'name' => 'Truck Driver'],
-			['id' => 11, 'name' => 'Food Handlers'],
-			['id' => 12, 'name' => 'Before medical/surgical procedure'],
-			['id' => 13, 'name' => 'Travel to Country/County with presumed widespread COVID-19'],
-			['id' => 14, 'name' => 'Meets case definition'],
-			['id' => 15, 'name' => 'Acute severe respiratory illness'],
-			['id' => 16, 'name' => 'Air Travel'],
+			['id' => 1, 'name' => 'Contact with confirmed case', 'nphl_code' => 2],
+			['id' => 2, 'name' => 'Presented at health facility', 'nphl_code' => 4],
+			['id' => 3, 'name' => 'Surveillance', 'nphl_code' => 4],
+			['id' => 4, 'name' => 'Point of entry detection', 'nphl_code' => 4],
+			['id' => 5, 'name' => 'Repatriation', 'nphl_code' => 4],
+			['id' => 6, 'name' => 'Other', 'nphl_code' => 4],
+			['id' => 7, 'name' => 'Surveillance and Quarantine', 'nphl_code' => 4],
+			['id' => 8, 'name' => 'Recent travel', 'nphl_code' => 4],
+			['id' => 9, 'name' => 'Health Care Worker', 'nphl_code' => 3],
+			['id' => 10, 'name' => 'Truck Driver', 'nphl_code' => 4],
+			['id' => 11, 'name' => 'Food Handlers', 'nphl_code' => 4],
+			['id' => 12, 'name' => 'Before medical/surgical procedure', 'nphl_code' => 6],
+			['id' => 13, 'name' => 'Travel to Country/County with presumed widespread COVID-19', 'nphl_code' => 2],
+			['id' => 14, 'name' => 'Meets case definition', 'nphl_code' => 1],
+			['id' => 15, 'name' => 'Acute severe respiratory illness', 'nphl_code' => 1],
+			['id' => 16, 'name' => 'Air Travel', 'nphl_code' => 4],
+			['id' => 17, 'name' => 'Outbreak Investigation', 'nphl_code' => 4],
+			['id' => 18, 'name' => 'Prison/Remand', 'nphl_code' => 5],
 		]);
+
+		return;
 
 		DB::statement("DROP TABLE IF EXISTS `nationalities`;");
 		DB::statement("
@@ -395,25 +420,6 @@ class CovidLookupSeeder extends Seeder
 			['id' => 2, 'name' => 'In Patient Ward'],
 			['id' => 3, 'name' => 'Self Quarantine'],
 			['id' => 4, 'name' => 'ICU - critical condition'],
-		]);
-
-		DB::statement("DROP TABLE IF EXISTS `covid_sample_types`;");
-		DB::statement("
-			CREATE TABLE `covid_sample_types` (
-				`id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
-				`name` varchar(50) DEFAULT NULL,
-				PRIMARY KEY (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-		");
-
-		DB::table('covid_sample_types')->insert([
-			['id' => 1, 'name' => 'Nasopharygneal & Oropharygneal swabs'],
-			['id' => 2, 'name' => 'Nasopharygneal swab in UTM'],
-			['id' => 3, 'name' => 'Oropharygneal swab in UTM'],
-			['id' => 4, 'name' => 'Serum'],
-			['id' => 5, 'name' => 'Sputum'],
-			['id' => 6, 'name' => 'Tracheal Aspirate'],
-			['id' => 7, 'name' => 'Other'],
 		]);
 
 

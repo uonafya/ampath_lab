@@ -908,12 +908,20 @@
                     $("#patient").removeAttr("required");
                     $("#initiation_date").removeAttr("required");
                     $("#prophylaxis").removeAttr("required");
+
+                    $("#patient").removeClass("requirable");
+                    $("#initiation_date").removeClass("requirable");
+                    $("#prophylaxis").removeClass("requirable");
                 }
                 else{
                     $("#recency_number").removeAttr("required");
                     $("#patient").attr("required", "required");
                     $("#initiation_date").attr("required", "required");
                     $("#prophylaxis").attr("required", "required");
+                    
+                    $("#patient").addClass("requirable");
+                    $("#initiation_date").addClass("requirable");
+                    $("#prophylaxis").addClass("requirable");
 
                 }
             });

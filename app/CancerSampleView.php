@@ -21,4 +21,11 @@ class CancerSampleView extends ViewModel
         else if($this->result == 5){ return "Collect New Sample"; }
         else{ return ""; }
     }
+
+    public function getNphlResultNameAttribute()
+    {
+        if($this->result == 1) return "N";
+        else if($this->result == 2) return "P";
+        else{ return "I"; }
+    }
 }

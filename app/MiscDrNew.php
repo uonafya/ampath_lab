@@ -340,7 +340,7 @@ class MiscDrNew extends Common
 			else if($value->type == 'drug-call-result'){
 				$sample = DrSample::where(['exatype_id' => $value->id])->first();
 				foreach ($value->attributes->drug_calls as $drug_call) {	
-					$c = DrCall::firstOrCreate([
+					$c = DrCall::firstOrCreate(['sample_id' => $sample->id, 'drug_class' => $drug_call->drug_class,], [
 						'sample_id' => $sample->id,
 						'drug_class' => $drug_call->drug_class,
 						'drug_class_id' => self::get_drug_class($drug_call->drug_class),
@@ -353,7 +353,7 @@ class MiscDrNew extends Common
 					}
 
 					foreach ($drug_call->drugs as $drug) {						
-						$d = DrCallDrug::firstOrCreate([
+						$d = DrCallDrug::firstOrCreate(['call_id' => $c->id, 'call' => $drug->call,], [
 							'call_id' => $c->id,
 							'short_name' => $drug->short_name,
 							'short_name_id' => MiscDr::get_short_name_id($drug->short_name),
@@ -385,169 +385,6 @@ class MiscDrNew extends Common
 				$sample = DrSample::where(['exatype_id' => $value->id])->first();
 
 			}
-
-		}
-
-		$w = $body->data->attributes;
-		$worksheet->exatype_job_status_id = MiscDr::get_job_status($w->status->id);
-		$worksheet->plate_controls_pass = $w->plate_controls_pass;
-		$worksheet->qc_run = $w->plate_qc_run;
-		$worksheet->qc_pass = $w->plate_qc->pass ?? 0;
-		$worksheet->qc_distance_pass = $w->plate_qc->distance_pass ?? 0;
-
-		if($worksheet->exatype_status_id == 4) return null;
-
-		if($worksheet->exatype_status_id != 5){
-
-			if($w->errors){
-				foreach ($w->errors as $error) {
-					self::create_warning(1, $worksheet, $error);
-				}
-			}
-
-			if($w->warnings){
-				foreach ($w->warnings as $error) {
-					self::create_warning(1, $worksheet, $error);
-				}
-			}
-		}
-
-		$worksheet->status_id = 6;
-		$worksheet->save();
-
-		// dd($body->included);
-
-		foreach ($body->included as $key => $value) {
-
-			$sample = DrSample::where(['exatype_id' => $value->id])->first();
-
-			if(!$sample) continue;
-			if(in_array($sample->status_id, [1])) continue;
-
-			// echo " {$sample->id} ";
-
-			// if($worksheet->exatype_status_id == 5 && !$worksheet->plate_controls_pass && !$sample->control) continue;
-
-			$s = $value->attributes;
-			$sample->status_id = self::get_sample_status($s->status_id);	
-
-			if($sample->status_id == 3)	$sample->qc_pass = 0;			
-
-			if(isset($s->sample_qc_pass)){
-				$sample->qc_pass = $s->sample_qc_pass ?? null;
-
-				$sample->qc_stop_codon_pass = $s->sample_qc->stop_codon_pass ?? null;
-				$sample->qc_plate_contamination_pass = $s->sample_qc->plate_contamination_pass ?? null;
-				$sample->qc_frameshift_codon_pass = $s->sample_qc->frameshift_codon_pass ?? null;
-			}
-
-			if(isset($s->sample_qc_distance)){
-				$sample->qc_distance_to_sample = $s->sample_qc_distance[0]->to_sample_id ?? null;
-				$sample->qc_distance_from_sample = $s->sample_qc_distance[0]->from_sample_id ?? null;
-				$sample->qc_distance_difference = $s->sample_qc_distance[0]->difference ?? null;
-				$sample->qc_distance_strain_name = $s->sample_qc_distance[0]->strain_name ?? null;
-				$sample->qc_distance_compare_to_name = $s->sample_qc_distance[0]->compare_to_name ?? null;
-				$sample->qc_distance_sample_name = $s->sample_qc_distance[0]->sample_name ?? null;
-			}
-
-			if(isset($s->errors) && $s->errors){
-				$sample->has_errors = true;
-
-				foreach ($s->errors as $error) {
-					self::create_warning(2, $sample, $error);
-				}
-			}
-
-			if(isset($s->warnings) && $s->warnings){
-				$sample->has_warnings = true;
-
-				foreach ($s->warnings as $error) {
-					self::create_warning(2, $sample, $error);
-				}
-			}
-
-			if(isset($s->calls) && $s->calls){
-				// $sample->has_calls = true;
-
-				foreach ($s->calls as $call) {
-					// $c = DrCall::where(['sample_id' => $sample->id, 'drug_class' => $call->drug_class])->first();
-					// if(!$c) $c = new DrCall;
-
-					// $c->fill([
-					// 	'sample_id' => $sample->id,
-					// 	'drug_class' => $call->drug_class,
-					// 	'other_mutations' => $call->other_mutations,
-					// 	'major_mutations' => $call->major_mutations,
-					// ]);
-
-					// $c->save();
-
-					// dd($call);
-
-					$c = DrCall::firstOrCreate([
-						'sample_id' => $sample->id,
-						'drug_class' => $call->drug_class,
-						'drug_class_id' => self::get_drug_class($call->drug_class),
-						// 'mutations' => $call->mutations ?? [],
-						// 'other_mutations' => self::escape_null($call->other_mutations),
-						// 'major_mutations' => self::escape_null($call->major_mutations),
-					]);
-
-					if(isset($call->mutations) && $call->mutations){
-						$sample->has_mutations = true;
-						$c->mutations = $call->mutations ?? [];
-						$c->save();
-					}
-
-					foreach ($call->drugs as $drug) {
-						$d = DrCallDrug::firstOrCreate([
-							'call_id' => $c->id,
-							'short_name' => $drug->short_name,
-							'short_name_id' => self::get_short_name_id($drug->short_name),
-							'call' => $drug->call,
-							'score' => $drug->score ?? null,
-						]);
-					}
-				}
-			}
-
-			if(isset($s->genotype) && $s->genotype){
-				// $sample->has_genotypes = true;
-
-				foreach ($s->genotype as $genotype) {
-					$g = DrGenotype::firstOrCreate([
-						'sample_id' => $sample->id,
-						'locus' => $genotype->locus,
-					]);
-
-					foreach ($genotype->residues as $residue) {
-						$r = DrResidue::firstOrCreate([
-							'genotype_id' => $g->id,
-							'residue' => $residue->residues[0] ?? null,
-							'position' => $residue->position,
-						]);
-					}
-				}
-			}
-
-			if($s->pending_action == "PendChromatogramManualIntervention"){
-				$sample->pending_manual_intervention = true;
-			}
-
-			if(!$s->pending_action && $sample->pending_manual_intervention){
-				$sample->pending_manual_intervention = false;
-				$sample->had_manual_intervention = true;
-			}				
-
-			$sample->assembled_sequence = $s->assembled_sequence ?? '';
-			$sample->chromatogram_url = $s->chromatogram_url ?? '';
-			$sample->exatype_version = $s->exatype_version ?? '';
-			$sample->algorithm = $s->algorithm ?? '';
-			// $sample->pdf_download_link = $s->sample_pdf_download->signed_url ?? '';
-			$sample->save();
-
-			// echo " {$sample->id} ";
-		
 		}
 		session(['toast_message' => 'The worksheet results have been successfully retrieved from Exatype.']);
 		return $body;

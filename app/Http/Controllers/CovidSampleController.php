@@ -488,6 +488,17 @@ class CovidSampleController extends Controller
     }
 
     /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create_antigen()
+    {
+        $data = Lookup::covid_form();
+        return view('forms.covidsamples', $data)->with('pageTitle', 'Add Antigen Sample');        
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -521,9 +532,9 @@ class CovidSampleController extends Controller
         }
 
         $sample = new CovidSample;
-        $sample->fill($request->only($data['sample']));
+        // $sample->fill($request->only($data['sample']));
+        $sample->fill($request->except(array_merge($data['patient'], ['travel'])));
         $sample->patient_id = $patient->id;
-        if(in_array(auth()->user()->lab_id, [1,25])) $sample->kemri_id = $request->input('kemri_id');
         $sample->save();
 
         $travels = $request->input('travel');
@@ -648,8 +659,8 @@ class CovidSampleController extends Controller
         $patient->current_health_status = $request->input('health_status');
         $patient->pre_update();
 
-        $covidSample->fill($request->only($data['sample']));
-        if(in_array(auth()->user()->lab_id, [1,25])) $covidSample->kemri_id = $request->input('kemri_id');
+        // $covidSample->fill($request->only($data['sample']));
+        $covidSample->fill($request->except(array_merge($data['patient'], ['travel'])));
         $covidSample->patient_id = $patient->id;
         $covidSample->pre_update();
 
