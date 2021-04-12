@@ -84,7 +84,7 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
             'sex' => $row->sex,
             'national_id' => $row->idpassport ?? $row->national_id ?? null,
             'current_health_status' => $row->health_status ?? null,
-            'nationality' => DB::table('nationalities')->where('name', $row->nationality)->first()->id ?? 1,
+            'nationality' => DB::table('nationalities')->where('name', ($row->nationality ?? 'Kenyan'))->first()->id ?? 1,
             'phone_no' => $row->phone_number ?? $row->phone_no ?? null,
             'county' => $row->county ?? null,
             'subcounty' => $row->subcounty ?? null,  
