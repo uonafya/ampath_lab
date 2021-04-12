@@ -14,7 +14,7 @@ class CancerWorksheet extends BaseModel
 
     public function sample()
     {
-    	return $this->hasMany('App\CancerSample');
+    	return $this->hasMany('App\CancerSample', 'worksheet_id');
     }
 
     public function runner()
