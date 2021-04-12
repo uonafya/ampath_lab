@@ -60,7 +60,12 @@ class BaseModel extends Model
 
         $url = url($c . '/' . $this->id);
         // if(\Str::contains($c, 'sample')) $url = url($c . '/runs/' . $this->id);
-        if(\Str::contains($c, 'worksheet')) $url = url($c . '/approve/' . $this->id);
+        if(\Str::contains($c, 'worksheet')){
+            if(in_array($this->status_id, [2, 3])) $url = url($c . '/approve/' . $this->id);
+            else{
+                $url = url($c . '/find/' . $this->id);
+            }
+        }
 
         if(\Str::contains($c, ['worksheet', 'sample']) && (!$user || ($user && $user->user_type_id == 5))) return $this->id;
 

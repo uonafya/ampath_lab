@@ -9,6 +9,11 @@ class CovidWorksheet extends BaseModel
 
 	protected $dates = ['datecut', 'datereviewed', 'datereviewed2', 'dateuploaded', 'datecancelled', 'daterun'];
 
+    public function pool()
+    {
+        return $this->belongs('App\CovidPool', 'pool_id');
+    }
+
     public function sample()
     {
     	return $this->hasMany('App\CovidSample', 'worksheet_id');

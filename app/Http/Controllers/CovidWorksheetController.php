@@ -399,10 +399,11 @@ class CovidWorksheetController extends Controller
             session(['toast_error' => 1, 'toast_message' => 'The worksheet is not eligible to be cancelled.']);
             return back();
         }
-        $worksheet->sample()->update(['worksheet_id' => null, 'result' => null]);
+        $worksheet->sample()->update(['worksheet_id' => null, 'result' => null, 'pool_sample_id' => null]);
         $worksheet->status_id = 4;
         $worksheet->datecancelled = date("Y-m-d");
         $worksheet->cancelledby = auth()->user()->id;
+        $worksheet->pool_id = null;
         $worksheet->save();
 
         if($worksheet->combined){
