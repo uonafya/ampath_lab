@@ -16,6 +16,7 @@ use App\ViewFacility;
 use App\CovidModels\Lab;
 use GuzzleHttp\Client;
 use DB;
+use Exception;
 
 use App\CovidTestModels\CovidPatient as TestPatient;
 use App\CovidTestModels\CovidSample as TestSample;
@@ -147,7 +148,18 @@ class CovidController extends Controller
             $county = DB::table('countys')->where('name', $p->county)->first();
             $p->county_id = $county->id ?? null;
         }
-        $p->save();
+        try {
+            $p->save();
+        } catch (Exception $e) {
+            return response()->json([
+              'status' => 'Bad Request',
+              'error' => $e->getMessage(),
+              'patient' => null,
+              'sample' => null,
+            ], 400);
+            
+        }
+        
 
         // $s = new CovidSample;
         // if(\Str::contains(url()->current(), 'test')) $s = new TestSample;
