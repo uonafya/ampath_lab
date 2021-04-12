@@ -155,7 +155,7 @@
                             <a href="{{ url('cancersample') }}">Samples</a>
                         </li>
                         <li class="">
-                            <a href="{{ url('cancersample') }}">Worksheets</a>
+                            <a href="{{ url('cancerworksheet') }}">Worksheets</a>
                         </li>
                         <li class="">
                             <a href="{{ url('cancersample') }}">Dispatched Results</a>
@@ -421,7 +421,7 @@
                         <a href="{{ url('cancersample') }}">Samples</a>
                     </li>
                     <li class="">
-                        <a href="{{ url('cancersample') }}">Worksheets</a>
+                        <a href="{{ url('cancerworksheet') }}">Worksheets</a>
                     </li>
                     <li class="">
                         <a href="{{ url('cancersample') }}">Dispatched Results</a>
