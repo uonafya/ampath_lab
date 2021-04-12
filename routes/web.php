@@ -183,6 +183,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('{sample}/print', 'CancerSampleController@print');
 		});
 		Route::resource('cancersample', 'CancerSampleController');
+		Route::resource('cancerworksheet', 'CancerWorksheetController');
 
 		Route::prefix('nat_sample')->name('covid_sample.')->group(function () {
 			Route::get('index/{type?}/{date_start?}/{date_end?}/{facility_id?}/{quarantine_site_id?}/{lab_id?}', 'NatCovidSampleController@index');

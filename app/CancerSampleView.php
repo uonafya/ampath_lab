@@ -21,4 +21,9 @@ class CancerSampleView extends ViewModel
         else if($this->result == 5){ return "Collect New Sample"; }
         else{ return ""; }
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 }

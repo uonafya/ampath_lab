@@ -19,14 +19,25 @@ class CancerSampleController extends Controller
     public function index($param=null)
     {
         $user = auth()->user();
-        $samples = CancerSampleView::with(['facility'])->where('facility_id', $user->facility_id)
-                                ->orWhere('user_id', $user->id)
+        $facility_user = false;
+        if ($user->facility_id)
+            $facility_user = true;
+        $samples = CancerSampleView::with(['facility', 'user' => function($query) use ($facility_user) {
+                                    $query->when(!$facility_user, function($query) {
+                                            return $query->whereNotIn('users.user_type_id', [5]);
+                                    });
+                                }])
+                                ->when($facility_user, function($query) use ($user) {
+                                    return $query->where('facility_id', $user->facility_id)
+                                                ->orWhere('user_id', $user->id);
+                                })
                                 ->when($param, function($query) use ($param){
                                     return $query->whereNull('result')->where('receivedstatus', 1);
-                                })->paginate();
+                                })->orderBy('created_at', 'DESC')->paginate();
+        // dd($samples);
         $data['samples'] = $samples;
         // dd($samples);
-        return view('tables.cancer_samples', $data)->with('pageTitle', 'Eid POC Samples');
+        return view('tables.cancer_samples', $data)->with('pageTitle', 'HPV Samples');
     }
 
     /**
@@ -51,7 +62,7 @@ class CancerSampleController extends Controller
         $submit_type = $request->input('submit_type');
         $user = auth()->user();
         $patient_string = $request->input('patient');
-        
+        // dd($request->all());
         DB::beginTransaction();
         try {
             $cancerpatient = CancerPatient::existing($request->input('facility_id'), $patient_string)->first();
