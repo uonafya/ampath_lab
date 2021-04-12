@@ -114,7 +114,7 @@
                                     Switch to DR
                                 </button>
                             </div>
-                            @if(session('testingSystem') != 'HPV' && Auth()->user()->user_type_id == 0)
+                            @if(session('testingSystem') != 'HPV' && Auth()->user()->user_type_id < 2)
                             <div class="col-md-1">
                                 <button class="btn btn-success" id="hpvswitch" style="margin-top:.5em;">
                                     Switch to HPV
