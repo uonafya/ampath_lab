@@ -264,7 +264,7 @@
                 </li>
                 <hr />
                 <li>
-                    <a href="{{ url('cancerworksheet/set_sampletype/1') }}">Update HPV Results</a>
+                    <a href="{{ url('cancerworksheet/index/1') }}">Update HPV Results</a>
                 </li>
                 <hr />
             @endif

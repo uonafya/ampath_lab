@@ -6,8 +6,10 @@ use App\CancerWorksheet;
 use App\CancerPatient;
 use App\CancerSample;
 use App\CancerSampleView;
+use App\Imports\CancerWorksheetImport;
 use App\Lookup;
 use App\Machine;
+use App\User;
 use Illuminate\Http\Request;
 
 class CancerWorksheetController extends Controller
@@ -217,6 +219,39 @@ class CancerWorksheetController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function upload(CancerWorksheet $worksheet)
+    {
+        if(!in_array($worksheet->status_id, [1, 4])){
+            session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
+            return back();
+        }
+        $worksheet->load(['creator']);
+        $users = User::whereIn('user_type_id', [1, 4])->where('email', '!=', 'rufus.nyaga@ken.aphl.org')->get();
+        return view('forms.upload_results', ['worksheet' => $worksheet, 'users' => $users])->with('pageTitle', 'Worksheet Upload');
+    }
+
+    /**
+     * Update the specified resource in storage with results file.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\CancerWorksheet  $worksheet
+     * @return \Illuminate\Http\Response
+     */
+    public function save_results(Request $request, CancerWorksheet $worksheet)
+    {
+        if(!in_array($worksheet->status_id, [1, 4])){
+            session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
+            return back();
+        }
+        $file = $request->upload->path();
+        $path = $request->upload->store('public/results/eid'); 
+
+        $c = new CancerWorksheetImport($worksheet, $request);
+        Excel::import($c, $path);
+        
+        return redirect('worksheet/approve/' . $worksheet->id);
     }
 
 

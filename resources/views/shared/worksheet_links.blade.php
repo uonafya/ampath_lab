@@ -14,7 +14,7 @@
 		</a> | 
 	@endif
 	
-	@if($worksheet->route_name == 'covid_worksheet' && $worksheet->machine_type != 0)
+	@if($worksheet->route_name == 'covid_worksheet' && $worksheet->machine_type != 0 && session('testingSystem') != 'HPV')
 		<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/0') }}" title="Convert Worksheet" >
 			Convert to Manual
 		</a> |
@@ -22,13 +22,13 @@
 
 	@if(env('APP_LAB') != 25)
 	
-		@if($worksheet->samples_no < 23 && $worksheet->machine_type != 1)
+		@if($worksheet->samples_no < 23 && $worksheet->machine_type != 1 && session('testingSystem') != 'HPV')
 			<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/1') }}" title="Convert Worksheet" >
 				Convert to Roche/Taqman
 			</a> |
 		@endif
 
-		@if($worksheet->machine_type != 2)
+		@if($worksheet->machine_type != 2 && session('testingSystem') != 'HPV')
 		<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/2') }}" title="Convert Worksheet">
 			Convert to Abbott
 		</a> |
@@ -40,7 +40,7 @@
 		</a> |
 		@endif
 		
-		@if($worksheet->route_name == 'viralworksheet' && $worksheet->machine_type != 4)
+		@if($worksheet->route_name == 'viralworksheet' && $worksheet->machine_type != 4 && session('testingSystem') != 'HPV')
 		<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/4') }}" title="Convert Worksheet">
 			Convert to Panther
 		</a> |
