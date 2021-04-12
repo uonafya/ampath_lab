@@ -141,7 +141,7 @@ class CreateDrSamplesTable extends Migration
 
             $table->text('assembled_sequence')->nullable(); 
             $table->string('chromatogram_url', 50)->nullable(); 
-            // $table->string('pdf_download_link')->nullable(); 
+            $table->string('pdf_download_link')->nullable(); 
             $table->string('exatype_version', 30)->nullable(); 
             $table->string('algorithm', 20)->nullable(); 
             

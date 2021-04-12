@@ -72,6 +72,7 @@ class ViewModel extends Model
         return $query->where(['facility_id' => $data_array['facility_id'], 'patient' => $data_array['patient'], 'batch_complete' => 0])
                     // ->whereBetween('datecollected', [$min_date, $max_date])
                     ->where('created_at', '>', date('Y-m-d', strtotime('-1 month')))
+                    ->where('patient', '!=', '')
                     ->whereRaw("(receivedstatus IS NULL OR receivedstatus = 1) ");
     }
 

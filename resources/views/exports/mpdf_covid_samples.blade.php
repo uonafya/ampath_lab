@@ -80,7 +80,11 @@ p.breakhere {page-break-before: always}
 						  	KENYATTA UNIVERSITY TEACHING, REFERRAL & RESEARCH HOSPITAL <br />
 							P.O. BOX 7674-00100, GPO, NAIROBI <br />
 							<b> Tel: </b> 0710642513/0780900519  <b> Website: </b> www.kutrrh.go.ke <b> Email: </b> info@kutrrh.go.ke <br />
-							PCR SARS COV-2 (COVID-19) RESULT FORM
+							@if($sample->antigen)
+								Antigen SARS COV-2 (COVID-19) RESULT FORM
+							@else
+								PCR SARS COV-2 (COVID-19) RESULT FORM
+							@endif
 						</span>
 					</td>					
 				</tr>
@@ -344,7 +348,7 @@ p.breakhere {page-break-before: always}
 					</td>
 				</tr>
 
-				@elseif(env('APP_LAB') == 600)			
+				@elseif(env('APP_LAB') == 2)			
 				<tr>
 					<td colspan="7" class="style4 style1 comment">
 						<center>

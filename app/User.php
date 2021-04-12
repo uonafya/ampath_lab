@@ -140,6 +140,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo('App\Facility');
     }
 
+    public function lab()
+    {
+        return $this->belongsTo('App\Lab', 'lab_id');        
+    }
+
     public function quarantine()
     {
         return $this->belongsTo('App\QuarantineSite', 'facility_id');

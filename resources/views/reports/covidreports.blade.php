@@ -173,6 +173,7 @@
                                 <label> <input type="radio" name="types" value="nphl_results_submission" class="i-checks" required> Daily NPHL Results Submission </label>
                                 <label> <input type="radio" name="types" value="nphl_results_submission_latest" class="i-checks" required> Air Travel Submission </label>
                                 <label> <input type="radio" name="types" value="nphl_api_submission" class="i-checks" required> NPHL API Submission </label>
+                                <label> <input type="radio" name="types" value="nphl_antigen_submission" class="i-checks" required> NPHL Antigen Submission </label>
                             </div>
                         </div>
                         <div class="form-group">

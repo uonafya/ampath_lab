@@ -1,9 +1,44 @@
 @extends('layouts.master')
 
     @component('/tables/css')
+        <link href="{{ asset('css/datapicker/datepicker3.css') }}" rel="stylesheet" type="text/css">
     @endcomponent
 
 @section('content')
+
+
+<br />
+
+<div class="row">
+    <form method="POST" action="{{ url('datatable/download_sms_excel/' . $type) }} ">
+        @csrf
+        <div class="form-group">
+
+            <label class="col-sm-1 control-label">From:</label>
+            <div class="col-sm-4">
+                <div class="input-group date">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    <input type="text" id="from_date" name="from_date" required class="form-control">
+                </div>
+            </div> 
+
+            <label class="col-sm-1 control-label">To:</label>
+            <div class="col-sm-4">
+                <div class="input-group date">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    <input type="text" id="to_date" name="to_date" required class="form-control">
+                </div>
+            </div> 
+
+            <div class="col-sm-2">                
+                <button class="btn btn-primary" type="submit">Filter</button>  
+            </div>                         
+        </div>
+    </form>
+</div>
+
+<br />
+
 <div class="content">
     <div class="row">
         <div class="col-lg-12">
@@ -39,6 +74,18 @@
 @section('scripts') 
 
     @component('/tables/scripts')
+        @slot('js_scripts')
+            <script src="{{ asset('js/datapicker/bootstrap-datepicker.js') }}"></script>
+        @endslot
+
+        $(".date").datepicker({
+            startView: 0,
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            autoclose: true,
+            format: "yyyy-mm-dd"
+        });
 
         var dt = $('#mytable').DataTable( {
             'responsive' : true,

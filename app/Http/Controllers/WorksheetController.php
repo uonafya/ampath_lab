@@ -525,7 +525,7 @@ class WorksheetController extends Controller
 
         foreach ($samples as $key => $value) {
 
-            if(in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby && !$worksheet->reviewedby2 && $worksheet->reviewedby != $approver){
+            if(in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby && !$worksheet->reviewedby2 && $worksheet->datereviewed){
                 $data = [
                     'approvedby2' => $approver,
                     'dateapproved2' => $today,
@@ -571,7 +571,7 @@ class WorksheetController extends Controller
         $checked_batches = true;
 
         if(in_array(env('APP_LAB'), $double_approval)){
-            if($worksheet->reviewedby && $worksheet->reviewedby != $approver){
+            if($worksheet->reviewedby && $worksheet->reviewedby != $approver && $worksheet->datereviewed){
                 $worksheet->status_id = 3;
                 $worksheet->datereviewed2 = $today;
                 $worksheet->reviewedby2 = $approver;

@@ -22,6 +22,13 @@ class CancerSampleView extends ViewModel
         else{ return ""; }
     }
 
+    public function getNphlResultNameAttribute()
+    {
+        if($this->result == 1) return "N";
+        else if($this->result == 2) return "P";
+        else{ return "I"; }
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');

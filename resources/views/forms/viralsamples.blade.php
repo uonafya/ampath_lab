@@ -449,11 +449,11 @@
                             <div class="col-sm-8">
                                 <div class="input-group date date-art">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="initiation_date" 
+                                    <input type="text" id="initiation_date" name="initiation_date" class="form-control lockable requirable" value="{{ $viralsample->patient->initiation_date ?? '' }}"
                                     @if(!isset($viralsample) || ($viralsample && $viralsample->patient->initiation_date))
                                         required 
                                     @endif
-                                    class="form-control lockable requirable" value="{{ $viralsample->patient->initiation_date ?? '' }}" name="initiation_date">
+                                    >
                                 </div>
                             </div>                            
                         </div>
@@ -905,9 +905,24 @@
                 var val = $(this).val();
                 if(val == 12){
                     $("#recency_number").attr("required", "required");
+                    $("#patient").removeAttr("required");
+                    $("#initiation_date").removeAttr("required");
+                    $("#prophylaxis").removeAttr("required");
+
+                    $("#patient").removeClass("requirable");
+                    $("#initiation_date").removeClass("requirable");
+                    $("#prophylaxis").removeClass("requirable");
                 }
                 else{
                     $("#recency_number").removeAttr("required");
+                    $("#patient").attr("required", "required");
+                    $("#initiation_date").attr("required", "required");
+                    $("#prophylaxis").attr("required", "required");
+                    
+                    $("#patient").addClass("requirable");
+                    $("#initiation_date").addClass("requirable");
+                    $("#prophylaxis").addClass("requirable");
+
                 }
             });
 

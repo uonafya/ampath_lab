@@ -199,6 +199,7 @@ Route::middleware(['auth'])->group(function(){
 		});
 
 		Route::prefix('covid_sample')->name('covid_sample.')->group(function () {
+			Route::get('create/antigen', 'CovidSampleController@create_antigen');
 			Route::get('index/{type?}/{date_start?}/{date_end?}/{facility_id?}/{quarantine_site_id?}/{lab_id?}', 'CovidSampleController@index');
 			Route::post('index', 'CovidSampleController@sample_search');
 
@@ -469,7 +470,6 @@ Route::middleware(['auth'])->group(function(){
 				Route::get('print/{drExtractionWorksheet}', 'DrExtractionWorksheetController@print')->name('print');
 				Route::get('cancel/{drExtractionWorksheet}', 'DrExtractionWorksheetController@cancel')->name('cancel');
 				Route::get('reverse_upload/{drExtractionWorksheet}', 'DrExtractionWorksheetController@reverse_upload')->name('reverse_upload');
-
 			});
 			Route::resource('dr_extraction_worksheet', 'DrExtractionWorksheetController');
 
@@ -781,6 +781,7 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::prefix('datatable')->name('datatable.')->group(function () {	
 			Route::post('sms_log/{param}', 'DatatableController@sms_log');
+			Route::post('download_sms_excel/{param}', 'DatatableController@download_sms_excel');
 		});
 
 

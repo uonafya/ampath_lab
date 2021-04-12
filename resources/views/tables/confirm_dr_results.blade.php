@@ -31,6 +31,9 @@
                                         <th>Rerun</th>
                                         <th>Collect New Sample</th>
                                         <th>Sample ID</th>
+                                        @if(env('APP_LAB') == 7)
+                                            <th>Nat No</th>
+                                        @endif
                                         <th>Exatype Status</th>
                                         <th>Facility</th>
                                         <th>Control</th>
@@ -97,6 +100,9 @@
                                                 @endif
                                             </td>
                                             <td> {{ $sample->patient }} </td>
+                                            @if(env('APP_LAB') == 7)
+                                                <td> {{ $sample->nat }} </td>
+                                            @endif
                                             <td> {!! $dr_sample_statuses->where('id', $sample->status_id)->first()->output ?? '' !!} </td>
                                             <!-- <td> {!! $dr_sample_statuses->first()->output ?? '' !!} </td> -->
                                             <td> {{ $sample->facilityname }} </td>

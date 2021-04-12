@@ -158,7 +158,7 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if($request->input('password') == "") { // No password for edit
+        if(!$request->input('password')) { // No password for edit
 
             $userData = $request->only(['user_type_id','email','surname','oname','telephone', 'facility_id', 'covid_allowed']);
             

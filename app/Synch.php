@@ -28,7 +28,7 @@ use App\Mail\TestMail;
 
 class Synch
 {
-	public static $base = 'http://eiddash.nascop.org/api/';
+	public static $base = 'https://eiddash.nascop.org/api/';
 	// public static $base = 'http://lab-2.test.nascop.org/api/';
 	public static $p3_base = 'https://kemrinairobi.nascop.org/api/';
 	// public static $cov_base = 'https://lab-covid19.health.go.ke/api';
