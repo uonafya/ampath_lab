@@ -5,6 +5,8 @@ namespace App;
 use GuzzleHttp\Client;
 
 use App\Common;
+use App\CancerSample;
+use App\CancerSampleView;
 use App\Sample;
 use App\SampleView;
 use App\Lookup;
@@ -13,12 +15,12 @@ use App\Lookup;
 class Misc extends Common
 {
 
-	public static function requeue($worksheet_id, $daterun)
+	public static function requeue($worksheet_id, $daterun, $model_view = SampleView::class, $model = Sample::class)
 	{
-        $samples_array = SampleView::where(['worksheet_id' => $worksheet_id])->where('site_entry', '!=', 2)->get()->pluck('id');
-		$samples = Sample::whereIn('id', $samples_array)->get();
+        $samples_array = $model_view->where(['worksheet_id' => $worksheet_id])->where('site_entry', '!=', 2)->get()->pluck('id');
+		$samples = $model->whereIn('id', $samples_array)->get();
 
-        Sample::whereIn('id', $samples_array)->update(['repeatt' => 0, 'datetested' => $daterun]);
+        $model->whereIn('id', $samples_array)->update(['repeatt' => 0, 'datetested' => $daterun]);
 
 		// Default value for repeatt is 0
 
@@ -79,6 +81,36 @@ class Misc extends Common
 	}
 
     public static function sample_result($result, $error=null)
+    {
+        $str = strtolower($result);
+
+
+        if(\Str::contains($str, ['non']) && \Str::contains($str, ['reactive'])){
+            $res = 1;
+        }
+        else if(\Str::contains($str, ['not']) && \Str::contains($str, ['detected'])){
+            $res = 1;
+        }
+        else if(\Str::contains($result, ['1', '>']) || \Str::contains($str, ['detected', 'reactive'])){
+            $res = 2;
+        }
+        else if(\Str::contains($str, ['invalid'])){
+            $res = 3;
+        }
+        else if(\Str::contains($str, ['valid', 'passed'])){
+            $res = 6;
+        }
+        else if(\Str::contains($str, ['collect', '5'])){
+            $res = 5;
+        }
+        else{
+            return ['result' => 3, 'interpretation' => $error];
+        }
+
+        return ['result' => $res, 'interpretation' => $result];
+    }
+
+    public static function hpv_sample_result($result, $error=null)
     {
         $str = strtolower($result);
 
