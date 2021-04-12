@@ -65,11 +65,11 @@ class CovidPoolController extends Controller
     public function create()
     {
         $worksheets = CovidWorksheet::where(['lab_id' => auth()->user()->lab_id, 'status_id' => 1])
-            ->whereRaw("id NOT IN (
+            /*->whereRaw("id NOT IN (
                     SELECT DISTINCT worksheet_id
                     FROM covid_samples
                     WHERE parentid > 0 AND site_entry != 2
-                )")
+                )")*/
             ->get();
 
         return view('forms.covid_pool', compact('worksheets'));
