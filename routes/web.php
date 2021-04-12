@@ -183,6 +183,10 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('{sample}/print', 'CancerSampleController@print');
 		});
 		Route::resource('cancersample', 'CancerSampleController');
+
+		Route::prefix('cancerworksheet')->name('cancerworksheet.')->group(function () {
+			Route::get('print/{worksheet}', 'CancerWorksheetController@print')->name('print');
+		});
 		Route::resource('cancerworksheet', 'CancerWorksheetController');
 
 		Route::prefix('nat_sample')->name('covid_sample.')->group(function () {
