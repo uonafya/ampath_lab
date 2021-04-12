@@ -71,6 +71,8 @@ class RandomController extends Controller
 			$new = session(['testingSystem' => 'CD4']);
 		}else if ($sys == 'Covid'){
 			$new = session(['testingSystem' => 'Covid']);
+		}else if ($sys == 'HPV'){
+			$new = session(['testingSystem' => 'HPV']);
 		}
 
 		session(['test_var' => 'changed']);

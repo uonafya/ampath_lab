@@ -28,4 +28,9 @@ class CancerSampleView extends ViewModel
         else if($this->result == 2) return "P";
         else{ return "I"; }
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 }

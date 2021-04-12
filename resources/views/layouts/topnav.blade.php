@@ -14,6 +14,7 @@
         /* padding-right: 10px; */
     }
 </style>
+
 <div id="header">
     <div class="">
     </div>
@@ -38,6 +39,8 @@
                 </form>
             @endif
         @endif
+        <!-- Mobile View -->
+        <!-- Anything edited here should also be edited below on the PC view section -->
         <div class="mobile-menu">
             <button type="button" class="navbar-toggle mobile-menu-toggle" data-toggle="collapse" data-target="#mobile-collapse">
                 <i class="fa fa-chevron-down"></i>
@@ -134,8 +137,7 @@
                         <li class="">
                             <a href="{{ url('dr_sample/index/1') }}">Completed Results</a>
                         </li>    
-                        @if(auth()->user()->is_admin)
-                            <li>
+                        @if(auth()->user()->is_admin)                            <li>
                                 <a href="{{ url('user') }}">Users</a>
                             </li>
                             <li>
@@ -144,6 +146,25 @@
                         @endif   
                         <li class="">
                             <a href="{{ url('reports') }}">Report</a>
+                        </li>
+                    @elseif(session('testingSystem') == 'HPV')
+                        <li class="">
+                            <a href="{{ url('home') }}">Home</a>
+                        </li>
+                        <li class="">
+                            <a href="{{ url('cancersample') }}">Samples</a>
+                        </li>
+                        <li class="">
+                            <a href="{{ url('cancersample') }}">Worksheets</a>
+                        </li>
+                        <li class="">
+                            <a href="{{ url('cancersample') }}">Dispatched Results</a>
+                        </li>
+                        <li class="">
+                            <a href="{{ url('cancersample') }}">Reports</a>
+                        </li>
+                        <li class="">
+                            <a href="{{ url('cancersample') }}">Dashboard</a>
                         </li>
                     @else
                         @if(!Session('pendingTasks') || env('APP_LAB') == 2)
@@ -280,6 +301,9 @@
                 </ul>
             </div>
         </div>
+        <!-- Mobile View -->
+
+        <!-- Full PC View -->
         <div class="navbar-right">
             <ul class="nav navbar-nav no-borders">
                 @if(in_array(Auth::user()->user_type_id, [0,1,4]))
@@ -386,6 +410,28 @@
                     <li class="">
                         <a href="{{ url('reports') }}">Report</a>
                     </li>                       
+                @elseif(session('testingSystem') == 'HPV')
+                    <li class="">
+                        <a class="label-menu-corner" href="{{ url('home') }}">
+                        <i class="pe-7s-home" style="font-size: 25px;"></i>
+                            <span class="label label-danger"></span>
+                        </a>
+                    </li>                    
+                    <li class="">
+                        <a href="{{ url('cancersample') }}">Samples</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('cancersample') }}">Worksheets</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('cancersample') }}">Dispatched Results</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('cancersample') }}">Reports</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('cancersample') }}">Dashboard</a>
+                    </li>
                 @else
                     @if(!Session('pendingTasks') || env('APP_LAB') == 2)
                         @if (Auth::user()->user_type_id == 5)
@@ -577,5 +623,6 @@
                 </li>
             </ul>
         </div>
+        <!-- Full PC View -->
     </nav>
 </div>
