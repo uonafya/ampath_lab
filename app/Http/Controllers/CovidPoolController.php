@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\CovidPool;
 use App\CovidPoolSample;
+use App\CovidSample;
 use App\CovidWorksheet;
+use App\Lookup;
 use Illuminate\Http\Request;
 
 class CovidPoolController extends Controller
