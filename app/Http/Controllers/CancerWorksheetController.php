@@ -80,7 +80,8 @@ class CancerWorksheetController extends Controller
              $worksheet->rerun = $rerun;
              $worksheet->neg = $neg;
              $worksheet->pos = $pos;
-             $worksheet->failed = $failed;
+            //  $worksheet->failed = $failed;
+             $worksheet->failed = 0;
              $worksheet->redraw = $redraw;
              $worksheet->noresult = $noresult;
              $worksheet->mylinks = $this->get_links($worksheet->id, $status, $worksheet->datereviewed);
