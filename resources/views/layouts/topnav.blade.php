@@ -158,7 +158,7 @@
                             <a href="{{ url('cancerworksheet') }}">Worksheets</a>
                         </li>
                         <li class="">
-                            <a href="{{ url('cancersample') }}">Dispatched Results</a>
+                            <a href="{{ url('cancersample/index/true') }}">Dispatched Results</a>
                         </li>
                         <li class="">
                             <a href="{{ url('cancersample') }}">Reports</a>
@@ -424,7 +424,7 @@
                         <a href="{{ url('cancerworksheet') }}">Worksheets</a>
                     </li>
                     <li class="">
-                        <a href="{{ url('cancersample') }}">Dispatched Results</a>
+                        <a href="{{ url('cancersample/index/true') }}">Dispatched Results</a>
                     </li>
                     <li class="">
                         <a href="{{ url('cancersample') }}">Reports</a>

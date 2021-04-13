@@ -31,8 +31,11 @@ class CancerSampleController extends Controller
                                     return $query->where('facility_id', $user->facility_id)
                                                 ->orWhere('user_id', $user->id);
                                 })
-                                ->when($param, function($query) use ($param){
-                                    return $query->whereNull('result')->where('receivedstatus', 1);
+                                // ->when($param, function($query) use ($param){
+                                //     return $query->whereNull('result')->where('receivedstatus', 1);
+                                // })
+                                ->when($param, function($query){
+                                    return $query->whereNotNull('datedispatched');
                                 })->orderBy('created_at', 'DESC')->paginate();
         // dd($samples);
         $data['samples'] = $samples;

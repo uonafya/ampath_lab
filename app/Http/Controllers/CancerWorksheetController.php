@@ -327,6 +327,168 @@ class CancerWorksheetController extends Controller
         return redirect("/cancerworksheet/upload/" . $worksheet->id);
     }
 
+    public function approve(Request $request, CancerWorksheet $worksheet)
+    {
+        // dd($request->all());
+        // $double_approval = Lookup::$double_approval;
+        $samples = $request->input('samples', []);
+        $batches = $request->input('batches');
+        $results = $request->input('results');
+        $actions = $request->input('actions');
+
+        $today = date('Y-m-d');
+        $approver = auth()->user()->id;
+
+        // if(in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby == $approver){
+        //     session(['toast_message' => "You are not permitted to do the second approval.", 'toast_error' => 1]);
+        //     return redirect('/worksheet');            
+        // }
+
+        $batch = array();
+
+        foreach ($samples as $key => $value) {
+
+            // if(in_array(env('APP_LAB'), $double_approval) && $worksheet->reviewedby && !$worksheet->reviewedby2 && $worksheet->datereviewed){
+            //     $data = [
+            //         'approvedby2' => $approver,
+            //         'dateapproved2' => $today,
+            //     ];
+            // }
+            // else{
+            //     $data = [
+            //         'approvedby' => $approver,
+            //         'dateapproved' => $today,
+            //     ];
+            // }
+            $data = [
+                'approvedby' => $approver,
+                'dateapproved' => $today,
+                'approvedby2' => $approver,
+                'dateapproved2' => $today,
+            ];
+
+            $data['result'] = $results[$key];
+            $data['repeatt'] = $actions[$key];
+
+            if($data['result'] == 5){
+                $data['labcomment'] = "Failed Run";
+                $data['repeatt'] = 0;
+            }
+
+            if ($actions[$key] == 0)
+                $data['datedispatched'] = date('Y-m-d');
+            
+            $sample = CancerSample::find($samples[$key]);
+            $sample->fill($data);
+            $sample->pre_update();
+
+            // if($actions[$key] == 1){
+            if($data['repeatt'] == 1){
+                CancerWorksheetController::save_repeat($samples[$key]);
+            }
+        }
+
+        // if($batches){
+        //     $batch = collect($batches);
+        //     $b = $batch->unique();
+        //     $unique = $b->values()->all();
+
+        //     foreach ($unique as $value) {
+        //         Misc::check_batch($value);
+        //     }
+        // }
+
+        // $checked_batches = true;
+
+        // if(in_array(env('APP_LAB'), $double_approval)){
+        //     if($worksheet->reviewedby && $worksheet->reviewedby != $approver && $worksheet->datereviewed){
+        //         $worksheet->status_id = 3;
+        //         $worksheet->datereviewed2 = $today;
+        //         $worksheet->reviewedby2 = $approver;
+        //         $worksheet->save();
+        //         session(['toast_message' => "The worksheet has been approved."]);
+
+        //         return redirect('/batch/dispatch');                 
+        //     }
+        //     else{
+        //         $worksheet->datereviewed = $today;
+        //         $worksheet->reviewedby = $approver;
+        //         $worksheet->save();
+        //         session(['toast_message' => "The worksheet has been approved. It is awaiting the second approval before the results can be prepared for dispatch."]);
+
+        //         return redirect('/worksheet');
+        //     }
+        // }
+        // else{
+        //     $worksheet->status_id = 3;
+        //     $worksheet->datereviewed = $today;
+        //     $worksheet->reviewedby = $approver;
+        //     $worksheet->save();
+        //     session(['toast_message' => "The worksheet has been approved."]);
+
+        //     return redirect('/batch/dispatch');            
+        // }
+        $worksheet->status_id = 3;
+        $worksheet->datereviewed = $today;
+        $worksheet->reviewedby = $approver;
+        $worksheet->datereviewed2 = $today;
+        $worksheet->reviewedby2 = $approver;
+        $worksheet->save();
+        return redirect('/cancerworksheet');
+    }
+
+    public static function save_repeat($sample_id)
+	{
+		$original = CancerSample::find($sample_id);
+		if($original->run == 5) return false;
+
+		$sample = new CancerSample;
+		$fields = \App\Lookup::samples_arrays();
+		$sample->fill($original->only($fields['sample_rerun']));
+		$sample->run++;
+		if($sample->parentid == 0) $sample->parentid = $original->id;
+
+        $s = CancerSample::where(['parentid' => $sample->parentid, 'run' => $sample->run])->first();
+        if($s) return $s;
+		
+		$sample->save();
+		return $sample;
+	}
+
+    public function rerun_worksheet(Worksheet $worksheet)
+    {
+        if($worksheet->status_id != 2 || !$worksheet->failed){
+            session(['toast_error' => 1, 'toast_message' => "The worksheet is not eligible for rerun."]);
+            return back();
+        }
+        $worksheet->status_id = 7;
+        $worksheet->save();
+
+        $new_worksheet = $worksheet->replicate(['national_worksheet_id', 'status_id',
+            'neg_control_result', 'pos_control_result', 
+            'neg_control_interpretation', 'pos_control_interpretation',
+            'datecut', 'datereviewed', 'datereviewed2', 'dateuploaded', 'datecancelled', 'daterun',
+        ]);
+        $new_worksheet->save();
+
+        
+        $samples = Sample::where(['worksheet_id' => $worksheet->id])
+                    ->where('site_entry', '!=', 2) 
+                    ->select('samples.*')
+                    ->join('batches', 'batches.id', '=', 'samples.batch_id')
+                    ->get();
+
+        foreach ($samples as $key => $sample) {
+            $sample->repeatt = 1;
+            $sample->pre_update();
+            $rsample = Misc::save_repeat($sample->id);
+            $rsample->worksheet_id = $new_worksheet->id;
+            $rsample->save();
+        }
+        session(['toast_message' => "The worksheet has been marked as failed as is ready for rerun."]);
+        return redirect($worksheet->route_name);  
+    }
+
 
     
 
