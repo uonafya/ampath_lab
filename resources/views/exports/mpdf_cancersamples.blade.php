@@ -84,6 +84,12 @@ p.breakhere {page-break-before: always}
 				<td colspan="3" class="style4 style1 comment"><strong>CCC Number</strong></td>
 				<td colspan="4"> <span class="style5">{{ $sample->patient->patient }}</span></td>
 			</tr>
+			
+
+			<tr>
+				<td colspan="3" class="style4 style1 comment"><strong>CCC Number</strong></td>
+				<td colspan="4"> <span class="style5">{{ $sample->patient->patient_name }}</span></td>
+			</tr>
 
 			<tr>
 				<td colspan="3" class="style4 style1 comment"><strong> DOB & Age (Months)</strong></td>
@@ -186,11 +192,11 @@ p.breakhere {page-break-before: always}
 			</tr>
 
 		</table>
-
+	{{--
 		<span class="style8" > 
 			<b> To Access & Download your current and past results go to : <u> https://eiddash.nascop.org</u> </b>
 		</span>
-
+--}}
 		{{--@if($count % 2 == 0)
 			<p class="breakhere"></p>
 			<pagebreak sheet-size='A4'>
