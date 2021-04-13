@@ -294,6 +294,36 @@ class CancerWorksheetController extends Controller
         return view('tables.confirm_results', $data)->with('pageTitle', 'Approve Results');
     }
 
+    public function cancel_upload(CancerWorksheet $worksheet)
+    {
+        if($worksheet->status_id != 2){
+            session(['toast_message' => 'The upload for this worksheet cannot be reversed.']);
+            session(['toast_error' => 1]);
+            return back();
+        }
+
+        if($worksheet->uploadedby != auth()->user()->id && auth()->user()->user_type_id != 0){
+            session(['toast_message' => 'Only the user who uploaded the results can reverse the upload.']);
+            session(['toast_error' => 1]);
+            return back();
+        }
+
+        $samples = CancerSample::where(['repeatt' => 1, 'worksheet_id' => $worksheet->id])->get();
+
+        foreach ($samples as $sample) {
+            $sample->remove_rerun();
+        }
+
+        $sample_array = CancerSampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
+        CancerSample::whereIn('id', $sample_array)->update(['result' => null, 'interpretation' => null, 'datemodified' => null, 'datetested' => null, 'repeatt' => 0, 'dateapproved' => null, 'approvedby' => null]);
+        $worksheet->status_id = 1;
+        $worksheet->neg_control_interpretation = $worksheet->pos_control_interpretation = $worksheet->neg_control_result = $worksheet->pos_control_result = $worksheet->daterun = $worksheet->dateuploaded = $worksheet->uploadedby = $worksheet->datereviewed = $worksheet->reviewedby = $worksheet->datereviewed2 = $worksheet->reviewedby2 = null;
+        $worksheet->save();
+
+        session(['toast_message' => 'The upload has been reversed.']);
+        return redirect("/cancerworksheet/upload/" . $worksheet->id);
+    }
+
 
     
 
