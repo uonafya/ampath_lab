@@ -25,13 +25,11 @@
 			<tbody>
 				@foreach($covidPool->pool_sample as $pool_sample)
 					<tr>
-						<td> {{ $pool_sample->position }} </td>
+						<td> {{ $pool_sample->position + 2 }} </td>
 						@foreach($pool_sample->sample as $sample)
 							<td> 
-								S ID - {{ $sample->id }} <br />
-								Identifier - {{ $sample->patient->identifier ?? '' }} <br />
-								Date Collected - {{ $sample->my_date_format('datecollected') }} <br />
-								Worksheet - {{ $sample->worksheet_id }} <br />
+								S ID - {{ $sample->id }} W No - {{ $sample->worksheet_id }} <br />
+								Identifier - {{ $sample->patient->identifier ?? '' }} {{ $sample->patient->patient_name ?? '' }} <br />
 							</td>
 						@endforeach
 					</tr>
