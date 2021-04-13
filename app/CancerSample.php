@@ -23,19 +23,19 @@ class CancerSample extends BaseModel
 
     public function worksheet()
     {
-        return $this->belongsTo('App\Worksheet');
+        return $this->belongsTo('App\CancerWorksheet');
     }
 
     // Parent sample
     public function parent()
     {
-        return $this->belongsTo('App\Sample', 'parentid');
+        return $this->belongsTo('App\CancerSample', 'parentid');
     }
 
     // Child samples
     public function child()
     {
-        return $this->hasMany('App\Sample', 'parentid');
+        return $this->hasMany('App\CancerSample', 'parentid');
     }
 
     /**

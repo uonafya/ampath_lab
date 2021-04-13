@@ -23,11 +23,13 @@
                                     <th>Lab #</th>
                                     <th>Facility</th>
                                     <th>Patient #</th>
+                                    <th>Patient Name</th>
                                     <th>Age </th>
                                     <th>Gender</th>
                                     <th>Date Drawn</th>
                                     <th>Received Status</th>
                                     <th>Date Tested</th>
+                                    <th>Worksheet</th>
                                     <th>Date Dispatched</th>
                                     <th>Result</th>
                                     <th>Action</th>
@@ -39,11 +41,13 @@
                                         <td> {{ $sample->id }} </td>
                                         <td> {{ $sample->facility->name ?? '' }} </td>
                                         <td> {{ $sample->patient }} </td>
+                                        <td> {{ $sample->patient_name }} </td>
                                         <td> {{ $sample->age }} </td>
                                         <td> {{ $sample->gender ?? '' }} </td>
                                         <td> {{ $sample->my_date_format('datecollected') }} </td>
                                         <td> {{ $sample->received }} </td>
                                         <td> {{ $sample->my_date_format('datetested') }} </td>
+                                        <td> {{ $sample->worksheet->id ?? '' }} </td>
                                         <td> {{ $sample->my_date_format('datedispatched') }} </td>
                                         <td> 
                                             {{ $sample->resultname ?? '' }}

@@ -22,7 +22,7 @@ class CancerSampleController extends Controller
         $facility_user = false;
         if ($user->facility_id)
             $facility_user = true;
-        $samples = CancerSampleView::with(['facility', 'user' => function($query) use ($facility_user) {
+        $samples = CancerSampleView::with(['facility', 'worksheet', 'user' => function($query) use ($facility_user) {
                                     $query->when(!$facility_user, function($query) {
                                             return $query->whereNotIn('users.user_type_id', [5]);
                                     });
@@ -221,9 +221,19 @@ class CancerSampleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($sample)
     {
-        //
+        $sample = CancerSample::find($sample);
+        
+        if($sample->result == NULL && $sample->run < 2 && $sample->worksheet_id == NULL && !$sample->has_rerun){
+            $sample->delete();
+            session(['toast_message' => 'The sample has been deleted.']);
+        }  
+        else{
+            session(['toast_message' => 'The sample has not been deleted.']);
+            session(['toast_error' => 1]);
+        }      
+        return back();
     }
 
     /**
