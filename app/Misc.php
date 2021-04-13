@@ -15,12 +15,20 @@ use App\Lookup;
 class Misc extends Common
 {
 
-	public static function requeue($worksheet_id, $daterun, $model_view = SampleView::class, $model = Sample::class)
+	public static function requeue($worksheet_id, $daterun, $type='eid')
 	{
-        $samples_array = $model_view->where(['worksheet_id' => $worksheet_id])->where('site_entry', '!=', 2)->get()->pluck('id');
-		$samples = $model->whereIn('id', $samples_array)->get();
+        if ($type == 'eid') {
+            $samples_array = SampleView::where(['worksheet_id' => $worksheet_id])->where('site_entry', '!=', 2)->get()->pluck('id');
+            $samples = Sample::whereIn('id', $samples_array)->get();
 
-        $model->whereIn('id', $samples_array)->update(['repeatt' => 0, 'datetested' => $daterun]);
+            Sample::whereIn('id', $samples_array)->update(['repeatt' => 0, 'datetested' => $daterun]);
+        } else {
+            $samples_array = CancerSampleView::where(['worksheet_id' => $worksheet_id])->where('site_entry', '!=', 2)->get()->pluck('id');
+            $samples = CancerSample::whereIn('id', $samples_array)->get();
+
+            CancerSample::whereIn('id', $samples_array)->update(['repeatt' => 0, 'datetested' => $daterun]);
+        }
+        
 
 		// Default value for repeatt is 0
 
@@ -112,32 +120,24 @@ class Misc extends Common
 
     public static function hpv_sample_result($result, $error=null)
     {
-        $str = strtolower($result);
+        $target1 = strtolower($data['target_1']);
+        $target2 = strtolower($data['target_2']);
+        $target3 = strtolower($data['target_3']);
 
-
-        if(\Str::contains($str, ['non']) && \Str::contains($str, ['reactive'])){
+        if(\Str::contains($target1, ['positive']) || \Str::contains($target2, ['positive']) || \Str::contains($target2, ['positive'])){
             $res = 1;
         }
-        else if(\Str::contains($str, ['not']) && \Str::contains($str, ['detected'])){
-            $res = 1;
-        }
-        else if(\Str::contains($result, ['1', '>']) || \Str::contains($str, ['detected', 'reactive'])){
-            $res = 2;
-        }
-        else if(\Str::contains($str, ['invalid'])){
-            $res = 3;
-        }
-        else if(\Str::contains($str, ['valid', 'passed'])){
+        else if(\Str::contains($target1, ['valid', 'passed']) && \Str::contains($target2, ['valid', 'passed']) && \Str::contains($target3, ['valid', 'passed'])){
             $res = 6;
         }
-        else if(\Str::contains($str, ['collect', '5'])){
+        else if(\Str::contains($target1, ['invalid']) && \Str::contains($target2, ['invalid']) || \Str::contains($target2, ['invalid'])){
             $res = 5;
         }
         else{
             return ['result' => 3, 'interpretation' => $error];
         }
 
-        return ['result' => $res, 'interpretation' => $result];
+        return ['result' => $res, 'interpretation' => $data['flag'], 'target_1' => $target1, 'target_2' => $target2, 'target_3' => $target3];
     }
 
 	public static function save_repeat($sample_id)

@@ -11,6 +11,7 @@ use App\Lookup;
 use App\Machine;
 use App\User;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CancerWorksheetController extends Controller
 {
@@ -157,34 +158,35 @@ class CancerWorksheetController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(CancerWorksheet $worksheet, $print=false)
+    public function show($worksheet, $print=false)
     {
+        $worksheet = CancerWorksheet::find($worksheet);
         $worksheet->load(['creator']);
-        $sample_array = CancerSampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '!=', 2)->get()->pluck('id')->toArray();
-        // $samples = Sample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
-
-
+        // $sample_array = CancerSampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '<>', 2)->get()/*->pluck('id')->toArray()*/;
+        // // $samples = Sample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
+        
         $samples = CancerSample::with(['patient'])
-                    ->whereIn('id', $sample_array)
+                    // ->whereIn('id', $sample_array)
+                    ->where('worksheet_id', $worksheet->id)
                     ->orderBy('run', 'desc')
-                    // ->when(true, function($query){
-                    //     if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
-                    //     if(in_array(env('APP_LAB'), [3])) $query->orderBy('datereceived', 'asc');
-                    //     if(!in_array(env('APP_LAB'), [8, 9, 1])) return $query->orderBy('batch_id', 'asc');
-                    // })
+                    // // ->when(true, function($query){
+                    // //     if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
+                    // //     if(in_array(env('APP_LAB'), [3])) $query->orderBy('datereceived', 'asc');
+                    // //     if(!in_array(env('APP_LAB'), [8, 9, 1])) return $query->orderBy('batch_id', 'asc');
+                    // // })
                     ->orderBy('id', 'asc')
                     ->get();
 
         $data = ['worksheet' => $worksheet, 'samples' => $samples, 'i' => 0];
 
         if($print) $data['print'] = true;
-
-        // if($worksheet->machine_type == 1){
-        //     return view('worksheets.other-table', $data)->with('pageTitle', 'Worksheets');
-        // }
-        // else{
+        
+        // // if($worksheet->machine_type == 1){
+        // //     return view('worksheets.other-table', $data)->with('pageTitle', 'Worksheets');
+        // // }
+        // // else{
             return view('worksheets.abbot-table', $data)->with('pageTitle', 'Worksheets');
-        // }
+        // // }
     }
 
     /**
@@ -245,13 +247,51 @@ class CancerWorksheetController extends Controller
             session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
             return back();
         }
+        
         $file = $request->upload->path();
-        $path = $request->upload->store('public/results/eid'); 
+        $path = $request->upload->store('public/results/hpv'); 
 
         $c = new CancerWorksheetImport($worksheet, $request);
         Excel::import($c, $path);
         
-        return redirect('worksheet/approve/' . $worksheet->id);
+        return redirect('cancerworksheet/approve/' . $worksheet->id);
+    }
+
+    public function approve_results(CancerWorksheet $worksheet)
+    {        
+        $worksheet->load(['reviewer', 'creator', 'runner', 'sorter', 'bulker']);
+
+        // $samples = Sample::where('worksheet_id', $worksheet->id)->with(['approver'])->get();
+        
+        $samples = CancerSample::with(['approver', 'final_approver'])
+                    ->where('worksheet_id', $worksheet->id) 
+                    ->where('site_entry', '<>', 2) 
+                    ->orderBy('run', 'desc')
+                    ->when(true, function($query){
+                        if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id');
+                        if(in_array(env('APP_LAB'), [3])) $query->orderBy('datereceived', 'asc');
+                    })
+                    ->orderBy('id', 'asc')
+                    ->get();
+
+        $s = $this->get_worksheets($worksheet->id);
+
+        $neg = $s->where('result', 1)->first()->totals ?? 0;
+        $pos = $s->where('result', 2)->first()->totals ?? 0;
+        $failed = $s->where('result', 3)->first()->totals ?? 0;
+        $redraw = $s->where('result', 5)->first()->totals ?? 0;
+        $noresult = $s->where('result', 0)->first()->totals ?? 0;
+
+        $total = $neg + $pos + $failed + $redraw + $noresult;
+
+        $subtotals = ['neg' => $neg, 'pos' => $pos, 'failed' => $failed, 'redraw' => $redraw, 'noresult' => $noresult, 'total' => $total];
+
+        $data = Lookup::worksheet_approve_lookups();
+        $data['samples'] = $samples;
+        $data['subtotals'] = $subtotals;
+        $data['worksheet'] = $worksheet;
+
+        return view('tables.confirm_results', $data)->with('pageTitle', 'Approve Results');
     }
 
 
@@ -353,6 +393,7 @@ class CancerWorksheetController extends Controller
 
     private function get_samples_for_run($limit = 94){
         $samples = CancerSample::whereNull('worksheet_id')->where('receivedstatus', '<>', 2)->whereNull('result')
+                                    ->where('site_entry', '<>', 2)
                                     ->orderBy('datereceived', 'asc')->orderBy('parentid', 'desc')->orderBy('id', 'asc')
                                     ->limit($limit)->get();
         $machine = Machine::find(3);
