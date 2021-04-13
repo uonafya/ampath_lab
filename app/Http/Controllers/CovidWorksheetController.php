@@ -613,12 +613,12 @@ class CovidWorksheetController extends Controller
             return redirect($worksheet->route_name);                        
         }
 
-        if(in_array(env('APP_LAB'), [5, 25]) && $worksheet->reviewedby && !auth()->user()->covid_approver){
+        if(in_array(env('APP_LAB'), [2, 5, 25]) && $worksheet->reviewedby && !auth()->user()->covid_approver){
             session(['toast_message' => "You are not permitted to approve the results.", 'toast_error' => 1]);
             return redirect($worksheet->route_name);
         }
 
-        if(in_array(env('APP_LAB'), [2]) && !$worksheet->reviewedby && !auth()->user()->covid_approver){
+        /*if(in_array(env('APP_LAB'), [2]) && !$worksheet->reviewedby && !auth()->user()->covid_approver){
             session(['toast_message' => "You are not permitted to approve the results.", 'toast_error' => 1]);
             return redirect($worksheet->route_name);
         }
@@ -626,7 +626,7 @@ class CovidWorksheetController extends Controller
         if(in_array(env('APP_LAB'), [2]) && $worksheet->reviewedby && !auth()->user()->covid_final_approver){
             session(['toast_message' => "You are not permitted to approve the results.", 'toast_error' => 1]);
             return redirect($worksheet->route_name);
-        }
+        }*/
 
         foreach ($samples as $key => $value) {
 
