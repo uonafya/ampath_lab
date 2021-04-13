@@ -88,7 +88,7 @@ p.breakhere {page-break-before: always}
 
 			<tr>
 				<td colspan="3" class="style4 style1 comment"><strong>CCC Number</strong></td>
-				<td colspan="4"> <span class="style5">{{ $sample->patient->patient_name }}</span></td>
+				<td colspan="4"> <span class="style5">{{ $sample->patient->patient_name ?? ''}}</span></td>
 			</tr>
 
 			<tr>
