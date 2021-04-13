@@ -59,8 +59,9 @@
 
                                             @if(!$sample->result && $sample->receivedstatus == 1)
                                                 <a href="{{ url('cancersample/' . $sample->id . '/edit/') }}" target="_blank">Edit</a> |
+                                                @if(Auth::user()->user_type_id == 5)
                                                 <a href="{{ url('cancersample/' . $sample->id . '/edit_result/') }}" target="_blank">Edit Result</a> |
-
+                                                @endif
                                                 @if(!$sample->result)
                                                     <form action="{{ url('cancersample/' . $sample->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete the following sample?');">
                                                         @csrf
