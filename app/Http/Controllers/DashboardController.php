@@ -452,6 +452,9 @@ class DashboardController extends Controller
             $model = CovidSample::where('id', '>', 0);
             $table = 'covid_samples';
             $sql = "AVG(tat1) as tat1, AVG(tat2) as tat2, AVG(tat3) as tat3, AVG(tat4) as tat4 ";
+        } else if (session('testingSystem') == 'HPV') {
+            $model = CancerSampleView::where('id', '>', 0);
+            $table = 'cancer_samples_view';
         }
 
         $model = $model->selectRaw($sql)
