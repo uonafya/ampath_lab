@@ -120,7 +120,7 @@
                                         <a href="{{ url('covid_pool/print/' . $pool->id) }}" title="Click to Download Worksheet Pool" target='_blank'>
                                             Print
                                         </a> | 
-                                        <a href="{{ url('covid_pool/cancel/' . $pool->id) }}" title="Click to Cancel Worksheet Pool" target='_blank'>
+                                        <a href="{{ url('covid_pool/cancel/' . $pool->id) }}" title="Click to Cancel Worksheet Pool">
                                             Cancel
                                         </a> | 
 
