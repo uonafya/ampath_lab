@@ -221,8 +221,10 @@ class CancerSampleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(CancerSample $sample)
+    public function destroy($sample)
     {
+        $sample = CancerSample::find($sample);
+        
         if($sample->result == NULL && $sample->run < 2 && $sample->worksheet_id == NULL && !$sample->has_rerun){
             $sample->delete();
             session(['toast_message' => 'The sample has been deleted.']);
