@@ -161,10 +161,10 @@
                             <a href="{{ url('cancersample/index/true') }}">Dispatched Results</a>
                         </li>
                         <li class="">
-                            <a href="{{ url('cancersample') }}">Reports</a>
+                            <a href="{{ url('reports') }}">Reports</a>
                         </li>
                         <li class="">
-                            <a href="{{ url('cancersample') }}">Dashboard</a>
+                            <a href="{{ url('dashboard') }}">Dashboard</a>
                         </li>
                     @else
                         @if(!Session('pendingTasks') || env('APP_LAB') == 2)
@@ -427,10 +427,10 @@
                         <a href="{{ url('cancersample/index/true') }}">Dispatched Results</a>
                     </li>
                     <li class="">
-                        <a href="{{ url('cancersample') }}">Reports</a>
+                        <a href="{{ url('reports') }}">Reports</a>
                     </li>
                     <li class="">
-                        <a href="{{ url('cancersample') }}">Dashboard</a>
+                        <a href="{{ url('dashboard') }}">Dashboard</a>
                     </li>
                 @else
                     @if(!Session('pendingTasks') || env('APP_LAB') == 2)
