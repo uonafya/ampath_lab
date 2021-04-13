@@ -8,6 +8,11 @@ class CancerSampleView extends ViewModel
 {
     protected $table = 'cancer_samples_view';
 
+    public function worksheet()
+    {
+        return $this->belongsTo('App\CancerWorksheet', 'worksheet_id');
+    }
+
     /**
      * Get the sample's result name
      *
