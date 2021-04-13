@@ -38,6 +38,26 @@ class CancerSample extends BaseModel
         return $this->hasMany('App\CancerSample', 'parentid');
     }
 
+    public function creator()
+    {
+        return $this->belongsTo('App\User', 'createdby');
+    }
+
+    public function canceller()
+    {
+        return $this->belongsTo('App\User', 'cancelledby');
+    }
+
+    public function approver()
+    {
+        return $this->belongsTo('App\User', 'approvedby');
+    }
+
+    public function final_approver()
+    {
+        return $this->belongsTo('App\User', 'approvedby2');
+    }
+
     /**
      * Get the sample's result name
      *

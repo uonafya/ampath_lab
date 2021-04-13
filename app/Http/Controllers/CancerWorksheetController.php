@@ -111,7 +111,7 @@ class CancerWorksheetController extends Controller
     public function create($limit=94)
     {
         $data = $this->get_samples_for_run(94);
-
+        
         return view('forms.cancerworksheet', $data)->with('pageTitle', "Create Worksheet ($limit)");
     }
 
@@ -158,13 +158,16 @@ class CancerWorksheetController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($worksheet, $print=false)
+    public function show(CancerWorksheet $worksheet, $print=false)
     {
-        $worksheet = CancerWorksheet::find($worksheet);
+        $id = $worksheet->id ?? false;
+        // if(!$id)
+        //     $worksheet = CancerWorksheet::find($work);
+        // dd($worksheet);
         $worksheet->load(['creator']);
         // $sample_array = CancerSampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '<>', 2)->get()/*->pluck('id')->toArray()*/;
         // // $samples = Sample::whereIn('id', $sample_array)->with(['patient', 'batch.facility'])->get();
-        
+        // dd($worksheet);
         $samples = CancerSample::with(['patient'])
                     // ->whereIn('id', $sample_array)
                     ->where('worksheet_id', $worksheet->id)
@@ -426,6 +429,7 @@ class CancerWorksheetController extends Controller
                                     ->where('site_entry', '<>', 2)
                                     ->orderBy('datereceived', 'asc')->orderBy('parentid', 'desc')->orderBy('id', 'asc')
                                     ->limit($limit)->get();
+        // dd($samples);
         $machine = Machine::find(3);
         return [
             'count' => $samples->count(),

@@ -134,9 +134,10 @@ class CancerWorksheetImport implements ToCollection, WithHeadingRow
                 // $datetested = Misc::worksheet_date($date_tested, $worksheet->created_at);
 
                 $sample_id = (int) trim($data['sample_id']);
-                $interpretation = rtrim($data['flag']);
+                $interpretation = rtrim($data['flag'] ?? '');
                 $control = NULL;
-                $date_tested =  ($data['date_tested']) ? date("Y-m-d", strtotime($data['date_tested'])) :
+                $date_tested = $data['date_tested'] ?? NULL;
+                $date_tested =  (isset($date_tested)) ? date("Y-m-d", strtotime($data['date_tested'])) :
                                 date("Y-m-d");
                 
 
