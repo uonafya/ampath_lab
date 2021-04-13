@@ -11,7 +11,7 @@ class CovidWorksheet extends BaseModel
 
     public function pool()
     {
-        return $this->belongs('App\CovidPool', 'pool_id');
+        return $this->belongsTo('App\CovidPool', 'pool_id');
     }
 
     public function sample()

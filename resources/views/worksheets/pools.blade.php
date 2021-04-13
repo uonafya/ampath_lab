@@ -13,7 +13,7 @@
 <!-- <body onLoad="JavaScript:window.print();"> -->
 <body >
 	<div class="container">
-		<table class="table table-bordered">
+		<table class="table table-bordered" style="font-size: 10px; padding: 0px;">
 			<thead>
 				<tr>
 					<th> Position </th>
