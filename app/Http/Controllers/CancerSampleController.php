@@ -240,4 +240,63 @@ class CancerSampleController extends Controller
 
         return view('exports.mpdf_cancersamples', $data)->with('pageTitle', 'Individual Samples');
     }
+
+    public function sample_dispatch()
+    {
+        return $this->get_rows();
+    }
+
+    public function get_rows($sample_list=NULL)
+    {
+        ini_set('memory_limit', '-1');
+        
+        $batches = CancerSampleView::select('batches.*', 'facility_contacts.email', 'facilitys.name')
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
+            ->leftJoin('facility_contacts', 'facilitys.id', '=', 'facility_contacts.facility_id')
+            ->when($sample_list, function($query) use ($batch_list){
+                return $query->whereIn('batches.id', $batch_list);
+            })
+            ->where('batch_complete', 2)
+            ->where('lab_id', env('APP_LAB'))
+            ->when((env('APP_LAB') == 9), function($query){
+                return $query->limit(10);
+            })            
+            ->get();
+
+        $batch_ids = $batches->pluck(['id'])->toArray();
+
+        $subtotals = Misc::get_subtotals($batch_ids);
+        $rejected = Misc::get_rejected($batch_ids);
+        $date_modified = Misc::get_maxdatemodified($batch_ids);
+        $date_tested = Misc::get_maxdatetested($batch_ids);
+
+        $batches->transform(function($batch, $key) use ($subtotals, $rejected, $date_modified, $date_tested){
+            $neg = $subtotals->where('batch_id', $batch->id)->where('result', 1)->first()->totals ?? 0;
+            $pos = $subtotals->where('batch_id', $batch->id)->where('result', 2)->first()->totals ?? 0;
+            $failed = $subtotals->where('batch_id', $batch->id)->where('result', 3)->first()->totals ?? 0;
+            $redraw = $subtotals->where('batch_id', $batch->id)->where('result', 5)->first()->totals ?? 0;
+            $noresult = $subtotals->where('batch_id', $batch->id)->where('result', 0)->first()->totals ?? 0;
+
+            $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
+            $total = $neg + $pos + $failed + $redraw + $noresult + $rej;
+
+            $dm = $date_modified->where('batch_id', $batch->id)->first()->mydate ?? '';
+            $dt = $date_tested->where('batch_id', $batch->id)->first()->mydate ?? '';
+
+            $batch->negatives = $neg;
+            $batch->positives = $pos;
+            $batch->failed = $failed;
+            $batch->redraw = $redraw;
+            $batch->noresult = $noresult;
+            $batch->rejected = $rej;
+            $batch->total = $total;
+            $batch->date_modified = $dm;
+            $batch->date_tested = $dt;
+            return $batch;
+        });
+
+        // dd($batches);
+
+        return view('tables.dispatch', ['batches' => $batches, 'pending' => $batches->count(), 'batch_list' => $batch_list, 'pageTitle' => 'Batch Dispatch']);
+    }
 }
