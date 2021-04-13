@@ -664,6 +664,11 @@
                     <li><a href="#"><select class="form-control" id="dr_patient_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="dr_nat_id_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="dr_sample_search"></select></a></li>
+                @elseif(Session('testingSystem') == 'HPV')
+                    <li><a href="#"><select class="form-control" id="sidebar_hpv_facility_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="hpv_patient_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="hpv_nat_id_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="hpv_sample_search"></select></a></li>
                 @endif
             @endif
         @endif
