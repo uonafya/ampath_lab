@@ -2,13 +2,14 @@
 
 namespace App\Imports;
 
-use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\ToCollection;
 use \App\Misc;
 use \App\CancerSample;
 use \App\CancerSampleView;
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class CancerWorksheetImport implements ToCollection
+class CancerWorksheetImport implements ToCollection, WithHeadingRow
 {
 	protected $worksheet;
 	protected $cancelled;
@@ -124,16 +125,23 @@ class CancerWorksheetImport implements ToCollection
         // {
             foreach ($collection as $key => $data) 
             {
-                if(!isset($data[5])) break;
+                if(!isset($data['sample_id'])) break;
 
-                $sample_id = (int) trim($data[1]); 
-                $interpretation = rtrim($data[5]); 
-                $control = rtrim($data[4]);
-                $date_tested=date("Y-m-d", strtotime($data[12]));
-                $datetested = Misc::worksheet_date($date_tested, $worksheet->created_at);
+                // $sample_id = (int) trim($data[1]);
+                // $interpretation = rtrim($data[5]); 
+                // $control = rtrim($data[4]);
+                // $date_tested=date("Y-m-d", strtotime($data[12]));
+                // $datetested = Misc::worksheet_date($date_tested, $worksheet->created_at);
 
-                $data_array = Misc::hpv_sample_result($interpretation);
+                $sample_id = (int) trim($data['sample_id']);
+                $interpretation = rtrim($data['flag']);
+                $control = NULL;
+                $date_tested =  ($data['date_tested']) ? date("Y-m-d", strtotime($data['date_tested'])) :
+                                date("Y-m-d");
+                
 
+                $data_array = Misc::hpv_sample_result($data);
+                
                 if(\Str::contains($control, '+')){
                     $positive_control = $data_array;
                     continue;
@@ -171,7 +179,7 @@ class CancerWorksheetImport implements ToCollection
 
         session(compact('doubles'));
 
-        Misc::requeue($worksheet->id, $worksheet->daterun, CancerSampleView::class, CancerSample::class);
+        Misc::requeue($worksheet->id, $worksheet->daterun, 'hpv');
         session(['toast_message' => "The worksheet has been updated with the results."]);
     }
 }
