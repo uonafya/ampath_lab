@@ -120,9 +120,9 @@ class Misc extends Common
 
     public static function hpv_sample_result($result, $error=null)
     {
-        $target1 = strtolower($data['target_1']);
-        $target2 = strtolower($data['target_2']);
-        $target3 = strtolower($data['target_3']);
+        $target1 = strtolower($result['target_1']);
+        $target2 = strtolower($result['target_2']);
+        $target3 = strtolower($result['target_3']);
 
         if(\Str::contains($target1, ['positive']) || \Str::contains($target2, ['positive']) || \Str::contains($target2, ['positive'])){
             $res = 1;
@@ -137,7 +137,7 @@ class Misc extends Common
             return ['result' => 3, 'interpretation' => $error];
         }
 
-        return ['result' => $res, 'interpretation' => $data['flag'], 'target_1' => $target1, 'target_2' => $target2, 'target_3' => $target3];
+        return ['result' => $res, 'interpretation' => $result['flag'] ?? NULL, 'target_1' => $target1, 'target_2' => $target2, 'target_3' => $target3];
     }
 
 	public static function save_repeat($sample_id)
