@@ -110,7 +110,7 @@
                                     <td> {!! $pool->status !!} </td>
                                     <td>
                                         @foreach($pool->worksheet as $worksheet)
-                                            {! $worksheet->hyper_link !!} <br />
+                                            {!! $worksheet->hyper_link !!} <br />
                                         @endforeach
                                     </td>
                                     <td> 
