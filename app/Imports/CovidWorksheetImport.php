@@ -93,7 +93,7 @@ class CovidWorksheetImport implements ToCollection
                 $sample->save();
 
                 if($sample->pool_sample_id){
-                    $sample->pool_sample->sample()->whereNull('dateapproved')->whereIn('worksheet_id', $$worksheet_ids)->update($result_array);
+                    $sample->pool_sample->sample()->whereNull('dateapproved')->whereIn('worksheet_id', $worksheet_ids)->update($result_array);
                 }
             }            
         }
@@ -182,7 +182,7 @@ class CovidWorksheetImport implements ToCollection
                     $sample->save();
 
                     if($sample->pool_sample_id){
-                        $sample->pool_sample->sample()->whereNull('dateapproved')->whereIn('worksheet_id', $$worksheet_ids)->update($result_array);
+                        $sample->pool_sample->sample()->whereNull('dateapproved')->whereIn('worksheet_id', $worksheet_ids)->update($result_array);
                     }
                 }
 
