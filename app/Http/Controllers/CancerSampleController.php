@@ -87,6 +87,10 @@ class CancerSampleController extends Controller
             $cancersample->fill($data);
             $cancersample->sample_type = $cancersample->sampletype;
             unset($cancersample->sampletype);
+            if (auth()->user()->user_type_id != 5){
+                $cancersample->site_entry = 0;
+                $cancersample->lab_id = env('APP_LAB');
+            }                
             $cancersample->patient_id = $cancerpatient->id;
             $cancersample->user_id = $user->id;
             $cancersample->save();
