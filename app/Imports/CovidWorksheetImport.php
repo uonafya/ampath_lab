@@ -20,7 +20,7 @@ class CovidWorksheetImport implements ToCollection
         $cancelled = false;
         if($worksheet->status_id == 4) $cancelled =  true;
         $worksheet->fill($request->except(['_token', 'upload']));
-        $this->worksheet_data = $request->except(['_token', 'upload']);
+        $this->worksheet_data = $request->except(['_token', '_method', 'upload']);
         $this->cancelled = $cancelled;
         $this->worksheet = $worksheet;
         $this->daterun = $request->input('daterun', date("Y-m-d"));
