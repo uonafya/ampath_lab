@@ -25,6 +25,11 @@ Artisan::command('nphl', function () {
     \App\Covid::synch_to_nphl();
 })->describe('Synch to NPHL');
 
+Artisan::command('backlog', function () {
+    \App\Random::backlog_report('eid');
+    \App\Random::backlog_report('vl');
+})->describe('Backlog report');
+
 Artisan::command('mysql8', function () {
     \App\AlterRegimen::mysql8_update();
 })->describe('Mysql 8 update');
