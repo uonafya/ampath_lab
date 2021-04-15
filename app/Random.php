@@ -111,7 +111,7 @@ class Random
 
         $lab = Lab::find(env('APP_LAB'));
 
-        $file = $type . '_backlog_line_list.csv';
+        $file = $type . '_backlog_line_list';
         Common::csv_download($data, $file, true, true);
     }
 
