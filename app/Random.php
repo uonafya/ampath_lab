@@ -81,7 +81,7 @@ class Random
         $data = [];
 
         while (true) {
-            $samples = $class::select($view_table . '.*', 'facilitycode', 'name', 'subcounty', 'county')
+            $samples = $class::select($view_table . '.*', 'view_facilitys.facilitycode', 'name', 'subcounty', 'county')
                 ->join('view_facilitys', 'view_facilitys.id', '=', $view_table. '.facility_id')
                 ->where(['repeatt' => 0, 'receivedstatus' => 1, 'lab_id' => env('APP_LAB')])
                 ->whereBetween('datecollected', ['2021-02-01', '2021-03-31'])
