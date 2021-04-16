@@ -77,8 +77,8 @@ class Random
         $dates = ['feb' => '2021-02-21', 'mar' => '2021-03-21', 'apr' => '2021-04-21'];
 
         foreach ($dates as $key => $value) {
-            $data = ViralsampleView::selectRaw("county, COUNT(viralsample_view.id) AS sample_count ")
-                ->join('view_facilitys', 'view_facilitys.id', '=', 'viralsample_view.facility_id')
+            $data = ViralsampleView::selectRaw("county, COUNT(viralsamples_view.id) AS sample_count ")
+                ->join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
                 ->where(['repeatt' => 0, 'receivedstatus' => 1, 'lab_id' => env('APP_LAB')]) 
                 ->where('datereceived', '<', $value)
                 ->whereNull('datetested')
