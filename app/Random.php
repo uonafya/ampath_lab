@@ -84,7 +84,8 @@ class Random
                 ->whereNull('datetested')
                 ->groupBy('county')
                 ->orderBy('county', 'ASC')
-                ->get();
+                ->get()
+                ->toArray();
 
             $file = $key . '_county_backlog';
             Common::csv_download($data, $file, true, true);
