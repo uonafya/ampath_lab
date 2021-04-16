@@ -72,6 +72,26 @@ class Random
 		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
 	}
 
+    public static function county_backlog()
+    {
+        $dates = ['feb' => '2021-02-21', 'mar' => '2021-03-21', 'apr' => '2021-04-21'];
+
+        foreach ($dates as $key => $value) {
+            $data = ViralsampleView::selectRaw("county, COUNT(viralsample_view.id) AS sample_count ")
+                ->join('view_facilitys', 'view_facilitys.id', '=', 'viralsample_view.facility_id')
+                ->where(['repeatt' => 0, 'receivedstatus' => 1, 'lab_id' => env('APP_LAB')]) 
+                ->where('datereceived', '<', $value)
+                ->whereNull('datetested')
+                ->groupBy('county')
+                ->orderBy('county', 'ASC')
+                ->get();
+
+            $file = $key . '_county_backlog';
+            Common::csv_download($data, $file, true, true);
+        }
+
+    }
+
     public static function backlog_report($type)
     {
         $class = \App\Synch::$synch_arrays[$type]['sampleview_class'];
@@ -79,10 +99,11 @@ class Random
 
         $file_name = $type . '_backlog_line_list';
         $fp = fopen(storage_path("exports/{$file_name}.csv"), 'w');
-        fputcsv($fp, ['Patient', 'Facility', 'MFL Code', 'Subcounty', 'County', 'Batch Number', 'Gender', 'Age', 'Date Collected', 'Date Received']);
+        fputcsv($fp, ['Patient', 'Facility', 'MFL Code', 'Subcounty', 'County', 'Batch Number', 'Gender', 'Age', 'Regimen', 'Date Collected', 'Date Received']);
 
-        $class::select($view_table . '.*', 'view_facilitys.facilitycode', 'name', 'subcounty', 'county')
+        $class::select($view_table . '.*', 'view_facilitys.facilitycode', 'view_facilitys.name', 'subcounty', 'county', 'viralregimen.name AS regimen')
             ->join('view_facilitys', 'view_facilitys.id', '=', $view_table. '.facility_id')
+            ->join('viralregimen', 'viralregimen.id', '=', $view_table. '.prophylaxis')
             ->where(['repeatt' => 0, 'receivedstatus' => 1, 'lab_id' => env('APP_LAB')])
             ->whereBetween('datecollected', ['2021-02-01', '2021-03-31'])
             ->whereNull('datetested')
@@ -97,12 +118,12 @@ class Random
                         'Batch Number' => $sample->batch_id,
                         'Gender' => $sample->gender,
                         'Age' => $sample->age,
+                        'Age' => $sample->age,
                         'Date Collected' => $sample->datecollected,
                         'Date Received' => $sample->datereceived,
                     ];
                     fputcsv($fp, $row);
                 }
-
             });
         fclose($fp);
     }

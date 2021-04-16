@@ -26,8 +26,9 @@ Artisan::command('nphl', function () {
 })->describe('Synch to NPHL');
 
 Artisan::command('backlog', function () {
-    \App\Random::backlog_report('eid');
-    \App\Random::backlog_report('vl');
+    \App\Random::county_backlog();
+    // \App\Random::backlog_report('eid');
+    // \App\Random::backlog_report('vl');
 })->describe('Backlog report');
 
 Artisan::command('mysql8', function () {
