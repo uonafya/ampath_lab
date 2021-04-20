@@ -35,13 +35,15 @@ class AlterCancerSamplesTableAddTestingColumns extends Migration
      */
     public function down()
     {
-        Schema::table('cancer_samples', function (Blueprint $table) {
-            $table->dropColumn('worksheet_id');
-            $table->dropColumn('target_1');
-            $table->dropColumn('target_2');
-            $table->dropColumn('target_3');
-            $table->dropColumn('site_entry');
-            $table->dropColumn('run');
-        });
+        if (!Schema::hasColumn('cancer_samples', 'worksheet_id')) {
+            Schema::table('cancer_samples', function (Blueprint $table) {
+                $table->dropColumn('worksheet_id');
+                $table->dropColumn('target_1');
+                $table->dropColumn('target_2');
+                $table->dropColumn('target_3');
+                $table->dropColumn('site_entry');
+                $table->dropColumn('run');
+            });   
+        }
     }
 }
