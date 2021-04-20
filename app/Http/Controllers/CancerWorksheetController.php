@@ -151,7 +151,7 @@ class CancerWorksheetController extends Controller
 
     public function print(CancerWorksheet $worksheet)
     {
-        return $this->show($worksheet, true);
+        return $this->show($worksheet->id, true);
     }
 
     /**
@@ -160,11 +160,11 @@ class CancerWorksheetController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(CancerWorksheet $worksheet, $print=false)
+    public function show($worksheet, $print=false)
     {
-        $id = $worksheet->id ?? false;
+        // $id = $worksheet->id ?? false;
         // if(!$id)
-        //     $worksheet = CancerWorksheet::find($work);
+            $worksheet = CancerWorksheet::find($worksheet);
         // dd($worksheet);
         $worksheet->load(['creator']);
         // $sample_array = CancerSampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '<>', 2)->get()/*->pluck('id')->toArray()*/;
