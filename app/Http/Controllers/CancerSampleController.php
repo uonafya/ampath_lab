@@ -37,9 +37,9 @@ class CancerSampleController extends Controller
                                 ->when($param, function($query){
                                     return $query->whereNotNull('datedispatched');
                                 })->orderBy('created_at', 'DESC')->paginate();
-        // dd($samples);
+        
         $data['samples'] = $samples;
-        // dd($samples);
+        
         return view('tables.cancer_samples', $data)->with('pageTitle', 'HPV Samples');
     }
 
@@ -65,7 +65,7 @@ class CancerSampleController extends Controller
         $submit_type = $request->input('submit_type');
         $user = auth()->user();
         $patient_string = $request->input('patient');
-        // dd($request->all());
+        
         DB::beginTransaction();
         try {
             $cancerpatient = CancerPatient::existing($request->input('facility_id'), $patient_string)->first();
@@ -73,10 +73,11 @@ class CancerSampleController extends Controller
                 $cancerpatient = new CancerPatient;
 
             $data = $request->only(['facility_id', 'patient', 'patient_name',
-                                'dob', 'sex', 'entry_point', 'hiv_status']);
+                                'dob', 'entry_point', 'hiv_status']);
             if(!$data['dob'])
                 $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
             $cancerpatient->fill($data);
+            $cancerpatient->sex = 2;
             $cancerpatient->patient = $patient_string;
             $cancerpatient->pre_update();
 
@@ -315,5 +316,10 @@ class CancerSampleController extends Controller
         // dd($batches);
 
         return view('tables.dispatch', ['batches' => $batches, 'pending' => $batches->count(), 'batch_list' => $batch_list, 'pageTitle' => 'Batch Dispatch']);
+    }
+
+    public function facility($facility)
+    {
+        dd($facility);
     }
 }

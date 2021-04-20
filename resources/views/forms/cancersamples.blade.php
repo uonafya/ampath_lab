@@ -118,7 +118,7 @@
                                     </div>
                                 </div>                            
                             </div>
-
+                            {{--
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Sex
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
@@ -142,6 +142,7 @@
                                     </select>
                                 </div>
                             </div>
+                            --}}
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Entry Point</label>
                                 <div class="col-sm-8">
