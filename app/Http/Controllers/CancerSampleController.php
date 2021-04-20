@@ -6,6 +6,7 @@ use App\CancerPatient;
 use App\CancerSample;
 use App\CancerSampleView;
 use App\Lookup;
+use App\ViewFacility;
 use DB;
 use Illuminate\Http\Request;
 
@@ -320,6 +321,22 @@ class CancerSampleController extends Controller
 
     public function facility($facility)
     {
-        dd($facility);
+        ini_set("memory_limit", "-1");
+        // $data = Lookup::cd4_lookups();
+        // $data['samples'] = Cd4Sample::where('facility_id', '=', $facility)->paginate(20);
+        // $facility = ViewFacility::find($facility);
+        // $data = (object) $data;
+        
+        // return view('tables.cd4-samples', compact('data'))->with('pageTitle', $facility->name.' Samples');
+        $user = auth()->user();
+        $facility_user = false;
+        if ($user->facility_id)
+            $facility_user = true;
+        
+        $data['samples'] = CancerSampleView::with(['facility', 'worksheet', 'user'])
+                            ->where('facility_id', $facility)
+                            ->orderBy('created_at', 'DESC')->paginate(20);
+                            
+        return view('tables.cancer_samples', $data)->with('pageTitle', 'HPV Facility Search Samples');
     }
 }
