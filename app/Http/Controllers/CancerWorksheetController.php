@@ -80,8 +80,9 @@ class CancerWorksheetController extends Controller
              $worksheet->rerun = $rerun;
              $worksheet->neg = $neg;
              $worksheet->pos = $pos;
-            //  $worksheet->failed = $failed;
-             $worksheet->failed = 0;
+             $worksheet->failed = $failed;
+             $worksheet->fail = $failed;
+            //  $worksheet->failed = 0;
              $worksheet->redraw = $redraw;
              $worksheet->noresult = $noresult;
              $worksheet->mylinks = $this->get_links($worksheet->id, $status, $worksheet->datereviewed);
@@ -559,8 +560,8 @@ class CancerWorksheetController extends Controller
                 }
                 return $query->where('worksheet_id', $worksheet_id);
             })
-            ->where('receivedstatus', '!=', 2)
-            ->where('site_entry', '!=', 2)
+            ->where('receivedstatus', '<>', 2)
+            ->where('site_entry', '<>', 2)
             ->groupBy('worksheet_id', 'result')
             ->get();
 
