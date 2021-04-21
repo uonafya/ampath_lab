@@ -55,7 +55,7 @@
 		set_select("dr_sample_search", "{{ url('/dr_sample/search') }}", 1, "Search for DR ID");
 
 		set_select_patient("hpv_patient_search", "{{ url('/cancerpatient/search') }}", 2, "Search for HPV patient", "{{ url('/cancerpatient') }}");
-		set_select("hpv_sample_search", "{{ url('/cancersample/search') }}", 1, "Search for HPV ID");
+		set_select("hpv_sample_search", "{{ url('/cancersample/search') }}", 1, "Search for HPV Lab ID");
 
 	});
 	

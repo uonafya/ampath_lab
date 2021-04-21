@@ -58,6 +58,17 @@ class CancerSample extends BaseModel
         return $this->belongsTo('App\User', 'approvedby2');
     }
 
+
+    public function scopeRuns($query, $sample)
+    {
+        if($sample->parentid == 0){
+            return $query->whereRaw("parentid = {$sample->id} or id = {$sample->id}")->orderBy('run', 'asc');
+        }
+        else{
+            return $query->whereRaw("parentid = {$sample->parentid} or id = {$sample->parentid}")->orderBy('run', 'asc');
+        }
+    }
+
     /**
      * Get the sample's result name
      *
