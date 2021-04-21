@@ -124,13 +124,13 @@ class Misc extends Common
         $target2 = strtolower($result['target_2']);
         $target3 = strtolower($result['target_3']);
 
-        if(\Str::contains($target1, ['positive']) || \Str::contains($target2, ['positive']) || \Str::contains($target2, ['positive'])){
+        if(\Str::contains($target1, ['positive']) || \Str::contains($target2, ['positive']) || \Str::contains($target3, ['positive'])){
             $res = 1;
         }
         else if(\Str::contains($target1, ['valid', 'passed']) && \Str::contains($target2, ['valid', 'passed']) && \Str::contains($target3, ['valid', 'passed'])){
             $res = 6;
         }
-        else if(\Str::contains($target1, ['invalid']) && \Str::contains($target2, ['invalid']) || \Str::contains($target2, ['invalid'])){
+        else if(\Str::contains($target1, ['invalid']) && \Str::contains($target2, ['invalid']) || \Str::contains($target3, ['invalid'])){
             $res = 5;
         }
         else{
