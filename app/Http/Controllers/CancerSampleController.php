@@ -256,7 +256,7 @@ class CancerSampleController extends Controller
         $data = Lookup::cancer_lookups();
         $sample->load(['patient', 'facility']);
         $data['samples'] = [$sample];
-
+        // dd($data);
         return view('exports.mpdf_cancersamples', $data)->with('pageTitle', 'Individual Samples');
     }
 

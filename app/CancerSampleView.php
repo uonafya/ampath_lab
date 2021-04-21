@@ -13,6 +13,11 @@ class CancerSampleView extends ViewModel
         return $this->belongsTo('App\CancerWorksheet', 'worksheet_id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
     /**
      * Get the sample's result name
      *
@@ -32,10 +37,5 @@ class CancerSampleView extends ViewModel
         if($this->result == 1) return "N";
         else if($this->result == 2) return "P";
         else{ return "I"; }
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }
