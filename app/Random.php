@@ -95,12 +95,13 @@ class Random
 
     public static function covid_linelist()
     {
-        $data = CovidSample::select('covid_samples.id', 'identifier', 'national_id', 'interpretation', 'result')
-                ->join('covid_patients', 'covid_patients.id', '=', 'covid_samples.patient_id')
-                ->join('covid_worksheets', 'covid_worksheets.id', '=', 'covid_samples.worksheet_id')
-                ->whereBetween('datetested', ['2021-01-01', '2021-03-31'])
-                ->where(['covid_samples.result' => 2, 'covid_worksheets.machine_type' => 2])
-                ->get()->toArray();
+        $data = CovidSample::select('covid_samples.id', 'identifier', 'national_id', 'worksheet_id', 'covid_patients.county', 'covid_patients.subcounty', 'covid_justifications.name AS justification', 'datecollected', 'datetested', 'interpretation', 'result')
+            ->join('covid_patients', 'covid_patients.id', '=', 'covid_samples.patient_id')
+            ->join('covid_worksheets', 'covid_worksheets.id', '=', 'covid_samples.worksheet_id')
+            ->join('covid_justifications', 'covid_justifications.id', '=', 'covid_patients.justification')
+            ->whereBetween('datetested', ['2021-01-01', '2021-03-31'])
+            ->where(['covid_samples.result' => 2, 'covid_worksheets.machine_type' => 2])
+            ->get()->toArray();
 
         Common::csv_download($data, 'abbott-positive-2021-Q1', true, true);
     }
