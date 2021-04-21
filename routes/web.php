@@ -186,6 +186,12 @@ Route::middleware(['auth'])->group(function(){
 		});
 		Route::resource('cancersample', 'CancerSampleController');
 
+		Route::prefix('cancerpatient')->name('cancerpatient.')->group(function() {
+			Route::post('search/', 'CancerpatientController@search');
+			// Route::get('search/{patient?}', 'CancerpatientController@search_result');
+		});
+		Route::resource('cancerpatient', 'CancerpatientController');
+
 		Route::prefix('cancerworksheet')->name('cancerworksheet.')->group(function () {
 			Route::get('index/{state?}/{date_start?}/{date_end?}', 'CancerWorksheetController@index')->name('list');
 			Route::get('find/{worksheet}', 'CancerWorksheetController@find')->name('find');

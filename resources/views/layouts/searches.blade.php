@@ -54,10 +54,9 @@
 		set_select_patient("dr_nat_id_search", "{{ url('/viralpatient/nat_id') }}", 2, "Search for DR nat ID", "{{ url('/viralpatient/dr') }}");
 		set_select("dr_sample_search", "{{ url('/dr_sample/search') }}", 1, "Search for DR ID");
 
-		set_select_patient("hpv_patient_search", "{{ url('/cancerpatient/search') }}", 2, "Search for HPV patient", "#");
+		set_select_patient("hpv_patient_search", "{{ url('/cancerpatient/search') }}", 2, "Search for HPV patient", "{{ url('/cancerpatient') }}");
 		set_select("hpv_sample_search", "{{ url('/cancersample/search') }}", 1, "Search for HPV ID");
 
-	
 	});
 	
 	function set_select(div_name, url, minimum_length, placeholder, worksheet=false, cd4=false) {
