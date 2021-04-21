@@ -93,6 +93,18 @@ class Random
 
     }
 
+    public static function covid_linelist()
+    {
+        $data = CovidSample::select('covid_samples.id', 'identifier', 'national_id', 'interpretation', 'result')
+                ->join('covid_patients', 'covid_patients.id', '=', 'covid_samples.patient_id')
+                ->join('covid_worksheets', 'covid_worksheets.id', '=', 'covid_samples.worksheet_id')
+                ->whereBetween('datetested', ['2021-01-01', '2021-03-31'])
+                ->where(['covid_samples.result' => 2, 'covid_worksheets.machine_type' => 2])
+                ->get()->toArray();
+
+        Common::csv_download($data, 'abbott-positive-2021-Q1', true, true);
+    }
+
     public static function backlog_report($type)
     {
         $class = \App\Synch::$synch_arrays[$type]['sampleview_class'];
