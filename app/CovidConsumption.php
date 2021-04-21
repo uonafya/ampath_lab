@@ -86,7 +86,7 @@ class CovidConsumption extends BaseModel
                 if ($this->getdata($week->week_start))
                     $data[] = $week;
                 $date = date('Y-m-d', strtotime("+1 day",strtotime($week->week_end)));
-                if ($week->week == $lastweeek->week)
+                if ($week->week_end == $lastweeek->week_end)
                     $loop = false;
             }
         } else {// Tests not done report for last week
@@ -137,6 +137,7 @@ class CovidConsumption extends BaseModel
                         else
                             return $query->where('lab_id', '=', env('APP_LAB'));
                 })->get();
+        
         if ($filled->isEmpty())
             return (object)['week_start' => $week,
                             'week_end' => date('Y-m-d', strtotime('+6 days', strtotime($week))),
