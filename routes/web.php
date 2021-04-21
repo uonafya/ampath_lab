@@ -183,11 +183,13 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('list/{param?}', 'CancerSampleController@index');
 			Route::get('{sample}/print', 'CancerSampleController@print');
 			Route::get('facility/{facility}', 'CancerSampleController@facility')->name('facility');
+			Route::post('search', 'CancerSampleController@search')->name('search');
 		});
 		Route::resource('cancersample', 'CancerSampleController');
 
 		Route::prefix('cancerpatient')->name('cancerpatient.')->group(function() {
 			Route::post('search/', 'CancerpatientController@search');
+			// Route::post('search', 'SampleController@search');
 			// Route::get('search/{patient?}', 'CancerpatientController@search_result');
 		});
 		Route::resource('cancerpatient', 'CancerpatientController');

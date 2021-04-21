@@ -138,7 +138,17 @@ class CancerSampleController extends Controller
      */
     public function show($id)
     {
-        //
+        $sample = CancerSampleView::find($id);
+        $s = CancerSample::find($id);
+        $samples = CancerSample::runs($s)->get();
+        $patient = $s->patient;
+
+        $data = Lookup::cancer_lookups();
+        $data['sample'] = $sample;
+        $data['samples'] = $samples;
+        $data['patient'] = $patient;
+        // dd($data);
+        return view('tables.cancersample_search', $data)->with('pageTitle', 'Cancer Sample Summary');
     }
 
     /**
@@ -151,7 +161,7 @@ class CancerSampleController extends Controller
     {
         $data = Lookup::cancersample_form();
         $data['sample'] = CancerSample::find($id);
-        return view('forms.cancersamples', $data)->with('pageTitle', 'Add Cervical Cancer Sample');
+        return view('forms.cancersamples', $data)->with('pageTitle', 'Edit Cervical Cancer Sample');
     }
 
     /**
@@ -338,5 +348,32 @@ class CancerSampleController extends Controller
                             ->orderBy('created_at', 'DESC')->paginate(20);
                             
         return view('tables.cancer_samples', $data)->with('pageTitle', 'HPV Facility Search Samples');
+    }
+
+    public function search(Request $request)
+    {
+        $user = auth()->user();
+        $search = $request->input('search');
+        $facility_user = false;
+
+        if($user->user_type_id == 5) $facility_user=true;
+        // $string = "(batches.facility_id='{$user->facility_id}' OR batches.user_id='{$user->id}')";
+        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+
+        // $samples = Sample::select('samples.id')
+        //     ->whereRaw("samples.id like '" . $search . "%'")
+        //     ->when($facility_user, function($query) use ($string){
+        //         return $query->join('batches', 'samples.batch_id', '=', 'batches.id')->whereRaw($string);
+        //     })
+        //     ->paginate(10);
+        $samples = CancerSampleView::select('id')
+            ->whereRaw("id like '" . $search . "%'")
+            ->when($facility_user, function($query) use ($string){
+                return $query->whereRaw($string);
+            })
+            ->paginate(10);
+
+        $samples->setPath(url()->current());
+        return $samples;
     }
 }
