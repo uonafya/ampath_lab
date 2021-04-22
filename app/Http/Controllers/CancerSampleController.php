@@ -40,6 +40,7 @@ class CancerSampleController extends Controller
                                 })->orderBy('created_at', 'DESC')->paginate();
         
         $data['samples'] = $samples;
+        $data['param'] = $param;
         
         return view('tables.cancer_samples', $data)->with('pageTitle', 'HPV Samples');
     }
