@@ -66,7 +66,7 @@
                                                 @if(Auth::user()->user_type_id == 5)
                                                 <a href="{{ url('cancersample/' . $sample->id . '/edit_result/') }}" target="_blank">Edit Result</a> |
                                                 @endif
-                                                @if(!$sample->result)
+                                                @if(!($sample->result || $param))
                                                     <form action="{{ url('cancersample/' . $sample->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete the following sample?');">
                                                         @csrf
                                                         @method('DELETE')
@@ -74,7 +74,9 @@
                                                     </form>
                                                 @endif
                                             @else
+                                                @if(!$param)
                                                 <a href="{{ url('cancersample/' . $sample->id . '/edit/') }}" target="_blank">Edit</a> |
+                                                @endif
                                                 <a href="{{ url('cancersample/' . $sample->id . '/print/') }}" target="_blank">Print</a>
                                             @endif
                                         </td>
