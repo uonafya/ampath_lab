@@ -72,6 +72,119 @@ class Random
 		Mail::to(['joelkith@gmail.com'])->send(new TestMail($data));
 	}
 
+    public static function county_backlog()
+    {
+        $dates = ['feb' => '2021-02-21', 'mar' => '2021-03-21', 'apr' => '2021-04-21'];
+
+        foreach ($dates as $key => $value) {
+            $data = ViralsampleView::selectRaw("county, COUNT(viralsamples_view.id) AS sample_count ")
+                ->join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
+                ->where(['repeatt' => 0, 'receivedstatus' => 1, 'lab_id' => env('APP_LAB')]) 
+                ->where('datereceived', '<', $value)
+                ->whereNull('datetested')
+                ->groupBy('county')
+                ->orderBy('county', 'ASC')
+                ->get()
+                ->toArray();
+
+            $file = $key . '_county_backlog';
+            Common::csv_download($data, $file, true, true);
+        }
+
+    }
+
+    public static function covid_linelist()
+    {
+        $data = CovidSample::select('covid_samples.id', 'identifier', 'national_id', 'worksheet_id', 'covid_patients.county', 'covid_patients.subcounty', 'covid_justifications.name AS justification', 'datecollected', 'datetested', 'interpretation', 'result')
+            ->join('covid_patients', 'covid_patients.id', '=', 'covid_samples.patient_id')
+            ->join('covid_worksheets', 'covid_worksheets.id', '=', 'covid_samples.worksheet_id')
+            ->join('covid_justifications', 'covid_justifications.id', '=', 'covid_patients.justification')
+            ->whereBetween('datetested', ['2021-01-01', '2021-03-31'])
+            ->where(['covid_samples.result' => 2, 'covid_worksheets.machine_type' => 2])
+            ->get()->toArray();
+
+        Common::csv_download($data, 'abbott-positive-2021-Q1', true, true);
+    }
+
+    public static function backlog_report($type)
+    {
+        $class = \App\Synch::$synch_arrays[$type]['sampleview_class'];
+        $view_table = \App\Synch::$synch_arrays[$type]['view_table'];
+
+        $file_name = $type . '_backlog_line_list';
+        $fp = fopen(storage_path("exports/{$file_name}.csv"), 'w');
+        fputcsv($fp, ['Patient', 'Facility', 'MFL Code', 'Subcounty', 'County', 'Batch Number', 'Gender', 'Age', 'Regimen', 'Date Collected', 'Date Received']);
+
+        $class::select($view_table . '.*', 'view_facilitys.facilitycode', 'view_facilitys.name', 'subcounty', 'county', 'viralregimen.name AS regimen')
+            ->join('view_facilitys', 'view_facilitys.id', '=', $view_table. '.facility_id')
+            ->join('viralregimen', 'viralregimen.id', '=', $view_table. '.prophylaxis')
+            ->where(['repeatt' => 0, 'receivedstatus' => 1, 'lab_id' => env('APP_LAB')])
+            ->whereBetween('datecollected', ['2021-02-01', '2021-03-31'])
+            ->whereNull('datetested')
+            ->chunk(100, function($samples) use($fp){
+                foreach ($samples as $key => $sample) {
+                    $row = [
+                        'Patient' => $sample->patient,
+                        'Facility' => $sample->name,
+                        'MFL Code' => $sample->facilitycode,
+                        'Subcounty' => $sample->subcounty,
+                        'County' => $sample->county,
+                        'Batch Number' => $sample->batch_id,
+                        'Gender' => $sample->gender,
+                        'Age' => $sample->age,
+                        'Age' => $sample->age,
+                        'Date Collected' => $sample->datecollected,
+                        'Date Received' => $sample->datereceived,
+                    ];
+                    fputcsv($fp, $row);
+                }
+            });
+        fclose($fp);
+    }
+
+    /*public static function backlog_report($type)
+    {
+        $class = \App\Synch::$synch_arrays[$type]['sampleview_class'];
+        $view_table = \App\Synch::$synch_arrays[$type]['view_table'];
+
+        $offset = 0; $limit = 100;
+        $data = [];
+
+        while (true) {
+            $samples = $class::select($view_table . '.*', 'view_facilitys.facilitycode', 'name', 'subcounty', 'county')
+                ->join('view_facilitys', 'view_facilitys.id', '=', $view_table. '.facility_id')
+                ->where(['repeatt' => 0, 'receivedstatus' => 1, 'lab_id' => env('APP_LAB')])
+                ->whereBetween('datecollected', ['2021-02-01', '2021-03-31'])
+                ->whereNull('datetested')
+                ->limit($limit)
+                ->offset($offset)
+                ->get();
+
+            if(!$samples->count()) break;
+
+            foreach ($samples as $key => $sample) {
+                $data[] = [
+                    'Patient' => $sample->patient,
+                    'Facility' => $sample->name,
+                    'MFL Code' => $sample->facilitycode,
+                    'Subcounty' => $sample->subcounty,
+                    'County' => $sample->county,
+                    'Batch Number' => $sample->batch_id,
+                    'Gender' => $sample->gender,
+                    'Age' => $sample->age,
+                    'Date Collected' => $sample->datecollected,
+                    'Date Received' => $sample->datereceived,
+                ];
+            }
+            $offset += $limit;
+        }
+
+        $lab = Lab::find(env('APP_LAB'));
+
+        $file = $type . '_backlog_line_list';
+        Common::csv_download($data, $file, true, true);
+    }*/
+
     public static function download_covid_excel()
     {
         ini_set("memory_limit", "-1");
