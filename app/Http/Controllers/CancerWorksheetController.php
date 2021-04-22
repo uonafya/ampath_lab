@@ -228,6 +228,24 @@ class CancerWorksheetController extends Controller
         //
     }
 
+    public function cancel(CancerWorksheet $worksheet)
+    {
+        if($worksheet->status_id != 1){
+            session(['toast_message' => 'The worksheet is not eligible to be cancelled.']);
+            session(['toast_error' => 1]);
+            return back();
+        }
+        $sample_array = CancerSampleView::select('id')->where('worksheet_id', $worksheet->id)->where('site_entry', '<>', 2)->get()->pluck('id')->toArray();
+        CancerSample::whereIn('id', $sample_array)->update(['worksheet_id' => null, 'result' => null]);
+        $worksheet->status_id = 4;
+        $worksheet->datecancelled = date("Y-m-d");
+        $worksheet->cancelledby = auth()->user()->id;
+        $worksheet->save();
+
+        session(['toast_message' => 'The worksheet has been cancelled.']);
+        return redirect("/cancerworksheet");
+    }
+
     public function upload(CancerWorksheet $worksheet)
     {
         if(!in_array($worksheet->status_id, [1, 4])){
@@ -301,6 +319,7 @@ class CancerWorksheetController extends Controller
 
     public function cancel_upload(CancerWorksheet $worksheet)
     {
+
         if($worksheet->status_id != 2){
             session(['toast_message' => 'The upload for this worksheet cannot be reversed.']);
             session(['toast_error' => 1]);
