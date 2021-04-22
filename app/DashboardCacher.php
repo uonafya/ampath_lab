@@ -7,6 +7,7 @@ use Illuminate\View\View;
 use DB;
 
 use App\Batch;
+use App\CancerWorksheet;
 use App\Viralbatch;
 use App\Facility;
 use App\FacilityContact;
@@ -145,6 +146,10 @@ class DashboardCacher
                 'dr_awaiting_hyrax' => Cache::get('dr_awaiting_hyrax'),
                 'dr_requires_action' => Cache::get('dr_requires_action'),
                 'dr_pending_approval' => Cache::get('dr_pending_approval'),
+            ]);
+        } else if (session('testingSystem') == 'HPV') {
+            return array_merge($data, [
+                'hpv_resultsForUpdate' => Cache::get('hpv_resultsForUpdate'),
             ]);
         }
     }
@@ -380,6 +385,8 @@ class DashboardCacher
             $model = Worksheet::with(['creator']);
         } else if ($testingSystem == 'Covid') {
             $model = CovidWorksheet::with(['creator']);
+        } else if ($testingSystem = 'HPV') {
+            $model = CancerWorksheet::with(['creator']);
         } else {
             $model = Cd4Worksheet::with(['creator']);
         }
@@ -626,6 +633,12 @@ class DashboardCacher
             Cache::put('covid_pending_receipt', $pending_receipt, $minutes);
             Cache::put('covid_pending_testing', $pending_testing, $minutes);
             Cache::put('covid_pending_results_update', $worksheets, $minutes);
+        }
+        else if(session('testingSystem') == 'HPV'){
+            if(Cache::has('hpv_resultsForUpdate')) return true;
+
+            $hpvresultsForUpdate = self::resultsAwaitingpdate('HPV');
+            Cache::put('hpv_resultsForUpdate', $hpvresultsForUpdate, $minutes);
         }
 
         // $rejectedAllocations = self::rejectedAllocations();

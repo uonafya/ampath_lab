@@ -266,7 +266,7 @@
                 </li>
                 <hr />
                 <li>
-                    <a href="{{ url('cancerworksheet/index/1') }}">Update HPV Results</a>
+                    <a href="{{ url('cancerworksheet/index/1') }}">Update HPV Results<span class="label label-warning pull-right">{{ $widgets['hpv_resultsForUpdate'] ?? 0 }}</span></a>
                 </li>
                 <hr />
             @endif
@@ -343,7 +343,7 @@
                 </li>
                 <hr />
                 <li>
-                    <a href="{{ url('cancersample/list/1') }}">Update HPV Results</a>
+                    <a href="{{ url('cancersample/list/1') }}">Update HPV Results<span class="label label-warning pull-right">{{ $widgets['hpv_resultsForUpdate'] ?? 0 }}</span></a>
                 </li>
                 <hr />
                 <li>
