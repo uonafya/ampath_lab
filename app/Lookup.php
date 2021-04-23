@@ -420,7 +420,7 @@ class Lookup
 
             'sample_api' => ['comments', 'labcomment', 'datecollected', 'spots', 'patient_id', 'rejectedreason', 'receivedstatus', 'mother_prophylaxis', 'mother_age', 'mother_last_result', 'feeding', 'regimen', 'redraw', 'pcrtype', 'provider_identifier', 'amrs_location', 'sample_type', 'order_no', 'datetested', 'result'],
 
-            'hpv_sample_rerun' => ['comments', 'labcomment', 'datecollected', 'user_id', 'patient_id', 'rejectedreason', 'receivedstatus', 'justification', 'facility_id', 'mother_last_result', 'feeding', 'regimen', 'redraw', 'datereceived', 'provider_identifier', 'sample_type', 'lab_id', 'patient_id', 'run', 'parentid', 'age'],
+            'hpv_sample_rerun' => ['comments', 'labcomment', 'datecollected', 'user_id', 'patient_id', 'rejectedreason', 'receivedstatus', 'justification', 'facility_id', 'mother_last_result', 'feeding', 'regimen', 'redraw', 'datereceived', 'site_entry', 'sample_type', 'lab_id', 'patient_id', 'run', 'parentid', 'age'],
         ]; 
     }
 

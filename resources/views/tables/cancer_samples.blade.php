@@ -28,6 +28,7 @@
                                     <th>Gender</th>
                                     <th>Date Drawn</th>
                                     <th>Received Status</th>
+                                    <th>Run</th>
                                     <th>Date Tested</th>
                                     <th>Worksheet</th>
                                     <th>Date Dispatched</th>
@@ -46,6 +47,7 @@
                                         <td> {{ $sample->gender ?? '' }} </td>
                                         <td> {{ $sample->my_date_format('datecollected') }} </td>
                                         <td> {{ $sample->received }} </td>
+                                        <td> {{ $sample->run }} </td>
                                         <td> {{ $sample->my_date_format('datetested') }} </td>
                                         <td> {{ $sample->worksheet->id ?? '' }} </td>
                                         <td> {{ $sample->my_date_format('datedispatched') }} </td>
