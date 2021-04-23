@@ -119,6 +119,7 @@
                                 <th rowspan="2">Created By</th>
                                 <th rowspan="2">Type</th>
                                 <th rowspan="2">Status</th>
+                                <th rowspan="2">Pool No</th>
                                 <th colspan="7">Samples</th>
                                 <th colspan="3">Date</th>
                                 <th rowspan="2">Combined</th>
@@ -145,6 +146,7 @@
                                     <td> {{ $worksheet->creator->full_name ?? '' }} </td>
                                     <td> {!! $worksheet->machine !!} </td>
                                     <td> {!! $worksheet->status !!} </td>
+                                    <td> {{ $worksheet->pool_id }} </td>
                                     <td> {{ $worksheet->pos }} </td>
                                     <td> {{ $worksheet->presumed_pos }} </td>
                                     <td> {{ $worksheet->neg }} </td>

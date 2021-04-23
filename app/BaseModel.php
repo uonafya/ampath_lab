@@ -11,7 +11,7 @@ class BaseModel extends Model
     // protected $revisionCleanup = true; 
     // protected $historyLimit = 500; 
     
-    protected $guarded = ['id', 'jitenge_sample', 'border_point', 'time_sent_to_cif', 'time_sent_to_nphl', 'sent_to_nphl', 'time_sent_to_kilifi', 'age_unit', 'created_at', 'updated_at', '_token', 'submit_type'];
+    protected $guarded = ['id', 'jitenge_sample', 'border_point', 'time_sent_to_cif', 'time_sent_to_nphl', 'sent_to_nphl', 'time_sent_to_kilifi', 'age_unit', 'created_at', 'updated_at', '_token', '_method', 'submit_type'];
     // protected $hidden = [];
 
     protected static function boot()
@@ -60,7 +60,12 @@ class BaseModel extends Model
 
         $url = url($c . '/' . $this->id);
         // if(\Str::contains($c, 'sample')) $url = url($c . '/runs/' . $this->id);
-        if(\Str::contains($c, 'worksheet')) $url = url($c . '/approve/' . $this->id);
+        if(\Str::contains($c, 'worksheet')){
+            if(in_array($this->status_id, [2, 3])) $url = url($c . '/approve/' . $this->id);
+            else{
+                $url = url($c . '/find/' . $this->id);
+            }
+        }
 
         if(\Str::contains($c, ['worksheet', 'sample']) && (!$user || ($user && $user->user_type_id == 5))) return $this->id;
 

@@ -255,6 +255,19 @@ Route::middleware(['auth'])->group(function(){
 
 		Route::group(['middleware' => ['only_utype:1,4,12,13,14,15']], function () {
 			Route::resource('covid_kit_type', 'CovidKitTypeController');
+
+			
+			Route::prefix('covid_pool')->name('covid_pool.')->group(function () {
+
+				Route::get('index/{state?}/{date_start?}/{date_end?}', 'CovidPoolController@index')->name('list');
+				Route::get('find/{pool}', 'CovidPoolController@find')->name('find');
+				Route::get('print/{pool}', 'CovidPoolController@print')->name('print');
+				Route::get('cancel/{pool}', 'CovidPoolController@cancel')->name('cancel');
+				Route::get('convert/{pool}/{machine_type}', 'CovidPoolController@convert_worksheet')->name('convert');
+				Route::post('search/', 'CovidPoolController@search')->name('search');		
+			});
+
+			Route::resource('covid_pool', 'CovidPoolController');
 			
 			Route::prefix('covid_worksheet')->name('covid_worksheet.')->group(function () {
 				Route::get('set_details', 'CovidWorksheetController@set_details_form')->name('set_details_form');

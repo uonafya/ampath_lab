@@ -36,6 +36,11 @@ class CovidSample extends BaseModel
         return $this->belongsTo('App\Lab', 'lab_id');
     }
 
+    public function pool_sample()
+    {
+        return $this->belongsTo('App\CovidPoolSample', 'pool_sample_id');
+    }
+
 
     // Parent sample
     public function parent()
