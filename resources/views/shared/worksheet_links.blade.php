@@ -100,10 +100,11 @@
 	<a href="{{ url($worksheet->route_name . '/' . $worksheet->id) }}" title="Click to View Cancelled Worksheet Details">
 		View Cancelled  Worksheet Details
 	</a> |
-
+	@if(session('testingSystem') != 'HPV')
 	<a href="{{ url($worksheet->route_name . '/upload/' . $worksheet->id) }}" title="Click to Update Results Worksheet" target='_blank'>
 		Update Results (In Case of Accidental Cancellation)
 	</a> | 
+	@endif
 	{!! $worksheet->delete_form !!}
 @elseif($worksheet->status_id == 7)
 	<a href="{{ url($worksheet->route_name . '/approve/' . $worksheet->id) }}" title="Click to View Samples Results" target='_blank'>	

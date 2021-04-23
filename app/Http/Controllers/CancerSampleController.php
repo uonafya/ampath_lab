@@ -36,7 +36,7 @@ class CancerSampleController extends Controller
                                 //     return $query->whereNull('result')->where('receivedstatus', 1);
                                 // })
                                 ->when($param, function($query){
-                                    return $query->whereNotNull('datedispatched');
+                                    return $query->whereNotNull('datedispatched')->orderBy('datedispatched');
                                 })->orderBy('created_at', 'DESC')->paginate();
         
         $data['samples'] = $samples;
@@ -99,6 +99,9 @@ class CancerSampleController extends Controller
             
             $cancersample->patient_id = $cancerpatient->id;
             $cancersample->user_id = $user->id;
+            if ($cancersample->receivedstatus == 2)
+                $cancersample->datedispatched = date('Y-m-d');
+            
             $cancersample->save();
 
             DB::commit();

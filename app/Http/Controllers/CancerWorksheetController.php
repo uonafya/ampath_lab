@@ -225,7 +225,13 @@ class CancerWorksheetController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $worksheet = CancerWorksheet::find($id);
+        if($worksheet->status_id != 4){
+            session(['toast_error' => 1, 'toast_message' => 'The worksheet cannot be deleted.']);
+            return back();
+        }
+        $worksheet->delete();
+        return back();
     }
 
     public function cancel(CancerWorksheet $worksheet)
@@ -465,7 +471,7 @@ class CancerWorksheetController extends Controller
 
 		$sample = new CancerSample;
 		$fields = \App\Lookup::samples_arrays();
-		$sample->fill($original->only($fields['sample_rerun']));
+		$sample->fill($original->only($fields['hpv_sample_rerun']));
 		$sample->run++;
 		if($sample->parentid == 0) $sample->parentid = $original->id;
 
