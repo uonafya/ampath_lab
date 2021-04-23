@@ -96,6 +96,23 @@ class DashboardController extends Controller
                 ->where('repeatt', '=', 0)->where('lab_id', env('APP_LAB'))
                 ->whereYear($table, $year)
                 ->groupBy('month', 'monthname')->get();
+            } else if ($currentTestingSystem == 'HPV') {
+                $data[$value] = DB::table('cancer_samples')
+                ->selectRaw("MONTH(".$table.") as `month`,MONTHNAME(".$table.") as `monthname`,count(*) as $value")
+                ->when($value, function($query) use ($value){
+                    if($value == 'tests'){
+                        return $query->whereRaw('result between 1 and 7');
+                    } else if($value == 'positives'){
+                        return $query->where('result', 2);
+                    } else if($value == 'negatives'){
+                        return $query->where('result', 1);
+                    }  else if($value == 'rejected'){
+                        return $query->where('receivedstatus', 2);
+                    }                
+                }) 
+                ->where('repeatt', '=', 0)->where('lab_id', env('APP_LAB'))
+                ->whereYear($table, $year)
+                ->groupBy('month', 'monthname')->get();
             } else {
                 $data[$value] = DB::table('samples_view')
                 ->selectRaw("MONTH(".$table.") as `month`,MONTHNAME(".$table.") as `monthname`,count(*) as $value")
