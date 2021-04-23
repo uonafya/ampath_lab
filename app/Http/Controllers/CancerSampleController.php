@@ -343,7 +343,7 @@ class CancerSampleController extends Controller
         $facility_user = false;
         if ($user->facility_id)
             $facility_user = true;
-        
+        $data['param'] = false;
         $data['samples'] = CancerSampleView::with(['facility', 'worksheet', 'user'])
                             ->where('facility_id', $facility)
                             ->orderBy('created_at', 'DESC')->paginate(20);

@@ -66,6 +66,7 @@ class CancerpatientController extends Controller
                                 ->orderBy('created_at', 'DESC')->paginate();
         
         $data['samples'] = $samples;
+        $data['param'] = false;
         
         return view('tables.cancer_samples', $data)->with('pageTitle', 'HPV Search Patient Samples');
     }
