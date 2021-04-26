@@ -150,6 +150,7 @@ class DashboardCacher
         } else if (session('testingSystem') == 'HPV') {
             return array_merge($data, [
                 'hpv_resultsForUpdate' => Cache::get('hpv_resultsForUpdate'),
+                'hpv_pending_testing' => Cache::get('hpv_pending_testing'),
             ]);
         }
     }
@@ -199,6 +200,22 @@ class DashboardCacher
                     ->where(['lab_id' => env('APP_LAB'), 'receivedstatus' => 1, 'input_complete' => 1])
                     ->where('site_entry', '<>', 2)
                     ->where('flag', '1')->get()->first()->total;
+            }
+        } elseif ($testingSystem == 'HPV') {
+            if ($over == true) {
+                $model = CancerSampleView::selectRaw('COUNT(id) as total')
+                                ->whereNull('worksheet_id')->where('lab_id', '=', env('APP_LAB'))
+                                ->whereRaw("datediff(datereceived, datetested) > 14")
+                                ->where('site_entry', '<>', 2)
+                                ->whereNull('result')->get()->first()->total;
+            } else {
+                $model = CancerSampleView::selectRaw('COUNT(id) as total')
+                    ->whereNull('worksheet_id')
+                    ->whereNull('datedispatched')
+                    ->where('datereceived', '>', $date_str)
+                    ->whereRaw("(result is null or result = '0')")
+                    ->where(['lab_id' => env('APP_LAB'), 'receivedstatus' => 1])
+                    ->where('site_entry', '<>', 2)->get()->first()->total;
             }
         } else {
             if ($over == true) {
@@ -638,7 +655,9 @@ class DashboardCacher
             if(Cache::has('hpv_resultsForUpdate')) return true;
 
             $hpvresultsForUpdate = self::resultsAwaitingpdate('HPV');
+            $hpv_pending_testing = self::pendingSamplesAwaitingTesting(true, 'HPV');
             Cache::put('hpv_resultsForUpdate', $hpvresultsForUpdate, $minutes);
+            Cache::put('hpv_pending_testing', $hpv_pending_testing, $minutes);
         }
 
         // $rejectedAllocations = self::rejectedAllocations();

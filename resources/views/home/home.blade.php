@@ -193,7 +193,6 @@
 		                        <a href="{{ url('cd4/worksheet/state/1') }}">Worksheets Awaiting 2nd Review.</a>
 		                    </li>
 		                @elseif(Session('testingSystem') == 'DR')
-
 		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['dr_pending_receipt']) }}">
 		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['dr_pending_receipt']) }}">{{ $widgets['dr_pending_receipt'] }}</span>
 		                        <a href="{{ url('dr_sample/index/11') }}">Samples Pending Approval for testing.</a>
@@ -223,7 +222,21 @@
 		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['dr_pending_approval']) }}">{{ $widgets['dr_pending_approval'] }}</span>
 		                        <a href="{{ url('dr_worksheet') }}">Pending Approval.</a>
 		                    </li>
+		                @elseif(Session('testingSystem') == 'HPV')
+		                	<li class="list-group-item" style="{{ $widgets['get_style']($widgets['hpv_pending_testing']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['hpv_pending_testing']) }}">{{ $widgets['hpv_pending_testing'] }}</span>
+		                        <a href="{{ url('cancersample/index/') }}">Samples Awaiting testing.</a>
+		                    </li>
 
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['hpv_pending_testing']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['hpv_pending_testing']) }}">{{ $widgets['hpv_pending_testing'] }}</span>
+		                        <a href="{{ url('cancerworksheet/create') }}">Worksheets Awaiting Approval.</a>
+		                    </li>
+
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['hpv_pending_testing']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['hpv_pending_testing']) }}">{{ $widgets['hpv_pending_testing'] }}</span>
+		                        <a href="{{ url('cancersample/index/1') }}">Samples for Rerun.</a>
+		                    </li>
 						@endif
 						@if(in_array(Session('testingSystem'), ['EID', 'Viralload']))
 							@if (Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 4  || Auth::user()->user_type_id == 0)
