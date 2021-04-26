@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Cache;
 use DB;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\CancerSample;
+use App\CancerSampleView;
 use App\CovidSample;
 use App\Sample;
 use App\SampleView;
@@ -113,6 +115,7 @@ class HomeController extends Controller
         if (session('testingSystem') == 'Viralload') $testingSystem = 'vl';
         if (session('testingSystem') == 'DR') $testingSystem = 'dr';
         if (session('testingSystem') == 'Covid') $testingSystem = 'covid';
+        if (session('testingSystem') == 'HPV') $testingSystem = 'hpv';
         $chart = [];
         $count = 0;
         $period = strtolower(trim($period));
@@ -326,6 +329,9 @@ class HomeController extends Controller
         } else if (session('testingSystem') == 'Covid') {
             if(Cache::has('coviddayentered'))
                 return true;
+        } else if (session('testingSystem') == 'HPV') {
+            if(Cache::has('hpvdayentered'))
+                return true;
         } else{
             return true;
         }
@@ -336,6 +342,7 @@ class HomeController extends Controller
             if (session('testingSystem') == 'Viralload') $testingSystem = 'vl';
             else if (session('testingSystem') == 'DR') $testingSystem = 'dr';
             else if (session('testingSystem') == 'Covid') $testingSystem = 'covid';
+            else if (session('testingSystem') == 'HPV') $testingSystem = 'hpv';
 
             $lab_id = auth()->user()->lab_id;
 
@@ -363,6 +370,7 @@ class HomeController extends Controller
         else if (session('testingSystem') == 'EID') $model = SampleView::class;
         else if (session('testingSystem') == 'DR') $model = DrSample::class;
         else if (session('testingSystem') == 'Covid') $model = CovidSample::class;
+        else if (session('testingSystem') == 'HPV') $model = CancerSample::class;
         return $model;
     }
 
@@ -375,7 +383,7 @@ class HomeController extends Controller
         return $model::selectRaw("count(id) as total")
             ->where(['lab_id' => env('APP_LAB'), 'repeatt' => 0])
             // ->where('lab_id', '=', env('APP_LAB'))
-            ->when(in_array(session('testingSystem'), ['EID', 'Viralload']), function($query){
+            ->when(in_array(session('testingSystem'), ['EID', 'Viralload', 'HPV']), function($query){
                 return $query->where('site_entry', '<>', 2);
             })
             ->when(true, function($query) use ($period, $param){
@@ -390,7 +398,7 @@ class HomeController extends Controller
 
         return $model::selectRaw("count(id) as total")
             ->where(['lab_id' => auth()->user()->lab_id, 'repeatt' => 0, 'receivedstatus' => 1])
-            ->when(in_array(session('testingSystem'), ['EID', 'Viralload']), function($query){
+            ->when(in_array(session('testingSystem'), ['EID', 'Viralload', 'HPV']), function($query){
                 return $query->where('site_entry', '<>', 2);
             })
             ->when(true, function($query) use ($period, $param){
@@ -406,7 +414,7 @@ class HomeController extends Controller
 
         return $model::selectRaw("count(id) as total")
             ->where(['lab_id' => auth()->user()->lab_id, 'repeatt' => 0, 'receivedstatus' => 2])
-            ->when(in_array(session('testingSystem'), ['EID', 'Viralload']), function($query){
+            ->when(in_array(session('testingSystem'), ['EID', 'Viralload', 'HPV']), function($query){
                 return $query->where('site_entry', '<>', 2);
             })
             ->when(true, function($query) use ($period, $param){
@@ -422,7 +430,7 @@ class HomeController extends Controller
 
         return $model::selectRaw("count(id) as total")
             ->where(['lab_id' => auth()->user()->lab_id, 'repeatt' => 0])
-            ->when(in_array(session('testingSystem'), ['EID', 'Viralload']), function($query){
+            ->when(in_array(session('testingSystem'), ['EID', 'Viralload', 'HPV']), function($query){
                 return $query->where('site_entry', '<>', 2);
             })
             ->when(true, function($query) use ($period, $param){
@@ -438,7 +446,7 @@ class HomeController extends Controller
 
         return $model::selectRaw("count(id) as total")
             ->where(['lab_id' => auth()->user()->lab_id, 'repeatt' => 0])
-            ->when(in_array(session('testingSystem'), ['EID', 'Viralload']), function($query){
+            ->when(in_array(session('testingSystem'), ['EID', 'Viralload', 'HPV']), function($query){
                 return $query->where('site_entry', '<>', 2);
             })
             ->when(true, function($query) use ($period, $param){
