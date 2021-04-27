@@ -118,9 +118,10 @@ class CancerSample extends BaseModel
     public function setTATs()
     {        
         $this->setTAT1();
-        $this->setTAT2();
-        $this->setTAT3();
-        $this->setTAT4();
+        // $this->setTAT2();
+        // $this->setTAT3();
+        // $this->setTAT4();
+        dd($this);
         return $this->save();
     }
 
