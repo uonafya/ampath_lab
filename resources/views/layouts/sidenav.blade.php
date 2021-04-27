@@ -256,7 +256,19 @@
                     <li><a href="{{ url('dr_worksheet/set_sampletype') }}">Create Sequencing Worksheet</a></li>
                     <hr />
                 @endif
-                
+            @elseif (session('testingSystem') == 'HPV')            
+                <li>
+                    <a href="{{ url('cancersample/create') }}">Add HPV Sample</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('cancerworksheet/create') }}">Create C8800 Worksheet(96)</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('cancerworksheet/index/1') }}">Update HPV Results<span class="label label-warning pull-right">{{ $widgets['hpv_resultsForUpdate'] ?? 0 }}</span></a>
+                </li>
+                <hr />
             @endif
             <!-- <li>
                 <a href="#"><span class="nav-label">Results</span><span class="label label-warning pull-right">{{-- $widgets['batchesForDispatch'] --}}<span class="fa arrow"></span></span></a>
@@ -331,7 +343,7 @@
                 </li>
                 <hr />
                 <li>
-                    <a href="{{ url('cancersample/list/1') }}">Update HPV Results</a>
+                    <a href="{{ url('cancersample/list/1') }}">Update HPV Results<span class="label label-warning pull-right">{{ $widgets['hpv_resultsForUpdate'] ?? 0 }}</span></a>
                 </li>
                 <hr />
                 <li>
@@ -555,27 +567,36 @@
             <li><a href="{{ url('user/passwordReset') }}">Change Password</a></li>
             <hr />
         @endif
-        @if(!(in_array(Session('testingSystem'), ['CD4', 'DR', 'Covid']) || in_array(Auth::user()->user_type_id, [5, 8, 10, 11]) ))
+        @if(!(in_array(Session('testingSystem'), ['CD4', 'DR', 'Covid', 'HPV'])))
+            @if(Auth::user()->eidvl_consumption_allowed)
             <li>
-            @if(env('APP_LAB') == 4)
-                @if(Auth::user()->user_type_id != 4)
+            {{-- 
+                @if(env('APP_LAB') == 4)
+                    @if(Auth::user()->eidvl_consumption_allowed)
+                        <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add EID/VL Kit Deliveries</span></a>
+                    @endif
+                @elseif(!(Auth::user()->quarantine_site || Auth::user()->other_lab))
                     <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add EID/VL Kit Deliveries</span></a>
                 @endif
-            @elseif(!(Auth::user()->quarantine_site || Auth::user()->other_lab))
-                <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add EID/VL Kit Deliveries</span></a>
-            @endif
+            --}}
+                <a href="{{ url('kitsdeliveries') }}"> <span class="nav-label">Add EID/VL Kit Deliveries</span></a>                
             </li>
             <hr />
+            @endif
         @elseif(in_array(Session('testingSystem'), ['Covid']))
+            @if(Auth::user()->covid_consumption_allowed)
             <li>
                 <a href="{{ url('covidkits/deliveries') }}"> <span class="nav-label">Add COVID Kit Deliveries</span></a>
             </li>
             <hr />
+            @endif
         @endif
         @if(!in_array(Session('testingSystem'), ['CD4', 'DR', 'Covid']) && in_array(Auth::user()->user_type_id, [0, 1]))
+            @if(Auth::user()->equipment_allowed)
             <li><a href="{{ url('lablogs') }}">Lab Equipments/Performance</a></li>
             <li><a href="{{ url('equipmentbreakdown') }}">Report Equipment Breakdown</a></li>
             <hr />
+            @endif
         @endif
         @if(Auth::user()->user_type_id != 2 || env('APP_LAB') == 1)
             @if(in_array(Auth::user()->user_type_id, [5,10]))
@@ -645,6 +666,10 @@
                     <li><a href="#"><select class="form-control" id="dr_patient_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="dr_nat_id_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="dr_sample_search"></select></a></li>
+                @elseif(Session('testingSystem') == 'HPV')
+                    <li><a href="#"><select class="form-control" id="sidebar_hpv_facility_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="hpv_patient_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="hpv_sample_search"></select></a></li>
                 @endif
             @endif
         @endif

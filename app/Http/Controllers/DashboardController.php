@@ -8,6 +8,8 @@ use App\Sample;
 use App\SampleView;
 use App\Viralsample;
 use App\ViralsampleView;
+use App\CancerSample;
+use App\CancerSampleView;
 use App\CovidSample;
 use App\CovidSampleView;
 use App\Facility;
@@ -94,6 +96,23 @@ class DashboardController extends Controller
                 ->where('repeatt', '=', 0)->where('lab_id', env('APP_LAB'))
                 ->whereYear($table, $year)
                 ->groupBy('month', 'monthname')->get();
+            } else if ($currentTestingSystem == 'HPV') {
+                $data[$value] = DB::table('cancer_samples')
+                ->selectRaw("MONTH(".$table.") as `month`,MONTHNAME(".$table.") as `monthname`,count(*) as $value")
+                ->when($value, function($query) use ($value){
+                    if($value == 'tests'){
+                        return $query->whereRaw('result between 1 and 7');
+                    } else if($value == 'positives'){
+                        return $query->where('result', 2);
+                    } else if($value == 'negatives'){
+                        return $query->where('result', 1);
+                    }  else if($value == 'rejected'){
+                        return $query->where('receivedstatus', 2);
+                    }                
+                }) 
+                ->where('repeatt', '=', 0)->where('lab_id', env('APP_LAB'))
+                ->whereYear($table, $year)
+                ->groupBy('month', 'monthname')->get();
             } else {
                 $data[$value] = DB::table('samples_view')
                 ->selectRaw("MONTH(".$table.") as `month`,MONTHNAME(".$table.") as `monthname`,count(*) as $value")
@@ -163,6 +182,7 @@ class DashboardController extends Controller
         $current = session('testingSystem');
         $table = 'samples_view';
         if($current == 'Covid') $table = 'covid_samples';
+        if($current == 'HPV') $table = 'cancer_samples';
 
         $tests = self::__getsamples_view()->whereRaw("YEAR(datetested) = ".$year)->when($month, function($query)use($month){
                                 return $query->whereMonth('datetested', $month);
@@ -397,6 +417,8 @@ class DashboardController extends Controller
 
         } elseif (session('testingSystem') == 'Covid') {
             $model = DB::table('covid_samples');
+        } elseif (session('testingSystem') == 'HPV') {
+            $model = DB::table('cancer_samples');
         } else {
             $model = DB::table('samples_view');
         }
@@ -412,7 +434,8 @@ class DashboardController extends Controller
             $model = ViralsampleView::where('result', '<>', '')->where('repeatt', '=', 0)->where('flag', '=', 1);
         } elseif (session('testingSystem') == 'Covid') {
             $model = CovidSample::where('id', '>', 0);
-
+        } elseif (session('testingSystem') == 'HPV') {
+            $model = CancerSample::where('id', '>', 0);
         } else {
             $model = SampleView::where('flag', '=', 1);
         }
@@ -428,6 +451,8 @@ class DashboardController extends Controller
             $model = ViralsampleView::where('result', '<>', '');
         } elseif (session('testingSystem') == 'Covid'){
             $model = CovidSample::where('id', '>', 0);
+        } elseif (session('testingSystem') == 'HPV') {
+            $model = CancerSample::where('id', '>', 0);
         } else {
             $model = SampleView::where('flag', '=', 1);
         }
@@ -451,6 +476,10 @@ class DashboardController extends Controller
         } else if (session('testingSystem') == 'Covid') {
             $model = CovidSample::where('id', '>', 0);
             $table = 'covid_samples';
+            $sql = "AVG(tat1) as tat1, AVG(tat2) as tat2, AVG(tat3) as tat3, AVG(tat4) as tat4 ";
+        } else if (session('testingSystem') == 'HPV') {
+            $model = CancerSampleView::where('id', '>', 0);
+            $table = 'cancer_samples_view';
             $sql = "AVG(tat1) as tat1, AVG(tat2) as tat2, AVG(tat3) as tat3, AVG(tat4) as tat4 ";
         }
 

@@ -5,6 +5,8 @@ namespace App;
 use GuzzleHttp\Client;
 
 use App\Common;
+use App\CancerSample;
+use App\CancerSampleView;
 use App\Sample;
 use App\SampleView;
 use App\Lookup;
@@ -13,12 +15,20 @@ use App\Lookup;
 class Misc extends Common
 {
 
-	public static function requeue($worksheet_id, $daterun)
+	public static function requeue($worksheet_id, $daterun, $type='eid')
 	{
-        $samples_array = SampleView::where(['worksheet_id' => $worksheet_id])->where('site_entry', '!=', 2)->get()->pluck('id');
-		$samples = Sample::whereIn('id', $samples_array)->get();
+        if ($type == 'eid') {
+            $samples_array = SampleView::where(['worksheet_id' => $worksheet_id])->where('site_entry', '!=', 2)->get()->pluck('id');
+            $samples = Sample::whereIn('id', $samples_array)->get();
 
-        Sample::whereIn('id', $samples_array)->update(['repeatt' => 0, 'datetested' => $daterun]);
+            Sample::whereIn('id', $samples_array)->update(['repeatt' => 0, 'datetested' => $daterun]);
+        } else {
+            $samples_array = CancerSampleView::where(['worksheet_id' => $worksheet_id])->where('site_entry', '!=', 2)->get()->pluck('id');
+            $samples = CancerSample::whereIn('id', $samples_array)->get();
+
+            CancerSample::whereIn('id', $samples_array)->update(['repeatt' => 0, 'datetested' => $daterun]);
+        }
+        
 
 		// Default value for repeatt is 0
 
@@ -106,6 +116,31 @@ class Misc extends Common
         }
 
         return ['result' => $res, 'interpretation' => $result];
+    }
+
+    public static function  hpv_sample_result($result, $error=null)
+    {
+        $target1 = strtolower($result['target_1']);
+        $target2 = strtolower($result['target_2']);
+        $target3 = strtolower($result['target_3']);
+
+        if(\Str::contains($target1, ['positive']) || \Str::contains($target2, ['positive']) || \Str::contains($target3, ['positive'])){
+            $res = 2;
+        }
+        else if (\Str::contains($target1, ['negative']) || \Str::contains($target2, ['negative']) || \Str::contains($target3, ['negative'])) {
+            $res = 1;
+        }
+        else if(\Str::is($target1, 'valid') && \Str::is($target2, 'valid') && \Str::is($target3, 'valid')){
+            $res = 6;
+        }
+        else if(\Str::is($target1, 'invalid') && \Str::is($target2, 'invalid') && \Str::is($target3, 'invalid')){
+            $res = 3;
+        }
+        else{
+            return ['result' => 3, 'interpretation' => $error];
+        }
+
+        return ['result' => $res, 'interpretation' => $result['overall_result'] ?? NULL, 'target_1' => $target1, 'target_2' => $target2, 'target_3' => $target3];
     }
 
 	public static function save_repeat($sample_id)

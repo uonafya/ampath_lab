@@ -7,6 +7,7 @@ use Illuminate\View\View;
 use DB;
 
 use App\Batch;
+use App\CancerWorksheet;
 use App\Viralbatch;
 use App\Facility;
 use App\FacilityContact;
@@ -146,6 +147,11 @@ class DashboardCacher
                 'dr_requires_action' => Cache::get('dr_requires_action'),
                 'dr_pending_approval' => Cache::get('dr_pending_approval'),
             ]);
+        } else if (session('testingSystem') == 'HPV') {
+            return array_merge($data, [
+                'hpv_resultsForUpdate' => Cache::get('hpv_resultsForUpdate'),
+                'hpv_pending_testing' => Cache::get('hpv_pending_testing'),
+            ]);
         }
     }
 
@@ -194,6 +200,22 @@ class DashboardCacher
                     ->where(['lab_id' => env('APP_LAB'), 'receivedstatus' => 1, 'input_complete' => 1])
                     ->where('site_entry', '<>', 2)
                     ->where('flag', '1')->get()->first()->total;
+            }
+        } elseif ($testingSystem == 'HPV') {
+            if ($over == true) {
+                $model = CancerSampleView::selectRaw('COUNT(id) as total')
+                                ->whereNull('worksheet_id')->where('lab_id', '=', env('APP_LAB'))
+                                ->whereRaw("datediff(datereceived, datetested) > 14")
+                                ->where('site_entry', '<>', 2)
+                                ->whereNull('result')->get()->first()->total;
+            } else {
+                $model = CancerSampleView::selectRaw('COUNT(id) as total')
+                    ->whereNull('worksheet_id')
+                    ->whereNull('datedispatched')
+                    ->where('datereceived', '>', $date_str)
+                    ->whereRaw("(result is null or result = '0')")
+                    ->where(['lab_id' => env('APP_LAB'), 'receivedstatus' => 1])
+                    ->where('site_entry', '<>', 2)->get()->first()->total;
             }
         } else {
             if ($over == true) {
@@ -380,6 +402,8 @@ class DashboardCacher
             $model = Worksheet::with(['creator']);
         } else if ($testingSystem == 'Covid') {
             $model = CovidWorksheet::with(['creator']);
+        } else if ($testingSystem = 'HPV') {
+            $model = CancerWorksheet::with(['creator']);
         } else {
             $model = Cd4Worksheet::with(['creator']);
         }
@@ -626,6 +650,14 @@ class DashboardCacher
             Cache::put('covid_pending_receipt', $pending_receipt, $minutes);
             Cache::put('covid_pending_testing', $pending_testing, $minutes);
             Cache::put('covid_pending_results_update', $worksheets, $minutes);
+        }
+        else if(session('testingSystem') == 'HPV'){
+            if(Cache::has('hpv_resultsForUpdate')) return true;
+
+            $hpvresultsForUpdate = self::resultsAwaitingpdate('HPV');
+            $hpv_pending_testing = self::pendingSamplesAwaitingTesting(true, 'HPV');
+            Cache::put('hpv_resultsForUpdate', $hpvresultsForUpdate, $minutes);
+            Cache::put('hpv_pending_testing', $hpv_pending_testing, $minutes);
         }
 
         // $rejectedAllocations = self::rejectedAllocations();

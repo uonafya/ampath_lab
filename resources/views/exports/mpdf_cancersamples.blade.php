@@ -81,20 +81,53 @@ p.breakhere {page-break-before: always}
 			</tr>
 
 			<tr>
-				<td colspan="3" class="style4 style1 comment"><strong>CCC Number</strong></td>
-				<td colspan="4"> <span class="style5">{{ $sample->patient->patient }}</span></td>
+				<td colspan="3" class="style4 style1 comment"><strong>Patient Number:</strong></td>
+
+				<td colspan="1" class="style4 style1 comment">{{ $sample->patient->patient }}</td>
+				<td colspan="1" class="style4 style1 comment"><strong>HIV Status:</strong></td>
+				<td colspan="2" class="style4 style1 comment">
+					@foreach($hivstatuses as $status)
+                        @if($sample->patient->hiv_status == $status->id)
+                        	{{ $status->name }}
+                        @endif
+                    @endforeach
+				</td>
+			</tr>
+			
+
+			<tr>
+				<td colspan="3" class="style4 style1 comment"><strong>Patient Name:</strong></td>
+
+				<td colspan="1" class="style4 style1 comment">{{ $sample->patient->patient_name }}</td>
+				<td colspan="1" class="style4 style1 comment"><strong>Sample Type:</strong></td>
+				<td colspan="2" class="style4 style1 comment">
+					@foreach($sampletypes as $sampletype)
+                        @if($sample->sample_type == $sampletype->id)
+                        	{{ $sampletype->name }}
+                        @endif
+                    @endforeach
+				</td>
 			</tr>
 
 			<tr>
-				<td colspan="3" class="style4 style1 comment"><strong> DOB & Age (Months)</strong></td>
-				<td colspan="4"  ><span class="style5">{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }})</span></td>
+				<td colspan="3" class="style4 style1 comment"><strong>DOB & Age (Months):</strong></td>
+
+				<td colspan="1" class="style4 style1 comment">{{ $sample->patient->my_date_format('dob') }} ({{ $sample->age }})</td>
+				<td colspan="1" class="style4 style1 comment"><strong>Justification:</strong></td>
+				<td colspan="2" class="style4 style1 comment">
+					@foreach($justifications as $justification)
+                        @if($sample->justification == $justification->id)
+                        	{{ $justification->name }}
+                        @endif
+                    @endforeach
+				</td>
 			</tr>
 
 			<tr>
-				<td colspan="2" class="style4 style1 comment"><strong> Gender</strong></td>
-				<td colspan="1"  ><span class="style5"> {{ $sample->patient->gender }} </span></td>
+				{{-- <td colspan="2" class="style4 style1 comment"><strong> Gender</strong></td>
+				<td colspan="1"  ><span class="style5"> {{ $sample->patient->gender }} </span></td> --}}
 				<td class="style4 style1 comment" colspan="3" ><strong> Entry Point	</strong></td>
-				<td colspan="1" class="comment">
+				<td colspan="4" class="comment">
 					<span class="style5">
                         {{ $sample->patient->entry_point }}
 					</span>
@@ -186,11 +219,11 @@ p.breakhere {page-break-before: always}
 			</tr>
 
 		</table>
-
+	{{--
 		<span class="style8" > 
 			<b> To Access & Download your current and past results go to : <u> https://eiddash.nascop.org</u> </b>
 		</span>
-
+--}}
 		{{--@if($count % 2 == 0)
 			<p class="breakhere"></p>
 			<pagebreak sheet-size='A4'>

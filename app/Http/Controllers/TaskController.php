@@ -81,7 +81,6 @@ class TaskController extends Controller
                                         ->where('lab_id', '=', env('APP_LAB'))->count();
             $covidconsumption = new CovidConsumption;
             $data['time'] = $covidconsumption->getMissingConsumptions();
-            // dd($data);
         }
         
         $data['currentmonth'] = date('m');

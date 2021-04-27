@@ -142,7 +142,8 @@ class CovidConsumptionController extends Controller
         if (sizeof($weeks) == 0) {
             if (auth()->user()->user_type_id != 12)
                 $this->reportRelease();
-            Synch::synchCovidConsumption();
+            if (env('APP_SECURE_URL'))
+                Synch::synchCovidConsumption();
         }
         if (auth()->user()->user_type_id == 12)
             return redirect('covidkits/pending');   

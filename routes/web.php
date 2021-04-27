@@ -177,12 +177,44 @@ Route::middleware(['auth'])->group(function(){
 
 
 		Route::prefix('cancersample')->name('cancersample.')->group(function () {
+			Route::get('index/{param?}', 'CancerSampleController@index')->name('list');
 			Route::get('{sample}/edit_result', 'CancerSampleController@edit_result');
 			Route::put('{sample}/edit_result', 'CancerSampleController@save_result');
 			Route::get('list/{param?}', 'CancerSampleController@index');
 			Route::get('{sample}/print', 'CancerSampleController@print');
+			Route::get('facility/{facility}', 'CancerSampleController@facility')->name('facility');
+			Route::post('search', 'CancerSampleController@search')->name('search');
 		});
 		Route::resource('cancersample', 'CancerSampleController');
+
+		Route::prefix('cancerpatient')->name('cancerpatient.')->group(function() {
+			Route::post('search/', 'CancerpatientController@search');
+			// Route::post('search', 'SampleController@search');
+			// Route::get('search/{patient?}', 'CancerpatientController@search_result');
+		});
+		Route::resource('cancerpatient', 'CancerpatientController');
+
+		Route::prefix('cancerworksheet')->name('cancerworksheet.')->group(function () {
+			Route::get('index/{state?}/{date_start?}/{date_end?}', 'CancerWorksheetController@index')->name('list');
+			Route::get('find/{worksheet}', 'CancerWorksheetController@find')->name('find');
+			Route::get('print/{worksheet}', 'CancerWorksheetController@print')->name('print');
+			Route::get('labels/{worksheet}', 'CancerWorksheetController@labels')->name('labels');
+			Route::get('cancel/{worksheet}', 'CancerWorksheetController@cancel')->name('cancel');
+			Route::get('rerun_worksheet/{worksheet}', 'CancerWorksheetController@rerun_worksheet')->name('rerun_worksheet');
+			Route::get('convert/{worksheet}/{machine_type}', 'CancerWorksheetController@convert_worksheet')->name('convert');
+
+			Route::group(['middleware' => ['only_utype:1']], function () {
+				Route::get('cancel_upload/{worksheet}', 'CancerWorksheetController@cancel_upload')->name('cancel_upload');
+				Route::get('reverse_upload/{worksheet}', 'CancerWorksheetController@reverse_upload')->name('reverse_upload');
+				Route::get('upload/{worksheet}', 'CancerWorksheetController@upload')->name('upload');
+				Route::put('upload/{worksheet}', 'CancerWorksheetController@save_results')->name('save_results');
+				Route::get('approve/{worksheet}', 'CancerWorksheetController@approve_results')->name('approve_results');
+				Route::put('approve/{worksheet}', 'CancerWorksheetController@approve')->name('approve');
+			});
+
+			Route::get('print/{worksheet}', 'CancerWorksheetController@print')->name('print');
+		});
+		Route::resource('cancerworksheet', 'CancerWorksheetController');
 
 		Route::prefix('nat_sample')->name('covid_sample.')->group(function () {
 			Route::get('index/{type?}/{date_start?}/{date_end?}/{facility_id?}/{quarantine_site_id?}/{lab_id?}', 'NatCovidSampleController@index');

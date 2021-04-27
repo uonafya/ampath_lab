@@ -419,6 +419,8 @@ class Lookup
             'sample_except' => ['_token', 'patient_name', 'submit_type', 'facility_id', 'sex', 'sample_months', 'sample_weeks', 'entry_point', 'caregiver_phone', 'hiv_status', 'patient', 'new_patient', 'datereceived', 'datedispatchedfromfacility', 'dob', 'ccc_no', 'highpriority'],
 
             'sample_api' => ['comments', 'labcomment', 'datecollected', 'spots', 'patient_id', 'rejectedreason', 'receivedstatus', 'mother_prophylaxis', 'mother_age', 'mother_last_result', 'feeding', 'regimen', 'redraw', 'pcrtype', 'provider_identifier', 'amrs_location', 'sample_type', 'order_no', 'datetested', 'result'],
+
+            'hpv_sample_rerun' => ['comments', 'labcomment', 'datecollected', 'user_id', 'patient_id', 'rejectedreason', 'receivedstatus', 'justification', 'facility_id', 'mother_last_result', 'feeding', 'regimen', 'redraw', 'datereceived', 'site_entry', 'sample_type', 'lab_id', 'patient_id', 'run', 'parentid', 'age'],
         ]; 
     }
 

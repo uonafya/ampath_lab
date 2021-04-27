@@ -23,11 +23,14 @@
                                     <th>Lab #</th>
                                     <th>Facility</th>
                                     <th>Patient #</th>
+                                    <th>Patient Name</th>
                                     <th>Age </th>
                                     <th>Gender</th>
                                     <th>Date Drawn</th>
                                     <th>Received Status</th>
+                                    <th>Run</th>
                                     <th>Date Tested</th>
+                                    <th>Worksheet</th>
                                     <th>Date Dispatched</th>
                                     <th>Result</th>
                                     <th>Action</th>
@@ -39,11 +42,14 @@
                                         <td> {{ $sample->id }} </td>
                                         <td> {{ $sample->facility->name ?? '' }} </td>
                                         <td> {{ $sample->patient }} </td>
+                                        <td> {{ $sample->patient_name }} </td>
                                         <td> {{ $sample->age }} </td>
                                         <td> {{ $sample->gender ?? '' }} </td>
                                         <td> {{ $sample->my_date_format('datecollected') }} </td>
                                         <td> {{ $sample->received }} </td>
+                                        <td> {{ $sample->run }} </td>
                                         <td> {{ $sample->my_date_format('datetested') }} </td>
+                                        <td> {{ $sample->worksheet->id ?? '' }} </td>
                                         <td> {{ $sample->my_date_format('datedispatched') }} </td>
                                         <td> 
                                             {{ $sample->resultname ?? '' }}
@@ -59,9 +65,10 @@
 
                                             @if(!$sample->result && $sample->receivedstatus == 1)
                                                 <a href="{{ url('cancersample/' . $sample->id . '/edit/') }}" target="_blank">Edit</a> |
+                                                @if(Auth::user()->user_type_id == 5)
                                                 <a href="{{ url('cancersample/' . $sample->id . '/edit_result/') }}" target="_blank">Edit Result</a> |
-
-                                                @if(!$sample->result)
+                                                @endif
+                                                @if(!($sample->result || $param))
                                                     <form action="{{ url('cancersample/' . $sample->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete the following sample?');">
                                                         @csrf
                                                         @method('DELETE')
@@ -69,7 +76,9 @@
                                                     </form>
                                                 @endif
                                             @else
+                                                @if(!$param)
                                                 <a href="{{ url('cancersample/' . $sample->id . '/edit/') }}" target="_blank">Edit</a> |
+                                                @endif
                                                 <a href="{{ url('cancersample/' . $sample->id . '/print/') }}" target="_blank">Print</a>
                                             @endif
                                         </td>

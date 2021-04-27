@@ -190,6 +190,8 @@ class BaseModel extends Model
         $a = explode('\\', get_class($this));
         $c = end($a);
         $c =  snake_case($c);
+        if($c == "cancer_worksheet")
+            $c = "cancerworksheet";
 
         return str_replace('_view', '', $c);
     }

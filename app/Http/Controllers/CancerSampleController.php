@@ -6,6 +6,7 @@ use App\CancerPatient;
 use App\CancerSample;
 use App\CancerSampleView;
 use App\Lookup;
+use App\ViewFacility;
 use DB;
 use Illuminate\Http\Request;
 
@@ -19,14 +20,29 @@ class CancerSampleController extends Controller
     public function index($param=null)
     {
         $user = auth()->user();
-        $samples = CancerSampleView::with(['facility'])->where('facility_id', $user->facility_id)
-                                ->orWhere('user_id', $user->id)
-                                ->when($param, function($query) use ($param){
-                                    return $query->whereNull('result')->where('receivedstatus', 1);
-                                })->paginate();
+        $facility_user = false;
+        if ($user->facility_id)
+            $facility_user = true;
+        $samples = CancerSampleView::with(['facility', 'worksheet', 'user' => function($query) use ($facility_user) {
+                                    $query->when(!$facility_user, function($query) {
+                                            return $query->whereNotIn('users.user_type_id', [5]);
+                                    });
+                                }])
+                                ->when($facility_user, function($query) use ($user) {
+                                    return $query->where('facility_id', $user->facility_id)
+                                                ->orWhere('user_id', $user->id);
+                                })
+                                // ->when($param, function($query) use ($param){
+                                //     return $query->whereNull('result')->where('receivedstatus', 1);
+                                // })
+                                ->when($param, function($query){
+                                    return $query->whereNotNull('datedispatched')->orderBy('datedispatched');
+                                })->orderBy('created_at', 'DESC')->paginate();
+        
         $data['samples'] = $samples;
-        // dd($samples);
-        return view('tables.cancer_samples', $data)->with('pageTitle', 'Eid POC Samples');
+        $data['param'] = $param;
+        
+        return view('tables.cancer_samples', $data)->with('pageTitle', 'HPV Samples');
     }
 
     /**
@@ -59,10 +75,11 @@ class CancerSampleController extends Controller
                 $cancerpatient = new CancerPatient;
 
             $data = $request->only(['facility_id', 'patient', 'patient_name',
-                                'dob', 'sex', 'entry_point', 'hiv_status']);
+                                'dob', 'entry_point', 'hiv_status']);
             if(!$data['dob'])
                 $data['dob'] = Lookup::calculate_dob($request->input('datecollected'), $request->input('age'), 0);
             $cancerpatient->fill($data);
+            $cancerpatient->sex = 2;
             $cancerpatient->patient = $patient_string;
             $cancerpatient->pre_update();
 
@@ -74,10 +91,17 @@ class CancerSampleController extends Controller
             
             $cancersample = new CancerSample;
             $cancersample->fill($data);
-            $cancersample->sample_type = $cancersample->sampletype;
-            unset($cancersample->sampletype);
+            $cancersample->sample_type = $data['sampletype'];
+            if (auth()->user()->user_type_id != 5){
+                $cancersample->site_entry = 0;
+                $cancersample->lab_id = env('APP_LAB');
+            }
+            
             $cancersample->patient_id = $cancerpatient->id;
             $cancersample->user_id = $user->id;
+            if ($cancersample->receivedstatus == 2)
+                $cancersample->datedispatched = date('Y-m-d');
+            
             $cancersample->save();
 
             DB::commit();
@@ -118,7 +142,17 @@ class CancerSampleController extends Controller
      */
     public function show($id)
     {
-        //
+        $sample = CancerSampleView::find($id);
+        $s = CancerSample::find($id);
+        $samples = CancerSample::runs($s)->get();
+        $patient = $s->patient;
+
+        $data = Lookup::cancer_lookups();
+        $data['sample'] = $sample;
+        $data['samples'] = $samples;
+        $data['patient'] = $patient;
+        // dd($data);
+        return view('tables.cancersample_search', $data)->with('pageTitle', 'Cancer Sample Summary');
     }
 
     /**
@@ -131,7 +165,7 @@ class CancerSampleController extends Controller
     {
         $data = Lookup::cancersample_form();
         $data['sample'] = CancerSample::find($id);
-        return view('forms.cancersamples', $data)->with('pageTitle', 'Add Cervical Cancer Sample');
+        return view('forms.cancersamples', $data)->with('pageTitle', 'Edit Cervical Cancer Sample');
     }
 
     /**
@@ -210,9 +244,19 @@ class CancerSampleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($sample)
     {
-        //
+        $sample = CancerSample::find($sample);
+        // dd($sample);
+        if($sample->result == NULL && $sample->run < 2 && $sample->worksheet_id == NULL && !$sample->has_rerun){
+            $sample->delete();
+            session(['toast_message' => 'The sample has been deleted.']);
+        }  
+        else{
+            session(['toast_message' => 'The sample has not been deleted.']);
+            session(['toast_error' => 1]);
+        }      
+        return back();
     }
 
     /**
@@ -226,7 +270,114 @@ class CancerSampleController extends Controller
         $data = Lookup::cancer_lookups();
         $sample->load(['patient', 'facility']);
         $data['samples'] = [$sample];
-
+        // dd($data);
         return view('exports.mpdf_cancersamples', $data)->with('pageTitle', 'Individual Samples');
+    }
+
+    public function sample_dispatch()
+    {
+        return $this->get_rows();
+    }
+
+    public function get_rows($sample_list=NULL)
+    {
+        ini_set('memory_limit', '-1');
+        
+        $batches = CancerSampleView::select('batches.*', 'facility_contacts.email', 'facilitys.name')
+            ->leftJoin('facilitys', 'facilitys.id', '=', 'batches.facility_id')
+            ->leftJoin('facility_contacts', 'facilitys.id', '=', 'facility_contacts.facility_id')
+            ->when($sample_list, function($query) use ($batch_list){
+                return $query->whereIn('batches.id', $batch_list);
+            })
+            ->where('batch_complete', 2)
+            ->where('lab_id', env('APP_LAB'))
+            ->when((env('APP_LAB') == 9), function($query){
+                return $query->limit(10);
+            })            
+            ->get();
+
+        $batch_ids = $batches->pluck(['id'])->toArray();
+
+        $subtotals = Misc::get_subtotals($batch_ids);
+        $rejected = Misc::get_rejected($batch_ids);
+        $date_modified = Misc::get_maxdatemodified($batch_ids);
+        $date_tested = Misc::get_maxdatetested($batch_ids);
+
+        $batches->transform(function($batch, $key) use ($subtotals, $rejected, $date_modified, $date_tested){
+            $neg = $subtotals->where('batch_id', $batch->id)->where('result', 1)->first()->totals ?? 0;
+            $pos = $subtotals->where('batch_id', $batch->id)->where('result', 2)->first()->totals ?? 0;
+            $failed = $subtotals->where('batch_id', $batch->id)->where('result', 3)->first()->totals ?? 0;
+            $redraw = $subtotals->where('batch_id', $batch->id)->where('result', 5)->first()->totals ?? 0;
+            $noresult = $subtotals->where('batch_id', $batch->id)->where('result', 0)->first()->totals ?? 0;
+
+            $rej = $rejected->where('batch_id', $batch->id)->first()->totals ?? 0;
+            $total = $neg + $pos + $failed + $redraw + $noresult + $rej;
+
+            $dm = $date_modified->where('batch_id', $batch->id)->first()->mydate ?? '';
+            $dt = $date_tested->where('batch_id', $batch->id)->first()->mydate ?? '';
+
+            $batch->negatives = $neg;
+            $batch->positives = $pos;
+            $batch->failed = $failed;
+            $batch->redraw = $redraw;
+            $batch->noresult = $noresult;
+            $batch->rejected = $rej;
+            $batch->total = $total;
+            $batch->date_modified = $dm;
+            $batch->date_tested = $dt;
+            return $batch;
+        });
+
+        // dd($batches);
+
+        return view('tables.dispatch', ['batches' => $batches, 'pending' => $batches->count(), 'batch_list' => $batch_list, 'pageTitle' => 'Batch Dispatch']);
+    }
+
+    public function facility($facility)
+    {
+        ini_set("memory_limit", "-1");
+        // $data = Lookup::cd4_lookups();
+        // $data['samples'] = Cd4Sample::where('facility_id', '=', $facility)->paginate(20);
+        // $facility = ViewFacility::find($facility);
+        // $data = (object) $data;
+        
+        // return view('tables.cd4-samples', compact('data'))->with('pageTitle', $facility->name.' Samples');
+        $user = auth()->user();
+        $facility_user = false;
+        if ($user->facility_id)
+            $facility_user = true;
+        $data['param'] = false;
+        $data['samples'] = CancerSampleView::with(['facility', 'worksheet', 'user'])
+                            ->where('facility_id', $facility)
+                            ->orderBy('created_at', 'DESC')->paginate(20);
+                            
+        return view('tables.cancer_samples', $data)->with('pageTitle', 'HPV Facility Search Samples');
+    }
+
+    public function search(Request $request)
+    {
+        $user = auth()->user();
+        $search = $request->input('search');
+        $facility_user = false;
+
+        if($user->user_type_id == 5) $facility_user=true;
+        // $string = "(batches.facility_id='{$user->facility_id}' OR batches.user_id='{$user->id}')";
+        $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
+
+        // $samples = Sample::select('samples.id')
+        //     ->whereRaw("samples.id like '" . $search . "%'")
+        //     ->when($facility_user, function($query) use ($string){
+        //         return $query->join('batches', 'samples.batch_id', '=', 'batches.id')->whereRaw($string);
+        //     })
+        //     ->paginate(10);
+        $samples = CancerSampleView::select('id')
+            ->whereRaw("id like '" . $search . "%'")
+            ->when($facility_user, function($query) use ($string){
+                return $query->whereRaw($string);
+            })
+            ->paginate(10);
+
+        $samples->setPath(url()->current());
+        return $samples;
     }
 }
