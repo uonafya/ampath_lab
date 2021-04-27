@@ -38,14 +38,14 @@
                         <label class="col-sm-4 control-label"><center>Consumed in the month</center></label>
                         <div class="col-sm-8">
                             <label class="col-sm-4 control-label badge badge-info">
-                                <center>{{ date("F", mktime(null, null, null, $period->month)) }}, {{ $period->year }}</center>
+                                <center>{{ date("F", mktime(0, 0, 0, $period->month, 1, Date('Y'))) }}, {{ $period->year }}</center>
                             </label>
                         </div>
                     </div>
                     @foreach($machines as $machine)
                         <input type="hidden" name="machine[]" value="{{ $machine->id }}">
                         @foreach($types as $type)
-                            `<div class="alert alert-danger">
+                            <div class="alert alert-danger">
                                 <center><i class="fa fa-bolt"></i> Please enter {{ $machine->machine }} {{ $type->name }} values below. <strong>(Tests:{{ number_format($machine->tests_done($type->name, $period->year, $period->month)) }})</strong></center>
                                 <input type="hidden" name="tests[{{$machine->machine}}][{{$type->name}}]" value="{{ $machine->tests_done($type->name, $period->year, $period->month) }}">
                             </div>

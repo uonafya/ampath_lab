@@ -113,9 +113,9 @@ class KitsController extends Controller
                 return $badge;
             },
             'testtypes' => TestType::get(),
-            'platforms' => Machine::get()
+            'platforms' => Machine::whereNotIn('id', [0])->get()
         ];
-        // dd($data);
+        
         return view('reports.kitsreport', compact('data'))->with('pageTitle', 'Kits Reports');
     }
 

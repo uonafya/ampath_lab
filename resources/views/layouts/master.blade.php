@@ -93,7 +93,7 @@
                             {{ $pageTitle ?? '' }}
                         </h2>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-5">
                         <div class="col-md-8" style="padding-top: 8px;">
                             <center>
                                 <p style="margin-top:6px;font-size: 14px;display: inline;">
@@ -114,6 +114,13 @@
                                     Switch to DR
                                 </button>
                             </div>
+                            @if(session('testingSystem') != 'HPV' && Auth()->user()->user_type_id < 2)
+                            <div class="col-md-1">
+                                <button class="btn btn-success" id="hpvswitch" style="margin-top:.5em;">
+                                    Switch to HPV
+                                </button>
+                            </div>
+                            @endif
                             @endif
                         @endif
                     @endif
@@ -201,6 +208,7 @@
                 else if (current == 'Viralload'){ test = 'EID'; text = '<strong>VIRAL LOAD</strong>'; } 
             @endif
             else if (current == 'CD4'){ test = 'EID'; text = '<strong>CD4</strong>'; }
+            else if (current == 'HPV'){ test = 'EID'; text = '<strong>Cervical Cancer</strong>'; }
 
             /*if(current == 'DR'){
                 $("#drswitch").hide();
@@ -228,6 +236,12 @@
 
         $("#cd4Switch").click(function(){
             $.get("<?= url('system_switch/CD4'); ?>", function(data){
+                location.replace("<?= url('home'); ?>");
+            });
+        });
+
+        $("#hpvswitch").click(function(){
+            $.get("<?= url('system_switch/HPV'); ?>", function(data){
                 location.replace("<?= url('home'); ?>");
             });
         });

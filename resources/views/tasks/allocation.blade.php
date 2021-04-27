@@ -30,7 +30,7 @@
                 
                 <div class="panel-body" style="padding: 20px;box-shadow: none; border-radius: 0px;">
                     <div class="alert alert-warning spacing bottom" id="choice">
-                        <strong><a href="{{ url('performancelog') }}">Do you wish to perform the kits allocation for this month ({{ date("F", mktime(null, null, null, $currentmonth)) }}, {{ $year }})</a></strong>
+                        <strong><a href="{{ url('performancelog') }}">Do you wish to perform the kits allocation for this month ({{ date("F", mktime(0, 0, 0, $currentmonth, 1, Date('Y'))) }}, {{ $year }})</a></strong>
                         <button class="btn btn-success btn-lg" id="yesBtn">YES</button>
                         <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#noAllocationModal">NO</button>
 
@@ -40,7 +40,7 @@
                                     <div class="color-line"></div>
                                     <div class="modal-header">
                                         <center>
-                                            <h4 class="modal-title">Dismiss Allocation for {{ date("F", mktime(null, null, null, $currentmonth)) }}, {{ $year }}</h4>
+                                            <h4 class="modal-title">Dismiss Allocation for {{ date("F", mktime(0, 0, 0, $currentmonth, 1, Date('Y'))) }}, {{ $year }}</h4>
                                             <small class="font-bold">Think twice before you leap.</small>
                                         </center>
                                     </div>

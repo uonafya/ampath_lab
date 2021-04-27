@@ -38,7 +38,8 @@
 		set_select_facility("sidebar_facility_search", "{{ url('/facility/search') }}", 3, "Search for facility batches", "{{ url('/batch/facility') }}");
 		set_select_facility("sidebar_viralfacility_search", "{{ url('/facility/search') }}", 3, "Search for facility batches", "{{ url('/viralbatch/facility') }}");
 		set_select_facility("sidebar_dr_facility_search", "{{ url('/facility/search') }}", 3, "Search for facility samples", "{{ url('/dr_sample/facility') }}");
-		set_select_facility("sidebar_cd4facility_search", "{{ url('/facility/search') }}", 3, "Search Site Samples", "{{ url('/cd4/sample/facility') }}")
+		set_select_facility("sidebar_cd4facility_search", "{{ url('/facility/search') }}", 3, "Search Site Samples", "{{ url('/cd4/sample/facility') }}");
+		set_select_facility("sidebar_hpv_facility_search", "{{ url('/facility/search') }}", 3, "Search for facility samples", "{{ url('/cancersample/facility') }}");
 
 		set_select("sidebar_labID_search", "{{ url('sample/search') }}", 1, "Search by EID Lab ID");
 		set_select("sidebar_virallabID_search", "{{ url('viralsample/search') }}", 1, "Search by VL Lab ID");
@@ -53,7 +54,9 @@
 		set_select_patient("dr_nat_id_search", "{{ url('/viralpatient/nat_id') }}", 2, "Search for DR nat ID", "{{ url('/viralpatient/dr') }}");
 		set_select("dr_sample_search", "{{ url('/dr_sample/search') }}", 1, "Search for DR ID");
 
-	
+		set_select_patient("hpv_patient_search", "{{ url('/cancerpatient/search') }}", 2, "Search for HPV patient", "{{ url('/cancerpatient') }}");
+		set_select("hpv_sample_search", "{{ url('/cancersample/search') }}", 1, "Search for HPV Lab ID");
+
 	});
 	
 	function set_select(div_name, url, minimum_length, placeholder, worksheet=false, cd4=false) {

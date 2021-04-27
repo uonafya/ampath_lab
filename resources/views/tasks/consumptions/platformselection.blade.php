@@ -32,7 +32,7 @@
                             <label class="col-sm-4 control-label"><center>Received for the month</center></label>
                             <div class="col-sm-8">
                                 <label class="col-sm-4 control-label">
-                                    {{ date("F", mktime(null, null, null, $period->month)) }}, {{ $period->year }}
+                                    {{ date("F", mktime(0, 0, 0, $period->month, 1, Date('Y'))) }}, {{ $period->year }}
                                 </label>
                             </div>
                         </div>

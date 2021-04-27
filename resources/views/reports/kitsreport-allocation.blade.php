@@ -27,7 +27,7 @@
                     @endphp
                     <td> {{ $key + 1 }} </td>
                     <td> 
-                        {{ date("F", mktime(null, null, null, $allocation->month)) }}, 
+                        {{ date("F", mktime(0, 0, 0, $allocation->month, 1, Date('Y'))) }}, 
                         {{ $allocation->year }}
                     </td>
                     <td>{{ strtoupper($type) }}</td>

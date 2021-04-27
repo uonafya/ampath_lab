@@ -48,7 +48,7 @@
                         	<p style="margin-left: 3em;">
                                 <font color="#CCCCCC">
                                 @foreach($deliveries as $delivery)
-                                    RECEIVED IN {{ date("F", mktime(null, null, null, $delivery->month)) }}, {{ $delivery->year }}<br />
+                                    RECEIVED IN {{ date("F", mktime(0, 0, 0, $delivery->month, 1, Date('Y'))) }}, {{ $delivery->year }}<br />
                                 @endforeach
                                 </font>
                             </p>
@@ -63,7 +63,7 @@
                                 <p style="margin-left: 3em;">
                                     <font color="#CCCCCC">
                                     @foreach($consumptions as $consumption)
-                                        COSUMPTIONS IN {{ date("F", mktime(null, null, null, $consumption->month)) }}, {{ $consumption->year }}<br />
+                                        COSUMPTIONS IN {{ date("F", mktime(0, 0, 0, $consumption->month, 1, Date('Y'))) }}, {{ $consumption->year }}<br />
                                     @endforeach
                                     </font>
                                 </p>
@@ -75,16 +75,17 @@
                         @endif
                     @endif
                     <!-- Kit and kits consumption -->
-
+                @endif
+                @if($allowedEquipmentUtilization)
                     <!-- Lab performance Report -->
                     @if ($performance == 0)
                         <div class="alert alert-warning spacing bottom">
-                        	<strong><a href="{{ url('performancelog') }}">Click to Submit Monthly Lab Performance Log ( Tracker )</a></strong>
-                        	<p style="margin-left: 3em;"><font color="#CCCCCC">Log on any Back logs and Reasons for the previous month</font></p>
+                            <strong><a href="{{ url('performancelog') }}">Click to Submit Monthly Lab Performance Log ( Tracker )</a></strong>
+                            <p style="margin-left: 3em;"><font color="#CCCCCC">Log on any Back logs and Reasons for the previous month</font></p>
                         </div>
                     @else 
                         <div class="alert alert-success spacing bottom">
-                            <strong><a href="#">{{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ $prevyear }} Lab Performance Log ( Tracker ) Submitted</a></strong>
+                            <strong><a href="#">{{ date("F", mktime(0, 0, 0, $prevmonth, 1, Date('Y'))) }}, {{ $prevyear }} Lab Performance Log ( Tracker ) Submitted</a></strong>
                         </div>
                     @endif
                     <!-- Lab performance Report -->
@@ -97,7 +98,7 @@
                         </div>
                     @else
                         <div class="alert alert-success spacing bottom">
-                            <strong><a href="#">{{ date("F", mktime(null, null, null, $prevmonth)) }}, {{ $prevyear }} Lab Monthly Equipment Log ( Tracker ) Submitted</a></strong>
+                            <strong><a href="#">{{ date("F", mktime(0, 0, 0, $prevmonth, 1, Date('Y'))) }}, {{ $prevyear }} Lab Monthly Equipment Log ( Tracker ) Submitted</a></strong>
                         </div>
                     @endif
                     <!-- Lab equipment Report -->

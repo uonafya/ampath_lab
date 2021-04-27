@@ -277,6 +277,7 @@
                                 @endif
                                 <!-- <label> <input type="radio" name="types" value="worksheetsrun" class="i-checks" required> Worksheets Run </label> -->
                                 <label> <input type="radio" name="types" value="rejected" required> Rejected Samples </label>
+                                @if(Session('testingSystem') != 'HPV')
                                 <label> <input type="radio" name="types" value="cns" required> CNS </label>
                                 @if(Auth::user()->user_type_id == 5)
                                 <label> <input type="radio" name="types" value="poc" required> All POC Samples Tested </label>
@@ -291,6 +292,7 @@
                                 <label><input type="radio" name="types" value="manifest" required> Print/Generate Sample Manifest</label>
                                 @else
                                 <label><input type="radio" name="types" value="worksheet_report" required> Worksheet Report</label>
+                                @endif
                                 @endif
                                 @endif
                             </div>

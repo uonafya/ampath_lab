@@ -45,7 +45,7 @@ class Controller extends BaseController
         if (!in_array(env('APP_LAB'), [23, 25])) {
             if (auth()->user()->eidvl_consumption_allowed)
                 return true;
-            if (auth()->user()->user_type_id == 1 && date('d') > 27)
+            if (auth()->user()->user_type_id == 1 && date('d') > 15)
                 return true;
         }
         return false;
@@ -56,7 +56,18 @@ class Controller extends BaseController
         if (!in_array(env('APP_LAB'), [8])) {
             if (auth()->user()->covid_consumption_allowed)
                 return true;
-            if (auth()->user()->user_type_id == 1 && in_array(date('l', strtotime(date('Y-m-d'))), ['Thursday','Friday', 'Saturday', 'Sunday']))
+            if (auth()->user()->user_type_id == 1 && in_array(date('l', strtotime(date('Y-m-d'))), [/*'Thursday',*/'Friday', 'Saturday', 'Sunday']))
+                return true;
+        }
+        return false;
+    }
+
+    public function eligibleForEquipmentUtilization()
+    {
+        if (!in_array(env('APP_LAB'), [23, 25])) {
+            if (auth()->user()->equipment_allowed)
+                return true;
+            if (auth()->user()->user_type_id == 1 && date('d') > 15)
                 return true;
         }
         return false;
@@ -64,16 +75,10 @@ class Controller extends BaseController
 
     public function pendingTasks()
     {
-        if ($this->eligibleForEidVlConsumptions()) {
-            $prevyear = date('Y', strtotime("-1 Month", strtotime(date('Y-m'))));
-            $prevmonth = date('m', strtotime("-1 Month", strtotime(date('Y-m'))));
-            
-            if (LabEquipmentTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
-                return true;
+        $prevyear = date('Y', strtotime("-1 Month", strtotime(date('Y-m'))));
+        $prevmonth = date('m', strtotime("-1 Month", strtotime(date('Y-m'))));
 
-            if (LabPerformanceTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
-                return true;
-            
+        if ($this->eligibleForEidVlConsumptions()) {
             $model = new Deliveries;
             if (!collect($model->getMissingDeliveries())->isEmpty())  
                 return true;
@@ -82,9 +87,18 @@ class Controller extends BaseController
                 return true;
         }
 
-        
+        if ($this->eligibleForEquipmentUtilization()) {
+            if (LabEquipmentTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
+                return true;
+
+            if (LabPerformanceTracker::where('year', $prevyear)->where('month', $prevmonth)->count() == 0)
+                return true;
+        }
+
+
         if ($this->eligibleForCovidConsumptions()) {
             $time = $this->getPreviousWeek();
+            // dd($time);
             // dd(CovidConsumption::whereDate('start_of_week', $time->week_start)->where('lab_id', env('APP_LAB'))->get());
             if (CovidConsumption::whereDate('start_of_week', $time->week_start)->where('lab_id', env('APP_LAB'))->get()->isEmpty()) {
                 return true;
