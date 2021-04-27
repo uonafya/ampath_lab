@@ -114,4 +114,37 @@ class CancerSample extends BaseModel
         $this->repeatt=0;
         $this->save();
     }
+
+    public function setTATs()
+    {        
+        $this->setTAT1();
+        $this->setTAT2();
+        $this->setTAT3();
+        $this->setTAT4();
+        return $this->save();
+    }
+
+    private function setTAT1()
+    {
+        if (null !== $this->datecollected && null !== $this->datereceived) 
+            $this->tat1 = date_diff(date_create($this->datereceived), date_create($this->datecollected));
+    }
+
+    private function setTAT2()
+    {
+        if (null !== $this->datetested && null !== $this->datereceived) 
+            $this->tat2 = date_diff(date_create($this->datetested), date_create($this->datereceived));
+    }
+
+    private function setTAT3()
+    {
+        if (null !== $this->datetested && null !== $this->datedispatched) 
+            $this->tat3 = date_diff(date_create($this->datedispatched), date_create($this->datetested));
+    }
+
+    private function setTAT4()
+    {
+        if (null !== $this->datecollected && null !== $this->datedispatched) 
+            $this->tat3 = date_diff(date_create($this->datedispatched), date_create($this->datecollected));
+    }
 }
