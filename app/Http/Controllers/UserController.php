@@ -28,6 +28,7 @@ class UserController extends Controller
             ->when(true, function($query){
                 return $query->where('users.user_type_id', '<>', 5);
                 
+
                 if(env('APP_LAB') != 7) return $query->where('users.user_type_id', '<>', 5);
                 return $query->leftJoin('facilitys', 'facilitys.id', '=', 'users.facility_id')
                     ->addSelect('facilitys.name', 'facilitycode');
