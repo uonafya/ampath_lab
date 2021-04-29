@@ -27,15 +27,10 @@ class CancerSampleController extends Controller
                                     $query->when(!$facility_user, function($query) {
                                             return $query->whereNotIn('users.user_type_id', [5]);
                                     });
-                                }])
-                                ->when($facility_user, function($query) use ($user) {
+                                }])->when($facility_user, function($query) use ($user) {
                                     return $query->where('facility_id', $user->facility_id)
                                                 ->orWhere('user_id', $user->id);
-                                })
-                                // ->when($param, function($query) use ($param){
-                                //     return $query->whereNull('result')->where('receivedstatus', 1);
-                                // })
-                                ->when($param, function($query){
+                                })->when($param, function($query){
                                     return $query->whereNotNull('datedispatched')->orderBy('datedispatched');
                                 })->orderBy('created_at', 'DESC')->paginate();
         
@@ -102,7 +97,7 @@ class CancerSampleController extends Controller
             if ($cancersample->receivedstatus == 2)
                 $cancersample->datedispatched = date('Y-m-d');
             
-            $cancersample->save();
+            $cancersample->setTATs();
 
             DB::commit();
             if ($submit_type == 'add') {
@@ -129,6 +124,7 @@ class CancerSampleController extends Controller
         $sample->dateapproved = $data['datetested'];
         $sample->dateapproved2 = $data['datetested'];
         $sample->pre_update();
+        $sample->setTATs();
 
         session(['toast_message' => 'Cancer Result sample updated successfully']);
         return redirect('cancersample');
@@ -151,7 +147,7 @@ class CancerSampleController extends Controller
         $data['sample'] = $sample;
         $data['samples'] = $samples;
         $data['patient'] = $patient;
-        // dd($data);
+        
         return view('tables.cancersample_search', $data)->with('pageTitle', 'Cancer Sample Summary');
     }
 
@@ -226,6 +222,7 @@ class CancerSampleController extends Controller
             unset($cancersample->sampletype);
             $cancersample->patient_id = $cancerpatient->id;
             $cancersample->save();
+            $cancersample->setTATs();
 
             DB::commit();
             session(['toast_message' => "Cervical Cancer Sample updated successfully."]);
@@ -233,8 +230,6 @@ class CancerSampleController extends Controller
         } catch(\Exception $e) {
             DB::rollback();
             throw $e;
-            // session(['toast_error' => true, 'toast_message' => "An error occured while saving cervical cancer sample. {$e}"]);
-            // return back();
         }
     }
 
@@ -328,20 +323,12 @@ class CancerSampleController extends Controller
             return $batch;
         });
 
-        // dd($batches);
-
         return view('tables.dispatch', ['batches' => $batches, 'pending' => $batches->count(), 'batch_list' => $batch_list, 'pageTitle' => 'Batch Dispatch']);
     }
 
     public function facility($facility)
     {
         ini_set("memory_limit", "-1");
-        // $data = Lookup::cd4_lookups();
-        // $data['samples'] = Cd4Sample::where('facility_id', '=', $facility)->paginate(20);
-        // $facility = ViewFacility::find($facility);
-        // $data = (object) $data;
-        
-        // return view('tables.cd4-samples', compact('data'))->with('pageTitle', $facility->name.' Samples');
         $user = auth()->user();
         $facility_user = false;
         if ($user->facility_id)
@@ -361,15 +348,9 @@ class CancerSampleController extends Controller
         $facility_user = false;
 
         if($user->user_type_id == 5) $facility_user=true;
-        // $string = "(batches.facility_id='{$user->facility_id}' OR batches.user_id='{$user->id}')";
+        
         $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}' OR lab_id='{$user->facility_id}')";
 
-        // $samples = Sample::select('samples.id')
-        //     ->whereRaw("samples.id like '" . $search . "%'")
-        //     ->when($facility_user, function($query) use ($string){
-        //         return $query->join('batches', 'samples.batch_id', '=', 'batches.id')->whereRaw($string);
-        //     })
-        //     ->paginate(10);
         $samples = CancerSampleView::select('id')
             ->whereRaw("id like '" . $search . "%'")
             ->when($facility_user, function($query) use ($string){
