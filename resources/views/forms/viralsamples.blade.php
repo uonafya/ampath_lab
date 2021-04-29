@@ -119,7 +119,7 @@
 
                             @endif
                             
-                            <input type="hidden" name="facility_id" value="{{$batch->facility_id}}">
+                            <input type="hidden" name="facility_id" value="{{$batch->facility_id}}" id="facility_id">
                         @endif
                         
                         @if(auth()->user()->user_type_id != 5 && in_array(env('APP_LAB'), [2, 3, 4]))
