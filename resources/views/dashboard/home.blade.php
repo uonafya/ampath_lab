@@ -154,10 +154,12 @@
 		                			<td>Total Tests Done In Lab (Including Reruns)</td>
 		                			<td>{{ number_format($lab_stats->testedSamples) }}</td>
 		                		</tr>
+                                @if(session('testingSystem') != 'HPV')
 		                		<tr>
 		                			<td><strong>No of SMS Printers Served by Lab</strong></td>
 		                			<td><strong>{{ $lab_stats->smsPrinters}}</strong></td>
 		                		</tr>
+                                @endif
                             @endif
 		                	</tbody>
 		                </table>

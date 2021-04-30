@@ -207,14 +207,14 @@ class DashboardCacher
             if ($over == true) {
                 $model = CancerSampleView::selectRaw('COUNT(id) as total')
                                 ->whereNull('worksheet_id')->where('lab_id', '=', env('APP_LAB'))
-                                ->whereRaw("datediff(datereceived, datetested) > 14")
+                                // ->whereRaw("datediff(datereceived, datetested) > 14")
                                 ->where('site_entry', '<>', 2)
                                 ->whereNull('result')->get()->first()->total;
             } else {
                 $model = CancerSampleView::selectRaw('COUNT(id) as total')
                     ->whereNull('worksheet_id')
                     ->whereNull('datedispatched')
-                    ->where('datereceived', '>', $date_str)
+                    // ->where('datereceived', '>', $date_str)
                     ->whereRaw("(result is null or result = '0')")
                     ->where(['lab_id' => env('APP_LAB'), 'receivedstatus' => 1])
                     ->where('site_entry', '<>', 2)->get()->first()->total;
@@ -307,7 +307,6 @@ class DashboardCacher
                         ->whereBetween('sampletype', [1, 5])
                         ->whereNull('worksheet_id')
                         ->where('datereceived', '>', $date_str)
-                        // ->whereRaw("(result is null or result = '0' or result != 'Collect New Sample')")
                         ->whereRaw("(result is null or result = '0')")
                         ->where('input_complete', '=', '1')
                         ->where('flag', '=', '1');
@@ -319,17 +318,14 @@ class DashboardCacher
                             $query->whereNull('result')
                                 ->orWhere('result', '=', 0);
                         });
-                        // ->where(DB::raw(('samples.result is null or samples.result = 0')));
         } elseif ($testingSystem == 'HPV') {
             $model = CancerSampleView::selectRaw('COUNT(*) as total')
                         ->whereNull('worksheet_id')
-                        ->where('datereceived', '>', $date_str)
+                        // ->where('datereceived', '>', $date_str)
                         ->where(function ($query) {
                             $query->whereNull('result')
                                 ->orWhere('result', '=', 0);
-                        })
-                        // ->where(DB::raw(('samples.result is null or samples.result = 0')))
-                        ->where('flag', '=', '1');
+                        });
         } else {
             $model = SampleView::selectRaw('COUNT(*) as total')
                         ->whereNull('worksheet_id')
@@ -338,7 +334,6 @@ class DashboardCacher
                             $query->whereNull('result')
                                   ->orWhere('result', '=', 0);
                         })
-                        // ->where(DB::raw(('samples.result is null or samples.result = 0')))
                         ->where('flag', '=', '1');
         }
 		return $model->where('receivedstatus', '<>', 2)->where('receivedstatus', '<>', 0)
@@ -505,7 +500,8 @@ class DashboardCacher
         if ($testingSystem == 'HPV')
             $model = CancerWorksheet::class;
 
-        return $model::selectRaw("COUNT() as `total`")
+        return $model::selectRaw("COUNT(*) as `total`")
+                ->where('status_id', 2)
                 ->first()->total;
     }
 
@@ -667,10 +663,9 @@ class DashboardCacher
         }
         else if(session('testingSystem') == 'HPV'){
             if(Cache::has('hpv_resultsForUpdate')) return true;
-
             $hpvresultsForUpdate = self::resultsAwaitingpdate(session('testingSystem'));
-            $hpv_pending_testing = self::pendingSamplesAwaitingTesting(true, session('testingSystem'));
-            $hpv_worksheets_for_approval = 0;//self::worksheetAwaitingApproval(session('testingSystem'));
+            $hpv_pending_testing = self::pendingSamplesAwaitingTesting(false, session('testingSystem'));
+            $hpv_worksheets_for_approval = self::worksheetAwaitingApproval(session('testingSystem'));
             $hpv_samplesforRerun = self::samplesAwaitingRepeat(session('testingSystem'));
             Cache::put('hpv_resultsForUpdate', $hpvresultsForUpdate, $minutes);
             Cache::put('hpv_pending_testing', $hpv_pending_testing, $minutes);
