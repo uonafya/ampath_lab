@@ -52,7 +52,7 @@
 					<td> {{ ($key+1) }} </td>
 					<td> {{ $sample->id }} </td>
 					<td> {{ $sample->patient->patient }} </td>
-					<td> {{ $sample->name }} </td>
+					<td> {{ $sample->facility->name ?? '' }} </td>
 					@if($sample->site_entry == 0)
 						<td> Lab Entry </td>
 					@elseif($sample->site_entry == 1)
