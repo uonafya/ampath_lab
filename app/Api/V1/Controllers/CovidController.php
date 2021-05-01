@@ -163,7 +163,7 @@ class CovidController extends Controller
 
         // $s = new CovidSample;
         // if(\Str::contains(url()->current(), 'test')) $s = new TestSample;
-        $s = $sample_class::where(['lab_id' => $lab->id, $sample_column => $request->input('specimen_id')])->first();
+        $s = $sample_class::where(['lab_id' => $lab->id, $sample_column => $request->input('specimen_id')])->whereNotNull($sample_column)->first();
         if(!$s) $s = $sample_class::where(['lab_id' => $lab->id, 'patient_id' => $p->id, 'datecollected' => $request->input('datecollected')])->first();
         if(!$s) $s = new $sample_class;
         $s->fill($request->only(['lab_id', 'test_type', 'health_status', 'symptoms', 'temperature', 'observed_signs', 'underlying_conditions', 'result', 'age', 'age_unit', 'datecollected', 'datereceived', 'datetested']));
