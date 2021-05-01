@@ -180,7 +180,7 @@ class CovidController extends Controller
         $s->save();
 
         return response()->json([
-          'status' => 'ok',
+          'status' => 'received',
           'patient' => $p,
           'sample' => $s,
         ], 201);
