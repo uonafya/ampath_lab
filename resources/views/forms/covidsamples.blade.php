@@ -180,6 +180,8 @@
 
                         @include('partial.input', ['model' => $m, 'prop' => 'residence', 'default_val' => $sample->patient->residence ?? null, 'label' => 'Area of Residence', 'facility_required' => true])
 
+                        @include('partial.select', ['model' => $m, 'prop' => 'vaccination_status', 'label' => 'Vaccination Status', 'items' => $covid_vaccination_statuses, ])
+
                     </div>
                 </div>
             </div>

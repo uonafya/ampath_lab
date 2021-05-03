@@ -15,6 +15,24 @@ class CovidLookupSeeder extends Seeder
 
 		// return;
 
+		DB::statement("ALTER TABLE covid_samples ADD COLUMN `vaccination_status` tinyint(3) unsigned DEFAULT 1 AFTER `sample_type` ");
+
+		DB::statement("DROP TABLE IF EXISTS `covid_vaccination_statuses`;");
+		DB::statement("
+			CREATE TABLE `covid_vaccination_statuses` (
+				`id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+				`name` varchar(150) DEFAULT NULL,
+				PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+		");
+		DB::table('covid_vaccination_statuses')->insert([
+			['id' => 1, 'name' => 'Not Vaccinated', ],
+			['id' => 2, 'name' => 'Partially Vaccinated (One Dose)', ],
+			['id' => 3, 'name' => 'Fully Vaccinated', ],
+		]);
+
+		// return;
+
 		DB::statement("DROP TABLE IF EXISTS `covid_sample_types`;");
 		DB::statement("
 			CREATE TABLE `covid_sample_types` (
