@@ -20,7 +20,7 @@ class ConsumptionSubmission
         // if (!in_array(env('APP_LAB'), [8]) && auth()->user()->covid_consumption_allowed) {
             // Check if COVID consumption has been submitted
             $check = new Controller;
-            if (!in_array(env('APP_LAB'), [7]) && $check->pendingTasks()){
+            if (!in_array(env('APP_LAB'), [7, 25]) && $check->pendingTasks()){
                 return redirect('/pending');
             }
         // }
