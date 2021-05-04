@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use Exception;
 use App\EquipmentMailingList as MailingList;
 use Mpdf\Mpdf;
+use DB;
 
 use App\Synch;
 
