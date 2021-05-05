@@ -34,7 +34,9 @@ class DrExtractionWorksheetController extends Controller
             })
             ->where('status_id', '!=', 4)
             ->orderBy('dr_extraction_worksheets.created_at', 'desc')
-            ->get();
+            ->paginate();
+            
+        $worksheets->setPath(url()->current());
 
         $data = Lookup::get_dr();
         $data['worksheets'] = $worksheets;
