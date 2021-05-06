@@ -10,7 +10,7 @@
 					<h6 class="mb-0 text-white">Update Password Form</h6>
 				</div>
 			</div>
-			<div class="ml-0 px-3" >
+			<div class="p-3 " >
 				<form autocomplete="off" class="val-form" method="POST" action="{{ url('uliza/update-password') }} ">
 					@csrf
 
@@ -30,6 +30,10 @@
 							</div>
 							<input aria-describedby="confirm_password_label" class="form-control" name="confirm_password" type="password" required id='confirm_password'>
 						</div>
+					</div>
+					  
+					<div class="mb-3 float-right">
+						<button class="btn btn-warning" type="submit" >Submit</button>
 					</div>
 				</form>
 			</div>
