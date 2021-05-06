@@ -73,6 +73,7 @@
 					<!-- <a class="p-2" routerlinkactive="active" href="/uliza-twg">TWGs</a> -->
 					<!-- <a class="p-2" routerlinkactive="active" href="/uliza-user">Users</a> -->
 				@endif
+				<a class="p-2" href="/uliza-user/change-password">Change Password</a>
 			</nav>
 			<a class="btn btn-outline-primary" href="{{ url('uliza/logout') }}" >Sign Out</a>
 		</div>

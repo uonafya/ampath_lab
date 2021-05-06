@@ -77,6 +77,8 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('uliza-review/view/{ulizaClinicalForm}', 'UlizaTwgFeedbackController@create');
 	Route::resource('uliza-review', 'UlizaTwgFeedbackController');
 	Route::get('uliza/logout', 'UlizaUserController@logout');
+	Route::get('uliza/update-password', 'UlizaUserController@change_password');
+	Route::post('uliza/update-password', 'UlizaUserController@update_password');
 	Route::resource('uliza-user', 'UlizaUserController');
 });
 
