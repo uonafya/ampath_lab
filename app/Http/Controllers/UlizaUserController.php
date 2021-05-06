@@ -131,7 +131,7 @@ class UlizaUserController extends Controller
 
     public function change_password()
     {
-        return view('uliza/uliza-update/password');
+        return view('uliza.uliza-update-password');
     }
 
     public function update_password(Request $request)
