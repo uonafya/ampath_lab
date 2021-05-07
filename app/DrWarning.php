@@ -11,4 +11,9 @@ class DrWarning extends BaseModel
     {
         return $this->belongsTo('App\DrSample', 'sample_id');
     }
+
+    public function warning_code()
+    {
+        return $this->belongsTo('App\DrWarningCode', 'warning_id');
+    }
 }
