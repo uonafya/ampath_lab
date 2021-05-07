@@ -649,7 +649,7 @@ class ViralworksheetController extends Controller
             return back();
         }
         $worksheet->status_id = 3;
-        $worksheet->datereviewed = $worksheet->datereviewed2 = date('Y-m-d');
+        $worksheet->daterun = $worksheet->datereviewed = $worksheet->datereviewed2 = date('Y-m-d');
         $worksheet->save();
         
         $samples = Viralsample::where(['worksheet_id' => $worksheet->id])
