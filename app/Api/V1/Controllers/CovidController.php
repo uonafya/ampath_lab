@@ -164,13 +164,13 @@ class CovidController extends Controller
         // $s = new CovidSample;
         // if(\Str::contains(url()->current(), 'test')) $s = new TestSample;
         $s = $sample_class::where(['lab_id' => $lab->id, $sample_column => $request->input('specimen_id'), 'datecollected' => $request->input('datecollected')])->whereNotNull($sample_column)->first();
-        if(!$s && $request->input('case_id')) $s = $sample_class::where(['lab_id' => $lab->id, $sample_column => $request->input('case_id'), 'datecollected' => $request->input('datecollected')])->first();
+        if(!$s && $request->input('identifier')) $s = $sample_class::where(['lab_id' => $lab->id, $sample_column => $request->input('identifier'), 'datecollected' => $request->input('datecollected')])->first();
         if(!$s) $s = $sample_class::where(['lab_id' => $lab->id, 'patient_id' => $p->id, 'datecollected' => $request->input('datecollected')])->first();
         if(!$s) $s = new $sample_class;
         // $s = new $sample_class;
         $s->fill($request->only(['lab_id', 'border_point', 'test_type', 'health_status', 'symptoms', 'temperature', 'observed_signs', 'underlying_conditions', 'result', 'age', 'age_unit', 'datecollected', 'datereceived', 'datetested']));
         $s->patient_id = $p->id;
-        $s->$sample_column = $request->input('specimen_id');
+        $s->$sample_column = $request->input('identifier');
         // if($lab->id == 11) $s->cif_sample_id = $request->input('specimen_id');
         // else{
         //     $s->nhrl_sample_id = $request->input('specimen_id');
