@@ -679,7 +679,7 @@ class Common
 	{
 		$worksheet_class = Synch::$synch_arrays[$type]['worksheet_class'];
 
-		$worksheets = $worksheet_class::where('datereviewed2', '>', date('Y-m-d', strtotime('-3 months')))
+		$worksheets = $worksheet_class::where('datereviewed2', '>', date('Y-m-d', strtotime('-6 months')))
 			->whereNotNull('datereviewed2')->whereNull('datereviewed')
 			->get();
 
