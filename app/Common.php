@@ -675,6 +675,22 @@ class Common
 		}
 	}
 
+	public static function fix_kisumu_approval($type)
+	{
+		$worksheet_class = Synch::$synch_arrays[$type]['worksheet_class'];
+
+		$worksheets = $worksheet_class::where('datereviewed2', '>', date('Y-m-d', strtotime('-3 months')))
+			->whereNotNull('datereviewed2')->whereNull('datereviewed')
+			->get();
+
+		foreach ($worksheets as $key => $worksheet) {
+			$worksheet->datereviewed = $worksheet->datereviewed;
+			$worksheet->save();
+
+			$worksheet->sample()->update(['dateapproved' => $worksheet->datereviewed]);
+		}
+	}
+
 
 	public static function worksheet_date($date_tested, $created_at, $default=null)
 	{

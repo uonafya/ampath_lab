@@ -458,6 +458,11 @@ Artisan::command('transfer:deliveries', function(){
 // })->describe('Checking for Chege');
 
 // Quick fixes
+Artisan::command('kisumu:approval', function(){
+    $str = \App\Common::fix_kisumu_approval('eid');
+    $str = \App\Common::fix_kisumu_approval('vl');
+    $this->info($str);
+})->describe('Fix results that have first approval but not second approval.');
 Artisan::command('correct:repeats', function(){
     $str = \App\Random::temp_correct_repeats();
     $this->info($str);
