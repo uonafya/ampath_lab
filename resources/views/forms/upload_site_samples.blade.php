@@ -80,6 +80,10 @@
                                 &nbsp;&nbsp;&nbsp; 13 => Runny Nose  <br />
                                 &nbsp;&nbsp;&nbsp; 14 => Irritability / Confusion  <br />
 
+                                Vaccination Status <br />
+                                &nbsp;&nbsp;&nbsp; 1 => Not Vaccinated  <br />
+                                &nbsp;&nbsp;&nbsp; 2 => Partially Vaccinated (One Dose  <br />
+                                &nbsp;&nbsp;&nbsp; 3 => Fully Vaccinated  <br />
                                 Email Address<br />
                                 Phone Number<br />
                                 National ID<br />
@@ -126,8 +130,14 @@
                                 &nbsp;&nbsp;&nbsp; 14 => Meets case definition  <br />
                                 &nbsp;&nbsp;&nbsp; 15 => Acute severe respiratory illness  <br />
                                 &nbsp;&nbsp;&nbsp; 16 => Air Travel  <br />
+
+                                Vaccination Status <br />
+                                &nbsp;&nbsp;&nbsp; 1 => Not Vaccinated  <br />
+                                &nbsp;&nbsp;&nbsp; 2 => Partially Vaccinated (One Dose  <br />
+                                &nbsp;&nbsp;&nbsp; 3 => Fully Vaccinated  <br />
                                 Nationality<br />
                                 Telehone Number<br />
+                                Email Address<br />
                                 Occupation<br />
                                 County of Residence<br />
                                 Sub-county<br />
