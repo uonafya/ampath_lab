@@ -684,7 +684,7 @@ class Common
 			->get();
 
 		foreach ($worksheets as $key => $worksheet) {
-			$worksheet->datereviewed = $worksheet->datereviewed;
+			$worksheet->datereviewed = $worksheet->datereviewed2;
 			$worksheet->save();
 
 			$worksheet->sample()->update(['dateapproved' => $worksheet->datereviewed]);
