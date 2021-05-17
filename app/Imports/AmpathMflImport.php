@@ -21,10 +21,19 @@ class AmpathMflImport implements OnEachRow, WithHeadingRow, WithChunkReading
         if(Str::contains($row_array['lab_tested_in'], ['Alupe', 'KEMRI']) && env('APP_LAB') != 3) return;
         if(Str::contains($row_array['lab_tested_in'], ['AMPATH', 'Eldoret']) && env('APP_LAB') != 5) return;
 
-        $p = Viralpatient::where(['patient' => $row_array['current_ccc']])->first();
+        /*$p = Viralpatient::where(['patient' => $row_array['current_ccc']])->first();
         if(!$p) return;
         $p->patient = $row_array['proposed_ccc'];
-        $p->pre_update();
+        $p->pre_update();*/
+
+        $p = Viralpatient::where(['patient' => $row_array['proposed_ccc']])->first();
+        if(!$p) return;
+
+        $sample = $p->sample()->whereNull('datetested')->where(['receivedstatus' => 1, 'repeatt' => 0])->first();
+
+        if(!$sample) return;
+        $sample->comments = $row_array['current_ccc'];
+        $sample->save();
     }
 
     public function chunkSize(): int

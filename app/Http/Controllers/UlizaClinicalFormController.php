@@ -65,6 +65,7 @@ class UlizaClinicalFormController extends Controller
         $twg = UlizaTwg::where('default_twg', 1)->first();
         $form->twg_id = $county->twg_id ?? $twg->id ?? null;
         $form->save();
+        $twg = $form->twg;
 
         $visits = $request->input('clinical_visits');
 

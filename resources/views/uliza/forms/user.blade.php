@@ -9,18 +9,18 @@
 		<div class="card-body">
 			<div class="d-flex align-items-center justify-content-center p-1 text-white bg-success rounded box-shadow">
 				<div class="text-center">
-					<h6 class="mb-0 text-white">Technical Working Group</h6>
+					<h6 class="mb-0 text-white">User</h6>
 				</div>
 			</div>
 			<div class="card mt-1">
 				<div class="card-body">
-			        @if(isset($ulizaTwg))
-			            <form method="POST" class="val-form" action='{{ url("/uliza-user/{$user->id}") }}' >
+			        @if(isset($uliza_user))
+			            <form method="POST" class="val-form" action='{{ url("/uliza-user/{$uliza_user->id}") }}' >
 			            @method('PUT')
 			        @else
 			            <form method="POST" class="val-form" action='{{ url("/uliza-user/") }}'>
 			        @endif
-			        
+
 			        @csrf
 			        	<input name="lab_id" type="hidden" value="0">
 
@@ -31,7 +31,7 @@
 							<select class="form-control col-md-9 select2" name="user_type_id" required>
 								<option></option>
 								@foreach($user_types as $user_type)
-									<option value="{{ $user_type->id }}" @if(isset($user) && $user->user_type_id == $user_type->id) selected  @endif > {{ $user_type->user_type }} </option>
+									<option value="{{ $user_type->id }}" @if(isset($uliza_user) && $uliza_user->user_type_id == $user_type->id) selected  @endif > {{ $user_type->user_type }} </option>
 								@endforeach
 							</select>
 						</div>
@@ -43,7 +43,7 @@
 							<select class="form-control col-md-9 select2" name="twg_id" required>
 								<option></option>
 								@foreach($twgs as $twg)
-									<option value="{{ $twg->id }}" @if(isset($user) && $user->twg_id == $twg->id) selected  @endif > {{ $twg->twg }} </option>
+									<option value="{{ $twg->id }}" @if(isset($uliza_user) && $uliza_user->twg_id == $twg->id) selected  @endif > {{ $twg->twg }} </option>
 								@endforeach
 							</select>
 						</div>
@@ -56,7 +56,7 @@
 										<span style='color: #ff0000;'>*</span>
 									</span>
 								</div>
-								<input class="form-control" name="email" required="required" type="email" value="{{ $user->email ?? '' }}">
+								<input class="form-control" name="email" required="required" type="email" value="{{ $uliza_user->email ?? '' }}">
 							</div>
 						</div>
 
@@ -68,7 +68,7 @@
 										<span style='color: #ff0000;'>*</span>
 									</span>
 								</div>
-								<input class="form-control" name="surname" required="required" type="text" value="{{ $user->surname ?? '' }}">
+								<input class="form-control" name="surname" required="required" type="text" value="{{ $uliza_user->surname ?? '' }}">
 							</div>
 						</div>
 						<div class="form-row mb-3">
@@ -79,7 +79,7 @@
 										<span style='color: #ff0000;'>*</span>
 									</span>
 								</div>
-								<input class="form-control" name="oname" required="required" type="text" value="{{ $user->oname ?? '' }}">
+								<input class="form-control" name="oname" required="required" type="text" value="{{ $uliza_user->oname ?? '' }}">
 							</div>
 						</div>
 
