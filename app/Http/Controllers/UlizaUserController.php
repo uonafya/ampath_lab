@@ -102,11 +102,11 @@ class UlizaUserController extends Controller
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user)
-    {
+    public function edit($id)
+    {     
+        $uliza_user = User::findOrFail($id);
         $user_types = DB::table('user_types')->where('id', '>', 100)->get();
-        $twgs = DB::table('uliza_twgs')->get();        
-        $uliza_user = $user;
+        $twgs = DB::table('uliza_twgs')->get();   
         return view('uliza.forms.user', compact('twgs', 'user_types', 'uliza_user'));
     }
 
@@ -117,8 +117,9 @@ class UlizaUserController extends Controller
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
-    {
+    public function update(Request $request, $id)
+    {    
+        $user = User::findOrFail($id);
         $u = User::where($request->only('email'))->where('id', '!=', $user->id)->first();
         if($u){
             session(['toast_error' => 1, 'toast_message' => 'The user already exists.']);

@@ -21,8 +21,6 @@
 			            <form method="POST" class="val-form" action='{{ url("/uliza-user/") }}'>
 			        @endif
 
-			        {{ $uliza_user ?? '' }}
-			        
 			        @csrf
 			        	<input name="lab_id" type="hidden" value="0">
 
