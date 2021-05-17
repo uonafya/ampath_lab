@@ -62,7 +62,7 @@ class UlizaUserController extends Controller
      */
     public function store(Request $request)
     {
-        $user = User::where($request->only('email'))->first();
+        $user = User::where($request->only('email'))->withTrashed()->first();
         if($user){
             session(['toast_error' => 1, 'toast_message' => 'The user already exists.']);
             return back();
@@ -75,12 +75,11 @@ class UlizaUserController extends Controller
         $user->password = $password;
         $user->save();
         session(['toast_message' => 'The user has been created']);
-        $user->notify(new NewUlizaUserNotification($password));
-        /*try {
+        try {
             $user->notify(new NewUlizaUserNotification($password));
         } catch (\Exception $e) {
             session(['toast_error' => 1, 'toast_message' => 'The user has been created but the email could not go out.']);
-        }*/
+        }
 
         return back();
     }
@@ -141,6 +140,23 @@ class UlizaUserController extends Controller
     public function destroy(User $user)
     {
         //
+    }
+
+    public function resend_email($id)
+    {
+        $user = User::findOrFail($id);
+        $password = \Str::random(15);
+        $user->password = $password;
+        $user->save();
+        session(['toast_message' => 'The email has been sent.']);
+        try {
+            $user->notify(new NewUlizaUserNotification($password));
+        } catch (\Exception $e) {
+            session(['toast_error' => 1, 'toast_message' => 'The user has been created but the email could not go out.']);
+        }
+
+        return back();
+
     }
 
     public function change_password()

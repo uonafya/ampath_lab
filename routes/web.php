@@ -79,6 +79,10 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('uliza/logout', 'UlizaUserController@logout');
 	Route::get('uliza/update-password', 'UlizaUserController@change_password');
 	Route::post('uliza/update-password', 'UlizaUserController@update_password');
+
+	Route::prefix('uliza-user')->name('uliza-user.')->group(function(){
+		Route::get('resend_email/{id}', 'UlizaUserController@resend_email');
+	});
 	Route::resource('uliza-user', 'UlizaUserController');
 });
 

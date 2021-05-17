@@ -20,6 +20,7 @@
                                 <th>User Type</th>
                                 <th>TWG</th>
                                 <th>Edit</th>
+                                <th>Resend Email</th>
                             </tr>
                         </thead>
                         <tbody> 
@@ -30,6 +31,7 @@
                                     <td> {{ $user->user_type->user_type }} </td>
                                     <td> {{ $user->twg->twg ?? '' }} </td>
                         			<td> <a href="{{ url('uliza-user/' . $user->id . '/edit') }} "> Edit</a> </td>
+                                    <td> <a href="{{ url('uliza-user/resend_email/' . $user->id) }} "> Resend</a> </td>
                         		</tr>
                         	@endforeach
                         </tbody>						
