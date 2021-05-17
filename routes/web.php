@@ -82,6 +82,7 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::prefix('uliza-user')->name('uliza-user.')->group(function(){
 		Route::get('resend_email/{id}', 'UlizaUserController@resend_email');
+		Route::put('restore/{id}', 'UlizaUserController@restore');
 	});
 	Route::resource('uliza-user', 'UlizaUserController');
 });

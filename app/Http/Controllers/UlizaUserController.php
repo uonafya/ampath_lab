@@ -137,9 +137,20 @@ class UlizaUserController extends Controller
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
-        //
+        $user = User::findOrFail($id);
+        $user->delete();
+        session(['toast_message' => 'The user has been deactivated.']);
+        return back();
+    }
+
+    public function restore($id)
+    {
+        $user = User::withTrashed()->findOrFail($id);
+        $user->restore();
+        session(['toast_message' => 'The user has been restored.']);
+        return back();
     }
 
     public function resend_email($id)

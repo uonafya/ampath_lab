@@ -21,6 +21,7 @@
                                 <th>TWG</th>
                                 <th>Edit</th>
                                 <th>Resend Email</th>
+                                <th>Deactivate / Restore</th>
                             </tr>
                         </thead>
                         <tbody> 
@@ -32,6 +33,21 @@
                                     <td> {{ $user->twg->twg ?? '' }} </td>
                         			<td> <a href="{{ url('uliza-user/' . $user->id . '/edit') }} "> Edit</a> </td>
                                     <td> <a href="{{ url('uliza-user/resend_email/' . $user->id) }} "> Resend</a> </td>
+                                    <td>        
+                                        @if($user->deleted_at)                              
+                                            <form action="{{ url('/uliza-user/restore/' . $user->id) }}" method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" class="btn btn-xs btn-success">Restore</button> 
+                                            </form>
+                                        @else                                
+                                            <form action="{{ url('/uliza-user/' . $user->id) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-xs btn-warning">Deactivate</button> 
+                                            </form>
+                                        @endif
+                                    </td>
                         		</tr>
                         	@endforeach
                         </tbody>						
