@@ -75,11 +75,12 @@ class UlizaUserController extends Controller
         $user->password = $password;
         $user->save();
         session(['toast_message' => 'The user has been created']);
-        try {
+        $user->notify(new NewUlizaUserNotification($password));
+        /*try {
             $user->notify(new NewUlizaUserNotification($password));
         } catch (\Exception $e) {
             session(['toast_error' => 1, 'toast_message' => 'The user has been created but the email could not go out.']);
-        }
+        }*/
 
         return back();
     }
