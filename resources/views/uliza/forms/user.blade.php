@@ -9,7 +9,7 @@
 		<div class="card-body">
 			<div class="d-flex align-items-center justify-content-center p-1 text-white bg-success rounded box-shadow">
 				<div class="text-center">
-					<h6 class="mb-0 text-white">Technical Working Group</h6>
+					<h6 class="mb-0 text-white">User</h6>
 				</div>
 			</div>
 			<div class="card mt-1">
