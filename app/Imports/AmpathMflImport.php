@@ -5,6 +5,7 @@ namespace App\Imports;
 use Maatwebsite\Excel\Row;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 
 use Str;
 use App\Viralpatient;
@@ -24,5 +25,10 @@ class AmpathMflImport implements OnEachRow, WithHeadingRow
         if(!$p) return;
         $p->patient = $row_array['proposed_ccc'];
         $p->pre_update();
+    }
+
+    public function chunkSize(): int
+    {
+        return 100;
     }
 }
