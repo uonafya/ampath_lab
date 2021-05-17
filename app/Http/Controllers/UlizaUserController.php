@@ -38,7 +38,7 @@ class UlizaUserController extends Controller
      */
     public function index()
     {
-        $users = User::where('user_type_id', '>', 100)->with(['twg', 'user_type'])->get();
+        $users = User::where('user_type_id', '>', 100)->with(['twg', 'user_type'])->withTrashed()->get();
         return view('uliza.tables.users', compact('users'));
     }
 

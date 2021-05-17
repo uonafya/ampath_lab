@@ -96,7 +96,7 @@ class Random
     public static function fix_ccc()
     {
         $c = new \App\Imports\AmpathMflImport;
-        Excel::import($c, base_path('ampath_proposed_ccc.xlsx'));
+        Excel::import($c, base_path('ampath_fixed_ccc.xlsx'));
     }
 
     public static function covid_linelist()
