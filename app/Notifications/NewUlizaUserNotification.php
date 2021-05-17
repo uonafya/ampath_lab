@@ -44,7 +44,7 @@ class NewUlizaUserNotification extends Notification
     {
         return (new MailMessage)
                     ->subject('Uliza Account Creation')
-                    ->line("An account has been made for you on the uliza platform with a password of {$password}.")
+                    ->line("An account has been made for you on the uliza platform with a password of {$this->password}.")
                     ->action('Notification Action', url('/uliza/uliza'))
                     ->line('Thank you for using our application!');
     }
