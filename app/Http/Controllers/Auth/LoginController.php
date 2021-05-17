@@ -63,7 +63,7 @@ class LoginController extends Controller
         $batch = Batch::find($batch_no);
 
         if($batch){
-            if($batch->outdated() && !in_array(env('APP_LAB'), [2, 4])) return $this->outdated_batch_error(); 
+            if($batch->outdated()) return $this->outdated_batch_error(); 
             if($batch->facility_id == $facility_id){
                 $user = User::where(['facility_id' => $facility_id, 'user_type_id' => 5])->first();
                 
@@ -83,7 +83,7 @@ class LoginController extends Controller
         $batch = Viralbatch::find($batch_no);
 
         if($batch){
-            if($batch->outdated() && !in_array(env('APP_LAB'), [2, 4])) return $this->outdated_batch_error(); 
+            if($batch->outdated()) return $this->outdated_batch_error(); 
             if($batch->facility_id == $facility_id){
                 $user = User::where(['facility_id' => $facility_id, 'user_type_id' => 5])->first();
                 

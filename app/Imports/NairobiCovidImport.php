@@ -62,6 +62,7 @@ class NairobiCovidImport implements OnEachRow, WithHeadingRow
             'identifier' => $row->patient_id ?? $row->name,
             'facility_id' => $fac->id ?? null,
             'quarantine_site_id' => $row->quarantine_site_id ?? 40,
+            'email_address' => $row->email_address ?? null,
             'patient_name' => $row->name,
             'sex' => $row->sex,
             'national_id' => $row->national_id ?? null,
@@ -94,6 +95,7 @@ class NairobiCovidImport implements OnEachRow, WithHeadingRow
             'datereceived' => $datereceived,
             'receivedstatus' => 1,
             'sample_type' => 1,
+            'vaccination_status' => $row->vaccination_status ?? 1, 
         ]);
         $sample->pre_update();
 

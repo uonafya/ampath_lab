@@ -30,18 +30,14 @@
                             </thead>
                             <tbody> 
                                 @foreach($sample->warning as $warning)
-                                    <?php
-                                        $code = $warning_codes->where('id', $warning->warning_id)->first();
-                                    ?>
-
                                     <tr>
-                                        @if($code && $code->error)
+                                        @if($warning->warning_code && $warning->warning_code->error)
                                             <td> Error </td>
                                         @else
                                             <td> Warning </td>
                                         @endif
-                                        <td> {{ $code->name ?? '' }} </td>
-                                        <td> {{ $code->description ?? '' }} </td>
+                                        <td> {{ $warning->warning_code->name ?? '' }} </td>
+                                        <td> {{ $warning->warning_code->description ?? '' }} </td>
                                         <td> {{ $warning->system }} </td>
                                         <td> {{ $warning->detail }} </td>
                                     </tr>

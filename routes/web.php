@@ -77,6 +77,8 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('uliza-review/view/{ulizaClinicalForm}', 'UlizaTwgFeedbackController@create');
 	Route::resource('uliza-review', 'UlizaTwgFeedbackController');
 	Route::get('uliza/logout', 'UlizaUserController@logout');
+	Route::get('uliza/update-password', 'UlizaUserController@change_password');
+	Route::post('uliza/update-password', 'UlizaUserController@update_password');
 	Route::resource('uliza-user', 'UlizaUserController');
 });
 
@@ -849,6 +851,7 @@ Route::middleware(['auth'])->group(function(){
 				Route::group(['middleware' => ['only_utype:1']], function () {
 					Route::get('cancel_upload/{worksheet}', 'WorksheetController@cancel_upload')->name('cancel_upload');
 					Route::get('reverse_upload/{worksheet}', 'WorksheetController@reverse_upload')->name('reverse_upload');
+					Route::get('cns/{worksheet}', 'WorksheetController@cns_worksheet')->name('cns_worksheet');
 					Route::get('upload/{worksheet}', 'WorksheetController@upload')->name('upload');
 					Route::put('upload/{worksheet}', 'WorksheetController@save_results')->name('save_results');
 					Route::get('approve/{worksheet}', 'WorksheetController@approve_results')->name('approve_results');
@@ -881,6 +884,7 @@ Route::middleware(['auth'])->group(function(){
 					Route::get('download_dump/{worksheet}', 'ViralworksheetController@download_dump')->name('download_dump');
 					Route::get('cancel_upload/{worksheet}', 'ViralworksheetController@cancel_upload')->name('cancel_upload');
 					Route::get('reverse_upload/{worksheet}', 'ViralworksheetController@reverse_upload')->name('reverse_upload');
+					Route::get('cns/{worksheet}', 'ViralworksheetController@cns_worksheet')->name('cns_worksheet');
 					Route::get('upload/{worksheet}', 'ViralworksheetController@upload')->name('upload');
 					Route::put('upload/{worksheet}', 'ViralworksheetController@save_results')->name('save_results');
 					Route::get('approve/{worksheet}', 'ViralworksheetController@approve_results')->name('approve_results');
