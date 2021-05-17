@@ -10,7 +10,7 @@ use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Str;
 use App\Viralpatient;
 
-class AmpathMflImport implements OnEachRow, WithHeadingRow
+class AmpathMflImport implements OnEachRow, WithHeadingRow, WithChunkReading
 {
 
 
