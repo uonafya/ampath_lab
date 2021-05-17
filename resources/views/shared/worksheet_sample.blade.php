@@ -25,7 +25,7 @@
 		@endif
 		{{ $sample->patient->patient ?? $sample->patient->identifier ?? '' }}
 		@if(in_array(env('APP_LAB'), [3, 5]) && get_class($worksheet) == "App\Viralworksheet")
-			<br /> {{ $sample->labcomment }}
+			<br /> {{ $sample->comments }}
 		@endif
 		@if(env('APP_LAB') != 5) 
 			<br /> Date Collected - {{ $sample->my_date_format('datecollected') }} 

@@ -32,7 +32,7 @@ class AmpathMflImport implements OnEachRow, WithHeadingRow, WithChunkReading
         $sample = $p->sample()->whereNull('datetested')->where(['receivedstatus' => 1, 'repeatt' => 0])->first();
 
         if(!$sample) return;
-        $sample->labcomment = $row_array['current_ccc'];
+        $sample->comments = $row_array['current_ccc'];
         $sample->save();
     }
 
