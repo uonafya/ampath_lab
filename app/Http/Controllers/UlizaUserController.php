@@ -106,7 +106,8 @@ class UlizaUserController extends Controller
     {
         $user_types = DB::table('user_types')->where('id', '>', 100)->get();
         $twgs = DB::table('uliza_twgs')->get();        
-        return view('uliza.forms.user', compact('twgs', 'user_types', 'user'));
+        $uliza_user = $user;
+        return view('uliza.forms.user', compact('twgs', 'user_types', 'uliza_user'));
     }
 
     /**
