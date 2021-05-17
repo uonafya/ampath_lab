@@ -62,6 +62,12 @@ class UlizaUserController extends Controller
      */
     public function store(Request $request)
     {
+        $user = User::where($request->only('email'))->first();
+        if($user){
+            session(['toast_error' => 1, 'toast_message' => 'The user already exists.']);
+            return back();
+        }
+
         $user = new User;
         $user->fill($request->all());
         // $user->password = 'password';
@@ -111,6 +117,11 @@ class UlizaUserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        $u = User::where($request->only('email'))->where('id', '!=', $user->id)->first();
+        if($u){
+            session(['toast_error' => 1, 'toast_message' => 'The user already exists.']);
+            return back();
+        }
         $user->fill($request->all());
         // $user->password = 'password';
         $user->save();
