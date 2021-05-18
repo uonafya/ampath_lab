@@ -20,6 +20,7 @@
                                 <th>Name</th>
                                 <th>User Type</th>
                                 <th>TWG</th>
+                                <th>Receive Emails</th>
                                 <th>Edit</th>
                                 <th>Resend Email</th>
                                 <th>Deactivate / Restore</th>

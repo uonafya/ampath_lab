@@ -49,6 +49,17 @@
 						</div>
 
 						<div class="form-row mb-3">
+							<div class="col-md-3">
+								<span class="input-group-text text-left"> Receive Emails: </span>
+							</div>
+							<select class="form-control col-md-9 select2" name="receive_emails" required>
+								<option></option>
+								<option value="0" @if(isset($uliza_user) && !$uliza_user->receive_emails) selected @endif> Should Receive Emails </option>
+								<option value="1" @if(isset($uliza_user) && $uliza_user->receive_emails) selected @endif> Should Not Receive Emails </option>
+							</select>
+						</div>
+
+						<div class="form-row mb-3">
 							<div class="col-md-12 input-group required">
 								<div class="input-group-prepend">
 									<span class="input-group-text text-left">

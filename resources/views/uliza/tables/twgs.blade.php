@@ -17,7 +17,7 @@
                             <tr>
                                 <th>TWG</th>
                                 <th>Counties</th>
-                                <th>Emails</th>
+                                <th>Email List</th>
                                 <th>Edit</th>
                             </tr>
                         </thead>
