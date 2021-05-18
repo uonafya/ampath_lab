@@ -17,6 +17,7 @@
                             <tr>
                                 <th>TWG</th>
                                 <th>Counties</th>
+                                <th>Emails</th>
                                 <th>Edit</th>
                             </tr>
                         </thead>
@@ -29,6 +30,11 @@
                         					{{ $county->name }}, 
                         				@endforeach
                         			</td>
+                                    <td>
+                                        @foreach($twg->email_array as $email)
+                                            {{ $email }}, 
+                                        @endforeach
+                                    </td>
                         			<td> <a href="{{ url('uliza-twg/' . $twg->id . '/edit') }} "> Edit</a> </td>
                         		</tr>
                         	@endforeach

@@ -16,6 +16,7 @@
                         <thead>
                             <tr>
                                 <th>Email</th>
+                                <th>Telephone</th>
                                 <th>Name</th>
                                 <th>User Type</th>
                                 <th>TWG</th>
@@ -28,6 +29,7 @@
                         	@foreach($users as $user)
                         		<tr>
                         			<td> {{ $user->email }} </td>
+                                    <td> {{ $user->telephone }} </td>
                                     <td> {{ $user->full_name }} </td>
                                     <td> {{ $user->user_type->user_type }} </td>
                                     <td> {{ $user->twg->twg ?? '' }} </td>

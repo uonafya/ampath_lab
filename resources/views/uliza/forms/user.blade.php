@@ -63,6 +63,15 @@
 						<div class="form-row mb-3">
 							<div class="col-md-12 input-group required">
 								<div class="input-group-prepend">
+									<span class="input-group-text text-left"> Telephone: </span>
+								</div>
+								<input class="form-control" name="telephone" type="text" value="{{ $uliza_user->telephone ?? '' }}">
+							</div>
+						</div>
+
+						<div class="form-row mb-3">
+							<div class="col-md-12 input-group required">
+								<div class="input-group-prepend">
 									<span class="input-group-text text-left">
 										Surname:
 										<span style='color: #ff0000;'>*</span>
