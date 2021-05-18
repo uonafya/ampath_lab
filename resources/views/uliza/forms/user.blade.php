@@ -54,8 +54,8 @@
 							</div>
 							<select class="form-control col-md-9 select2" name="receive_emails" required>
 								<option></option>
-								<option value="0" @if(isset($uliza_user) && !$uliza_user->receive_emails) selected @endif> Should Receive Emails </option>
-								<option value="1" @if(isset($uliza_user) && $uliza_user->receive_emails) selected @endif> Should Not Receive Emails </option>
+								<option value="0" @if(isset($uliza_user) && !$uliza_user->receive_emails) selected @endif> Should Not Receive Emails </option>
+								<option value="1" @if(isset($uliza_user) && $uliza_user->receive_emails) selected @endif> Should Receive Emails </option>
 							</select>
 						</div>
 
