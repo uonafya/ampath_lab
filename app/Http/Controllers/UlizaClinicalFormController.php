@@ -149,6 +149,6 @@ class UlizaClinicalFormController extends Controller
      */
     public function destroy(UlizaClinicalForm $ulizaClinicalForm)
     {
-        //
+        
     }
 }
