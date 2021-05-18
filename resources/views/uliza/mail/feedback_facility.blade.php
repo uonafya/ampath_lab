@@ -9,7 +9,7 @@
 </p>
 <p>
 	Kind Regards, <br />
-	Uliza-NASCOP Secretariat
+	Uliza-NASCOP Admin
 </p>
 <p>
 	<i> Please do not respond to the message, it is auto-generated. </i>
