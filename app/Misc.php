@@ -123,24 +123,39 @@ class Misc extends Common
         $target1 = strtolower($result['target_1']);
         $target2 = strtolower($result['target_2']);
         $target3 = strtolower($result['target_3']);
+        $overall_result = NULL;
 
         if(\Str::contains($target1, ['positive']) || \Str::contains($target2, ['positive']) || \Str::contains($target3, ['positive'])){
             $res = 2;
+            if (\Str::contains($target1, ['positive']))
+                $overall_result = $target1;
+            if (\Str::contains($target2, ['positive']))
+                $overall_result = $target2;
+            if (\Str::contains($target3, ['positive']))
+                $overall_result = $target3;
         }
         else if (\Str::contains($target1, ['negative']) || \Str::contains($target2, ['negative']) || \Str::contains($target3, ['negative'])) {
             $res = 1;
+            if (\Str::contains($target1, ['negative']))
+                $overall_result = $target1;
+            if (\Str::contains($target2, ['negative']))
+                $overall_result = $target2;
+            if (\Str::contains($target3, ['negative']))
+                $overall_result = $target3;
         }
         else if(\Str::is($target1, 'valid') && \Str::is($target2, 'valid') && \Str::is($target3, 'valid')){
             $res = 6;
+            $overall_result = $target1;
         }
         else if(\Str::is($target1, 'invalid') && \Str::is($target2, 'invalid') && \Str::is($target3, 'invalid')){
             $res = 3;
+            $overall_result = $target1;
         }
         else{
             return ['result' => 3, 'interpretation' => $error];
         }
 
-        return ['result' => $res, 'interpretation' => $result['overall_result'] ?? NULL, 'target_1' => $target1, 'target_2' => $target2, 'target_3' => $target3];
+        return ['result' => $res, 'interpretation' => $overall_result, 'target_1' => $target1, 'target_2' => $target2, 'target_3' => $target3];
     }
 
 	public static function save_repeat($sample_id)
