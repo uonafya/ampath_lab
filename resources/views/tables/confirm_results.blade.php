@@ -68,6 +68,11 @@
                                         <th> Patient Name </th>
                                     @endif
                                     <th>Run</th>
+                                    @if(session('testingSystem') == 'HPV')
+                                        <th>Target 1</th>
+                                        <th>Target 2</th>
+                                        <th>Target 3</th>
+                                    @endif
                                     <th>Result</th>                
                                     <th>Interpretation</th>                
                                     <th>Action</th>                
@@ -84,6 +89,11 @@
                                         <td>-</td>
                                     @endif
                                     <td >-</td>
+                                    @if(session('testingSystem') == 'HPV')
+                                        <th>-</th>
+                                        <th>-</th>
+                                        <th>-</th>
+                                    @endif
                                     <td ><small><strong>
                                         <font color='#FF0000'>
                                             @if($worksheet->pos_control_result == 6 || $worksheet->pos_control_result == 2)
@@ -108,6 +118,11 @@
                                         <td>-</td>
                                     @endif
                                     <td >-</td>
+                                    @if(session('testingSystem') == 'HPV')
+                                        <th>-</th>
+                                        <th>-</th>
+                                        <th>-</th>
+                                    @endif
                                     <td ><small><strong>
                                         <font color='#339900'> 
                                             @if($worksheet->neg_control_result == 6 || $worksheet->neg_control_result == 1)
@@ -181,6 +196,11 @@
                                             <td> {{ $sample->patient->patient_name }} </td>
                                         @endif
                                         <td> {{ $sample->run }} </td>
+                                        @if(session('testingSystem') == 'HPV')
+                                            <th>{{ $sample->target_1 }}</th>
+                                            <th>{{ $sample->target_2 }}</th>
+                                            <th>{{ $sample->target_3 }}</th>
+                                        @endif
                                         <td> {{ $sample->interpretation }} </td>
                                         <td>  
                                             @if( $class == 'noneditable' || isset($covid))
