@@ -38,9 +38,9 @@
 		@if(env('APP_LAB') == 4 && $sample->parentid)
 			<br /> Previous Worksheet - {{ $sample->prev_worksheet }}
 		@endif
-		@if(isset($covid))
+		@if(isset($covid) || session('testingSystem') == 'HPV')
 			<br /> Name - {{ $sample->patient->patient_name }}
-			@if(env('APP_LAB') == 1)
+			@if(env('APP_LAB') == 1 && session('testingSystem') != 'HPV')
 				<br /> Kemri ID - {{ $sample->kemri_id }}
 			@endif
 		@endif
