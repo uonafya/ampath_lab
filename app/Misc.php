@@ -40,35 +40,59 @@ class Misc extends Common
             }
             $a = true;
 			if($sample->parentid == 0){
-				if($sample->result == 2 || $sample->result == 3){
-					$sample->repeatt = 1;
-					$sample->save();
-				}
+                if (session('testingSystem') == 'HPV') {
+                    if($sample->result == 3){
+                        $sample->repeatt = 1;
+                        $sample->save();
+                    }
+                } else {
+                    if($sample->result == 2 || $sample->result == 3){
+                        $sample->repeatt = 1;
+                        $sample->save();
+                    }
+                }				
 			}
 			else{
                 $original = $sample->parent;
 
 				if($sample->run == 2){
-					if( ($sample->result == 3 && $original->result == 3) || 
-						($sample->result == 2 && $original->result == 3) || 
-						($sample->result != 2 && $original->result == 2) )
-					{
-						$sample->repeatt = 1;
-						$sample->save();
-					}
+                    if (session('testingSystem') == 'HPV') {
+                        if( ($sample->result == 3 && $original->result == 3) )
+                        {
+                            $sample->repeatt = 1;
+                            $sample->save();
+                        }
+                    } else {
+                        if( ($sample->result == 3 && $original->result == 3) || 
+                            ($sample->result == 2 && $original->result == 3) || 
+                            ($sample->result != 2 && $original->result == 2) )
+                        {
+                            $sample->repeatt = 1;
+                            $sample->save();
+                        }
+                    }
+					
 				}
 
 				else if($sample->run == 3){
 					$second = self::check_run($original->id, 2);
-
-					if( ($sample->result == 3 && $second->result == 3 && $original->result == 3) ||
-						($sample->result == 3 && $second->result == 2 && $original->result == 3) ||
-						($original->result == 2 && $second->result == 1 && $sample->result == 2) ||
-						($original->result == 2 && $second->result == 3 && $sample->result == 3) )
-					{
-						$sample->repeatt = 1;
-						$sample->save();
-					}
+                    if (session('testingSystem') == 'HPV') {
+                        if( ($sample->result == 3 && $second->result == 3 && $original->result == 3) )
+                        {
+                            $sample->repeatt = 1;
+                            $sample->save();
+                        }
+                    } else {
+                        if( ($sample->result == 3 && $second->result == 3 && $original->result == 3) ||
+                            ($sample->result == 3 && $second->result == 2 && $original->result == 3) ||
+                            ($original->result == 2 && $second->result == 1 && $sample->result == 2) ||
+                            ($original->result == 2 && $second->result == 3 && $sample->result == 3) )
+                        {
+                            $sample->repeatt = 1;
+                            $sample->save();
+                        }
+                    }
+					
 				}
 				else if($sample->run == 4){
 					$second = self::check_run($original->id, 2);
