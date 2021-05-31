@@ -104,10 +104,10 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">Date Of Birth
+                                <label class="col-sm-3 control-label">Date Of Birth
                                     <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                 </label>
-                                <div class="col-sm-8">
+                                <div class="col-sm-3">
                                     <div class="input-group date date-dob">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                         <input type="text" id="dob" class="form-control lockable"
@@ -116,8 +116,18 @@
                                         @endif
                                          value="{{ $sample->patient->dob ?? '' }}" name="dob">
                                     </div>
+                                </div>
+                                <label class="col-sm-1 control-label">
+                                    <strong> OR </strong>
+                                </label>
+                                <label class="col-sm-2 control-label" for="age">Age (In Years)
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
+                                <div class="col-sm-3">
+                                    <input class="form-control requirable" required name="age" type="number" value="{{ $sample->age ?? '' }}" id="age" min="0" max="120">
                                 </div>                            
                             </div>
+
                             {{--
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Sex
@@ -446,6 +456,21 @@
                 }
             }); 
 
+        });
+
+        $("#dob").change(function(){
+            const dob = new Date($(this).val());
+            const today = new Date();
+            let yearsDiff =  today.getFullYear() - dob.getFullYear();
+            $("#age").val(yearsDiff);
+        });
+
+        $("#age").change(function() {
+            const age = $(this).val();
+            const today = new Date;
+            let dobYear = today.getFullYear() - age;
+            // let dob = new Date(dobYear,today.getMonth(), today.getDate());
+            $("#dob").val([dobYear, ("0" + (today.getMonth() + 1)).slice(-2), ("0" + today.getDate()).slice(-2)].join('-'));
         });
 
 
