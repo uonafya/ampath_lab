@@ -628,6 +628,18 @@ class CancerWorksheetController extends Controller
         return $samples;
     }
 
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+
+        $worksheets = CancerWorksheet::selectRaw('id as id, id as name')
+            ->whereRaw("id like '" . $search . "%'")
+            ->paginate(10);
+
+        $worksheets->setPath(url()->current());
+        return $worksheets;
+    }
+
     private function get_samples_for_run($limit = 94){
         $samples = CancerSample::whereNull('worksheet_id')->where('receivedstatus', '<>', 2)->whereNull('result')
                                     ->where('site_entry', '<>', 2)

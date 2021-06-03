@@ -21,6 +21,33 @@
     <div class="content animate-panel" data-child="hpanel">
         <div class="row">
             <div class="col-lg-10 col-lg-offset-1">
+                @if(session('testingSystem') == 'HPV')
+                <div class="hpanel">
+                    <div class="alert alert-success">
+                        <center>Worksheet Sample Reports</center>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive" style="padding-left: 15px;padding-top: 2px;padding-bottom: 2px;padding-right: 15px;">
+                            <table cellpadding="1" cellspacing="1" class="table table-condensed">
+                                <tbody>
+                                    <tr>
+                                        <form action="{{ url('/reports/worksheet') }}" class="form-horizontal" method="POST" id='reports_dateSelect_form'>
+                                            @csrf
+                                        <td>Select Worksheet:</td>
+                                        <td>
+                                            <select class="form-control" id="report_cancerworksheet_search" name="worksheet"></select>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-default">Download Report</button>
+                                        </td>
+                                        </form>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                @endif
                 @if(Auth::user()->user_type_id != 5 && Session('testingSystem') != 'DR')
                 <div class="hpanel">
                     <div class="alert alert-success">
@@ -351,6 +378,7 @@
         set_select_facility("report_district_search", "{{ url('district/search') }}", 3, "Search for Sub-County", false);
         set_select_facility("report_county_search", "{{ url('county/search') }}", 1, "Search for County", false);
         set_select_facility("report_partner_search", "{{ url('partner/search') }}", 1, "Search for Partner", false);
+        set_select_facility("report_cancerworksheet_search", "{{ url('cancerworksheet/search') }}", 1, "Search for Worksheet", false);
 
     @endcomponent
     <script type="text/javascript">
