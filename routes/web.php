@@ -204,6 +204,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('cancel/{worksheet}', 'CancerWorksheetController@cancel')->name('cancel');
 			Route::get('rerun_worksheet/{worksheet}', 'CancerWorksheetController@rerun_worksheet')->name('rerun_worksheet');
 			Route::get('convert/{worksheet}/{machine_type}', 'CancerWorksheetController@convert_worksheet')->name('convert');
+			Route::post('search/', 'CancerWorksheetController@search');
 
 			Route::group(['middleware' => ['only_utype:1']], function () {
 				Route::get('cancel_upload/{worksheet}', 'CancerWorksheetController@cancel_upload')->name('cancel_upload');
@@ -593,6 +594,7 @@ Route::middleware(['auth'])->group(function(){
 		Route::post('reports/kitsconsumption', 'ReportController@consumption');
 		Route::post('reports/kitsconsumption/update', 'ReportController@update_consumption');
 		Route::get('facility/reports/{testtype?}', 'ReportController@index')->name('facility');
+		Route::post('reports/worksheet', 'ReportController@worksheet')->name('worksheet');
 
 		Route::get('reports/kits', 'KitsController@kits')->name('report.kits');
 		Route::post('reports/kitdeliveries', 'KitsController@kits');

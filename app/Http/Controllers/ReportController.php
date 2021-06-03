@@ -6,6 +6,7 @@ use App\Abbotdeliveries;
 use App\Abbotprocurement;
 use App\Batch;
 use App\CancerSampleView;
+use App\CancerWorksheet;
 use App\Cd4SampleView;
 use App\Common;
 use App\Consumption;
@@ -237,6 +238,21 @@ class ReportController extends Controller
         }
         session(['toast_error' => 1, 'toast_message' => 'No Data Found']);
         return back();
+    }
+
+    public function worksheet(Request $request)
+    {
+        $worksheet = CancerWorksheet::find($request->input('worksheet'));
+        $dataArray = [];
+        $dataArray[] = ['Sample ID', 'Lab ID', 'Run', 'Target 1', 'Target 2', 'Target 3', 'Interpretation', 'Date Approved', 'Approved By'];
+        foreach ($worksheet->sample as $sample) {
+            $dataArray[] = [
+                $sample->patient->id, $sample->id, $sample->run, $sample->target_1, $sample->target_2, $sample->target_3, $sample->result_name, $sample->dateapproved, $sample->approver->full_name ?? ''
+            ];
+        }
+        $title = 'Worksheet No. ' . $worksheet->id . ' samples reports';
+        $title = strtoupper($title);
+        return Common::csv_download($dataArray, $title, false);
     }
 
     public function __getTATData($request, &$dateString) {
