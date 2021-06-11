@@ -255,11 +255,17 @@ class Misc extends Common
 	public static function check_run($sample_id, $run=2)
 	{
 		$lab = auth()->user()->lab_id;
-		$sample = Sample::select('samples.*')
-		->join('batches', 'samples.batch_id', '=', 'batches.id')
-		->where(['batches.lab_id' => $lab, 'samples.parentid' => $sample_id, 'run' => $run])
-		->get()
-		->first();
+        if (session('testingSystem') == 'HPV') {
+            $sample = CancerSample::select('cancer_samples.*')
+                ->where(['cancer_samples.lab_id' => $lab, 'cancer_samples.parentid' => $sample_id, 'run' => $run])
+                ->first();
+        } else {
+            $sample = Sample::select('samples.*')
+                ->join('batches', 'samples.batch_id', '=', 'batches.id')
+                ->where(['batches.lab_id' => $lab, 'samples.parentid' => $sample_id, 'run' => $run])
+                ->get()
+                ->first();
+        }
 
 		return $sample;
 	}
