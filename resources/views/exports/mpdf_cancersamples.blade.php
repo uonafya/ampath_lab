@@ -66,7 +66,7 @@ p.breakhere {page-break-before: always}
 					<strong>Facility: {{ $sample->facility->name ?? '' }}</strong>
 				</td>
 				<td colspan="3" class="comment style1 style4" align="right">
-					<strong>Testing Lab: {{ $sample->facility_lab->name ?? $sample->lab->name ?? '' }}</strong>
+					<strong>Testing Lab: {{ $sample->testing_lab->name ?? '' }}</strong>
 				</td>
 			</tr>
 			

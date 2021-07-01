@@ -11,6 +11,11 @@ class CancerSample extends BaseModel
     	return $this->belongsTo(CancerPatient::class, 'patient_id', 'id');
     }
 
+    public function lab()
+    {
+        return $this->belongsTo(Lab::class, 'lab_id', 'id');
+    }
+
     public function facility()
     {
     	return $this->belongsTo('App\Facility');
@@ -56,6 +61,13 @@ class CancerSample extends BaseModel
     public function final_approver()
     {
         return $this->belongsTo('App\User', 'approvedby2');
+    }
+
+    public function getTestingLabAttribute()
+    {
+        if (in_array($this->site_entry, [0,1]))
+            return $this->lab;
+        return $this->facility_lab;
     }
 
 
