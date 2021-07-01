@@ -64,20 +64,24 @@
                                             --}}
 
                                             @if(!$sample->result && $sample->receivedstatus == 1)
-                                                <a href="{{ url('cancersample/' . $sample->id . '/edit/') }}" target="_blank">Edit</a> |
-                                                @if(Auth::user()->user_type_id == 5)
-                                                <a href="{{ url('cancersample/' . $sample->id . '/edit_result/') }}" target="_blank">Edit Result</a> |
-                                                @endif
-                                                @if(!($sample->result || $param))
-                                                    <form action="{{ url('cancersample/' . $sample->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete the following sample?');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-xs btn-primary">Delete</button>
-                                                    </form>
+                                                @if(in_array($sample->site_entry, [0, 1]) && !$facility_user)
+                                                    <a href="{{ url('cancersample/' . $sample->id . '/edit/') }}" target="_blank">Edit</a> |
+                                                    @if(Auth::user()->user_type_id == 5)
+                                                    <a href="{{ url('cancersample/' . $sample->id . '/edit_result/') }}" target="_blank">Edit Result</a> |
+                                                    @endif
+                                                    @if(!($sample->result || $param))
+                                                        <form action="{{ url('cancersample/' . $sample->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete the following sample?');">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-xs btn-primary">Delete</button>
+                                                        </form>
+                                                    @endif
                                                 @endif
                                             @else
-                                                @if(!$param)
-                                                <a href="{{ url('cancersample/' . $sample->id . '/edit/') }}" target="_blank">Edit</a> |
+                                                @if(in_array($sample->site_entry, [0, 1]) && !$facility_user)
+                                                    @if(!$param)
+                                                    <a href="{{ url('cancersample/' . $sample->id . '/edit/') }}" target="_blank">Edit</a> |
+                                                    @endif
                                                 @endif
                                                 <a href="{{ url('cancersample/' . $sample->id . '/print/') }}" target="_blank">Print</a>
                                             @endif

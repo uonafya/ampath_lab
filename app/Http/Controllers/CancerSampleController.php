@@ -23,6 +23,7 @@ class CancerSampleController extends Controller
         $facility_user = false;
         if ($user->facility_id)
             $facility_user = true;
+
         $samples = CancerSampleView::with(['facility', 'worksheet', 'user' => function($query) use ($facility_user) {
                                     $query->when(!$facility_user, function($query) {
                                             return $query->whereNotIn('users.user_type_id', [5]);
@@ -36,6 +37,7 @@ class CancerSampleController extends Controller
         
         $data['samples'] = $samples;
         $data['param'] = $param;
+        $data['facility_user'] = $facility_user;
         
         return view('tables.cancer_samples', $data)->with('pageTitle', 'HPV Samples');
     }
