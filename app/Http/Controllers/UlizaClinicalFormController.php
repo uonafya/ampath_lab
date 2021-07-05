@@ -25,7 +25,7 @@ class UlizaClinicalFormController extends Controller
         $user = auth()->user();
         $statuses = DB::table('uliza_case_statuses')->get();
         if(!$user) return redirect('uliza/uliza');
-        $forms = UlizaClinicalForm::with(['facility', 'twg'])
+        $forms = UlizaClinicalForm::with(['view_facility', 'twg'])
         ->when(true, function($query) use ($user){
             if($user->uliza_secretariat) return $query->where('twg_id', $user->twg_id);
             if($user->uliza_reviewer) return $query->where('reviewer_id', $user->id);

@@ -18,6 +18,8 @@
                                 <th>#</th>
                                 <th>Nat No</th>
                                 <th>RTWG</th>
+                                <th>County</th>
+                                <th>Subcounty</th>
                                 <th>Facility</th>
                                 <th>Status</th>
                                 <th>Reporting Date</th>
@@ -30,7 +32,9 @@
                         			<td> {{ $key }} </td>
                                     <td> {{ $form->nat_number }} </td>
                                     <td> {{ $form->twg->twg }} </td>
-                                    <td> {{ $form->facility->name }} </td>
+                                    <td> {{ $form->view_facility->county }} </td>
+                                    <td> {{ $form->view_facility->subcounty }} </td>
+                                    <td> {{ $form->view_facility->name }} </td>
                                     <td> {{ $form->get_prop_name($statuses, 'status_id') }} </td>
                         			<td> {{ $form->created_at }} </td>
                         			<td> 
