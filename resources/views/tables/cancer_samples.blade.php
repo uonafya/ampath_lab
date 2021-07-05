@@ -65,25 +65,28 @@
 
                                             @if(!$sample->result && $sample->receivedstatus == 1)
                                                 @if(in_array($sample->site_entry, [0, 1]) && !$facility_user)
-                                                    <a href="{{ url('cancersample/' . $sample->id . '/edit/') }}" target="_blank">Edit</a> |
+                                                    <a href="{{ url('cancersample/' . $sample->id . '/edit/') }}" target="_blank" class="btn btn-warning btn-xs" style="margin-bottom: 0.2em;">Edit</a>
+                                                    <br/>
                                                     @if(Auth::user()->user_type_id == 5)
-                                                    <a href="{{ url('cancersample/' . $sample->id . '/edit_result/') }}" target="_blank">Edit Result</a> |
+                                                    <a href="{{ url('cancersample/' . $sample->id . '/edit_result/') }}" target="_blank" class="btn btn-success btn-xs" style="margin-bottom: 0.2em;">Update Result</a>
+                                                    <br/>
                                                     @endif
                                                     @if(!($sample->result || $param))
                                                         <form action="{{ url('cancersample/' . $sample->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete the following sample?');">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" class="btn btn-xs btn-primary">Delete</button>
+                                                            <button type="submit" class="btn btn-xs btn-danger">Delete</button>
                                                         </form>
                                                     @endif
                                                 @endif
                                             @else
                                                 @if(in_array($sample->site_entry, [0, 1]) && !$facility_user)
                                                     @if(!$param)
-                                                    <a href="{{ url('cancersample/' . $sample->id . '/edit/') }}" target="_blank">Edit</a> |
+                                                    <a href="{{ url('cancersample/' . $sample->id . '/edit/') }}" target="_blank" class="btn btn-warning btn-xs" style="margin-bottom: 0.2em;">Edit</a>
+                                                    <br />
                                                     @endif
                                                 @endif
-                                                <a href="{{ url('cancersample/' . $sample->id . '/print/') }}" target="_blank">Print</a>
+                                                <a href="{{ url('cancersample/' . $sample->id . '/print/') }}" target="_blank" class="btn btn-default btn-xs" style="margin-bottom: 0.2em;">Print</a>
                                             @endif
                                         </td>
                                     </tr>

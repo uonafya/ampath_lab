@@ -62,20 +62,25 @@
                                         </td>
                                         <td> 
                                             @if($sample->datedispatched)
-                                                <a href="{{ url($pre . 'batch/summary/' . $sample->batch_id) }}" target="_blank"><i class='fa fa-print'></i> Summary</a> |
-
-                                                <a href="{{ url($pre . 'sample/print/' . $sample->id) }}" target="_blank"><i class='fa fa-print'></i> Print</a> |
+                                                <a href="{{ url($pre . 'batch/summary/' . $sample->batch_id) }}" target="_blank" class="btn btn-success btn-xs" style="margin-bottom: 0.2em;"><i class='fa fa-print'></i> Summary</a>
+                                                <br />
+                                                <a href="{{ url($pre . 'sample/print/' . $sample->id) }}" target="_blank" class="btn btn-primary btn-xs" style="margin-bottom: 0.2em;"><i class='fa fa-print'></i> Print</a>
+                                                <br />
                                             @endif
 
                                             @if(auth()->user()->user_type_id != 7)
-                                                <a href="{{ url($pre . 'sample/' . $sample->id . '/edit/') }}" target="_blank">Edit</a> |
-                                                <a href="{{ url($pre . 'sample/' . $sample->id . '/edit_result/') }}" target="_blank">Edit Result</a> |
+                                                <a href="{{ url($pre . 'sample/' . $sample->id . '/edit/') }}" target="_blank" class="btn btn-warning btn-xs" style="margin-bottom: 0.2em;">Edit</a>
+
+                                                <br/>
+
+                                                <a href="{{ url($pre . 'sample/' . $sample->id . '/edit_result/') }}" target="_blank" class="btn btn-success btn-xs" style="margin-bottom: 0.2em;">Update Result</a>
+                                                <br />
 
                                                 @if(!$sample->result)
                                                     <form action="{{ url($pre . 'sample/' . $sample->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete the following sample?');">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-xs btn-primary">Delete</button>
+                                                        <button type="submit" class="btn btn-xs btn-danger">Delete</button>
                                                     </form>
                                                 @endif
                                             @endif
