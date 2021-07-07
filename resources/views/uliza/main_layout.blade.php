@@ -72,6 +72,12 @@
 
 					<!-- <a class="p-2" routerlinkactive="active" href="/uliza-twg">TWGs</a> -->
 					<!-- <a class="p-2" routerlinkactive="active" href="/uliza-user">Users</a> -->
+				@elseif(auth()->user()->uliza_secretariat)
+					<a class="btn btn-outline-primary " href="#" role="button" id="dropdownMenuLinkTwo" data-toggle="collapse" data-target="#userDropdown" aria-haspopup="true" aria-expanded="false"> Users </a>
+					<div class="collapse" aria-labelledby="dropdownMenuLinkTwo" id="userDropdown">
+						<a class="collapse-item" href="/uliza-user">View Users</a>
+						<a class="collapse-item" href="/uliza-user/create">Create Users</a>
+					</div>
 				@endif
 				<a class="p-2" href="/uliza/update-password">Change Password</a>
 			</nav>

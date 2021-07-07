@@ -2,7 +2,6 @@
 
 @section('content')
 
-
 <div class="col-md-9">
 
 	<div class="card mr-2">
@@ -23,6 +22,17 @@
 
 			        @csrf
 			        	<input name="lab_id" type="hidden" value="0">
+
+			        	@if(auth()->user()->uliza_secretariat)
+			        		<div class="alert alert-info">
+			        			Uliza Reviewer <br />
+			        			Twg: {{ auth()->user()->twg->twg ?? '' }} 			        			
+			        		</div>
+
+			        		<input type="hidden" name="user_type_id" value="104">
+			        		<input type="hidden" name="twg_id" value="{{ auth()->user()->twg_id }}">
+
+			        	@else
 
 						<div class="form-row mb-3">
 							<div class="col-md-3">
@@ -47,6 +57,8 @@
 								@endforeach
 							</select>
 						</div>
+
+						@endif
 
 						<div class="form-row mb-3">
 							<div class="col-md-3">

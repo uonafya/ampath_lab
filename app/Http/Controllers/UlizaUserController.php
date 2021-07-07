@@ -38,7 +38,17 @@ class UlizaUserController extends Controller
      */
     public function index()
     {
-        $users = User::where('user_type_id', '>', 100)->with(['twg', 'user_type'])->withTrashed()->get();
+        $user = auth()->user();
+        if($user->uliza_reviewer) abort(403);
+        $users = User::with(['twg', 'user_type'])
+            ->when(true, function($query) use($user){
+                if($user->uliza_secretariat) return $query->where(['twg_id' => $user->twg_id, 'user_type_id' => 104]);
+                else{
+                    return $query->where('user_type_id', '>', 100);
+                }
+            })
+            ->withTrashed()
+            ->get();
         return view('uliza.tables.users', compact('users'));
     }
 
