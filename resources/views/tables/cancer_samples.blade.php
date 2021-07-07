@@ -65,11 +65,15 @@
 
                                             @if(!$sample->result && $sample->receivedstatus == 1)
                                                 @if(in_array($sample->site_entry, [0, 1]) && !$facility_user)
+                                                    @if($sample->age_in_days < 30)
                                                     <a href="{{ url('cancersample/' . $sample->id . '/edit/') }}" target="_blank" class="btn btn-warning btn-xs" style="margin-bottom: 0.2em;">Edit</a>
                                                     <br/>
+                                                    @endif
                                                     @if(Auth::user()->user_type_id == 5)
-                                                    <a href="{{ url('cancersample/' . $sample->id . '/edit_result/') }}" target="_blank" class="btn btn-success btn-xs" style="margin-bottom: 0.2em;">Update Result</a>
-                                                    <br/>
+                                                        @if($sample->age_in_days < 30)
+                                                        <a href="{{ url('cancersample/' . $sample->id . '/edit_result/') }}" target="_blank" class="btn btn-success btn-xs" style="margin-bottom: 0.2em;">Update Result</a>
+                                                        <br/>
+                                                        @endif
                                                     @endif
                                                     @if(!($sample->result || $param))
                                                         <form action="{{ url('cancersample/' . $sample->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete the following sample?');">

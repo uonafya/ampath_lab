@@ -69,13 +69,14 @@
                                             @endif
 
                                             @if(auth()->user()->user_type_id != 7)
-                                                <a href="{{ url($pre . 'sample/' . $sample->id . '/edit/') }}" target="_blank" class="btn btn-warning btn-xs" style="margin-bottom: 0.2em;">Edit</a>
-
-                                                <br/>
-
-                                                <a href="{{ url($pre . 'sample/' . $sample->id . '/edit_result/') }}" target="_blank" class="btn btn-success btn-xs" style="margin-bottom: 0.2em;">Update Result</a>
-                                                <br />
-
+                                                @if($sample->age_in_days < 30)
+                                                    <a href="{{ url($pre . 'sample/' . $sample->id . '/edit/') }}" target="_blank" class="btn btn-warning btn-xs" style="margin-bottom: 0.2em;">Edit</a>
+                                                    <br/>
+                                                @endif
+                                                @if($sample->age_in_days < 30)
+                                                    <a href="{{ url($pre . 'sample/' . $sample->id . '/edit_result/') }}" target="_blank" class="btn btn-success btn-xs" style="margin-bottom: 0.2em;">Update Result</a>
+                                                    <br />
+                                                @endif
                                                 @if(!$sample->result)
                                                     <form action="{{ url($pre . 'sample/' . $sample->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete the following sample?');">
                                                         @csrf

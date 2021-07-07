@@ -210,6 +210,7 @@ class ReportController extends Controller
                 }
                 $this->generate_samples_manifest($request, $data, $dateString);
             } else {
+                $data = $this->__getDateData($request, $dateString)->get();
                 $this->__getExcel($data, $dateString, $request);
             }
         }else if($request->input('types') == 'worksheet_report'){
@@ -496,6 +497,8 @@ class ReportController extends Controller
                 $testtype = 'Viralload';
             else if ($request->input('testtype') == 'EID')
                 $testtype = 'EID';
+            else if ($request->input('testtype') == 'HPV')
+                $testtype = 'HPV';
         }
         
         $title = '';
@@ -575,6 +578,10 @@ class ReportController extends Controller
                     ->leftJoin('cancerjustifications', 'cancerjustifications.id', '=', "$table.justification")
                     ->leftJoin('cancersampletypes', 'cancersampletypes.id', '=', "$table.sample_type")
                     ->leftJoin('machines', 'machines.id', '=', 'worksheets.machine_type');
+
+                    if ($request->input('category') == 'norl_facility') {
+                        $model = $model->where('view_facilitys.norl', 1);
+                    }
     	}
         
         $model = self::__getBelongingTo($request, $model, $dateString);
@@ -596,6 +603,10 @@ class ReportController extends Controller
             $report = 'VL ';
         if ($testtype == 'HPV')
             $report = 'Cancer ';
+
+        if ($request->input('category') == 'norl_facility') {
+            $report .= 'norl facilites ';
+        }
         
         if ($request->input('types') == 'tested') {
             $model = $model->where("$table.receivedstatus", "<>", '2');
@@ -703,7 +714,7 @@ class ReportController extends Controller
                 
         ini_set("memory_limit", "-1");
         ini_set("max_execution_time", "3000");
-        
+        // dd($data->isEmpty());
         if(!$data->isEmpty()) {
             foreach ($data as $report) {
                 // if ($request->input('types') == 'manifest')
@@ -715,6 +726,7 @@ class ReportController extends Controller
             return Common::csv_download($dataArray, $title, false);
         } else {
             session(['toast_message' => 'No data available for the criteria provided']);
+            return back();
         }
     }
 
