@@ -1,5 +1,5 @@
 <!-- Jquery Validate -->
-<script src="{{ asset('js/validate/jquery.validate.min.js') }}"></script>
+<!-- <script src="{{ asset('js/validate/jquery.validate.min.js') }}"></script> -->
 
 {{ $js_scripts ?? '' }}
 

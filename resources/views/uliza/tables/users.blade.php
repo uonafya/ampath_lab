@@ -65,9 +65,3 @@
 </div>
 
 @endsection
-
-@section('scripts')
-
-    @component('/uliza/tables/scripts')
-	@endcomponent
-@endsection

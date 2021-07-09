@@ -32,15 +32,20 @@ class UlizaTwgFeedbackController extends Controller
      */
     public function create($id)
     {
+        $user = auth()->user();
         $ulizaClinicalForm = UlizaClinicalForm::findOrFail($id);
+        if(!$user->uliza_admin && $user->twg_id != $ulizaClinicalForm->twg_id) abort(403);
+        if($user->uliza_reviewer && !in_array($user->id, $ulizaClinicalForm->reviewers)) abort(403);
         $view = true;
         if(Str::contains(url()->current(), ['create'])) $view = false;
+        $userFeedback = $ulizaClinicalForm->feedback()->where(['user_id' => $user->id])->first();
+
         $reasons = DB::table('uliza_reasons')->orderBy('name', 'ASC')->get();
         $recommendations = DB::table('uliza_recommendations')->orderBy('name', 'ASC')->get();
         $feedbacks = DB::table('uliza_facility_feedbacks')->orderBy('name', 'ASC')->get();
         $regimens = DB::table('viralregimen')->get();
         $reviewers = User::where(['user_type_id' => 104, 'twg_id' => $ulizaClinicalForm->twg_id])->get();
-        return view('uliza.clinical_review', compact('view', 'reasons', 'recommendations', 'feedbacks', 'regimens', 'ulizaClinicalForm', 'reviewers'));       
+        return view('uliza.clinical_review', compact('view', 'userFeedback', 'reasons', 'recommendations', 'feedbacks', 'regimens', 'ulizaClinicalForm', 'reviewers'));       
     }
 
     /**
@@ -51,26 +56,38 @@ class UlizaTwgFeedbackController extends Controller
      */
     public function store(Request $request)
     {
-        $clinical_form = UlizaClinicalForm::find($request->input('uliza_clinical_form_id'));
-        $ulizaTwgFeedback = $clinical_form->feedback;
-        // $ulizaTwgFeedback = UlizaTwgFeedback::where($request->only(['uliza_clinical_form_id']))->first();
+        $clinical_form = UlizaClinicalForm::findOrFail($request->input('uliza_clinical_form_id'));
+        $user = auth()->user();
+        $ulizaTwgFeedback = $clinical_form->feedback()->where(['user_id' => $user->id])->first();
         if(!$ulizaTwgFeedback) $ulizaTwgFeedback = new UlizaTwgFeedback;
-        $ulizaTwgFeedback->fill($request->except(['reviewer_id', 'requested_info']));
-        $ulizaTwgFeedback->user_id = auth()->user()->id;
+        $ulizaTwgFeedback->fill($request->except(['reviewer_id', 'reviewers', 'requested_info']));
+        $ulizaTwgFeedback->user_id = $user->id;
         $ulizaTwgFeedback->save();
 
         $twg = $clinical_form->twg;
 
-        // $clinical_form = $ulizaTwgFeedback->clinical_form;
         $clinical_form->status_id = 2;
-        if($ulizaTwgFeedback->recommendation_id == 3 && auth()->user()->user_type_id < 104) $clinical_form->status_id = 4;
-        if(auth()->user()->user_type_id == 104) $clinical_form->status_id = 3;
-        if($request->input('reviewer_id')) $clinical_form->fill($request->only(['reviewer_id']));
+        if($ulizaTwgFeedback->recommendation_id == 3 && !$user->uliza_reviewer) $clinical_form->status_id = 4;
+        if($user->uliza_reviewer){
+            $unfilledFeedback = $clinical_form->feedback()->whereNull('recommendation_id')->first();
+            if(!$unfilledFeedback) $clinical_form->status_id = 3;
+        }
+        // if($request->input('reviewer_id')) $clinical_form->fill($request->only(['reviewer_id']));
         $clinical_form->save();
         session(['toast_message' => 'The feedback has been saved.']);
 
-        if($request->input('reviewer_id')){
+        /*if($request->input('reviewer_id')){
             Mail::to([$clinical_form->reviewer->email])->send(new UlizaMail($clinical_form, 'case_referral', 'NASCOP ' . $clinical_form->subject_identifier));
+        }*/
+
+        if($request->input('reviewers')){
+            $reviewers = User::whereIn('id', $request->input('reviewers'))->get();
+
+            foreach ($reviewers as $key => $reviewer) {
+                $clinical_form->feedback()->firstOrCreate(['user_id' => $reviewer->id]);
+
+                Mail::to([$reviewer->email])->send(new UlizaMail($clinical_form, 'case_referral', 'NASCOP ' . $clinical_form->subject_identifier));
+            }
         }
 
         if($request->input('requested_info')){

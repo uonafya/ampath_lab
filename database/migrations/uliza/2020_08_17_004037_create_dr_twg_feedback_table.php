@@ -22,11 +22,11 @@ class CreateDrTwgFeedbackTable extends Migration
             $table->text('observationsofsummary')->nullable();
             $table->tinyInteger('diagnosis')->nullable();
             $table->string('diagnosis_other')->nullable();
-            $table->text('supportivemanagement')->nullable()->nullable();
-            $table->text('definativemanagement')->nullable()->nullable();
-            $table->text('additionalinfo')->nullable()->nullable();
-            $table->text('nascop_comments')->nullable()->nullable();
-            $table->text('reviewer_comments')->nullable()->nullable();
+            $table->text('supportivemanagement')->nullable();
+            $table->text('definativemanagement')->nullable();
+            $table->text('additionalinfo')->nullable();
+            $table->text('nascop_comments')->nullable();
+            $table->text('reviewer_comments')->nullable();
             $table->tinyInteger('recommendation_id')->nullable();
             $table->tinyInteger('facility_recommendation_id')->nullable();
             $table->timestamps();

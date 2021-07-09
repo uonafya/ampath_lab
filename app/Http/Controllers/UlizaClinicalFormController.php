@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\UlizaMail;
 use App\Notifications\UlizaNotification;
 use App\UlizaClinicalForm;
+use App\UlizaTwgFeedback;
 use App\UlizaClinicalVisit;
 use App\UlizaAdditionalInfo;
 use App\UlizaTwg;
@@ -20,15 +21,32 @@ class UlizaClinicalFormController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
         $statuses = DB::table('uliza_case_statuses')->get();
         if(!$user) return redirect('uliza/uliza');
+        $fclass = UlizaTwgFeedback::class;
         $forms = UlizaClinicalForm::with(['view_facility', 'twg'])
-        ->when(true, function($query) use ($user){
+        ->when(true, function($query) use ($user, $fclass){
             if($user->uliza_secretariat) return $query->where('twg_id', $user->twg_id);
-            if($user->uliza_reviewer) return $query->where('reviewer_id', $user->id);
+            if($user->uliza_reviewer) return $query->whereIn('id', $fclass::select('uliza_clinical_form_id')->where('user_id', $user->id));
+        })
+        ->when($request->input('twg_id'), function($query) use($request){
+            return $query->where('twg_id', $request->input('twg_id'));
+        })
+        ->when($request->input('status_id'), function($query) use($request){
+            return $query->where('status_id', $request->input('status_id'));
+        })
+        ->when($request->has(['start_date', 'end_date']), function($query) use($request){
+            return $query->whereBetween('created_at', [$request->input('start_date'), $request->input('end_date')]);
+        })
+        ->when($request->hasAny(['county_id', 'subcounty_id']), function($query) use($request){
+            $query->select('uliza_clinical_forms.*')
+                ->join('view_facilitys', 'view_facilitys.id', '=', 'uliza_clinical_forms.facility_id');
+
+            if($request->input('subcounty_id'))$query->where('subcounty_id', $request->input('subcounty_id'));
+            if($request->input('county_id'))$query->where('county_id', $request->input('county_id'));
         })
         ->where('draft', false)
         ->orderBy('id', 'desc')
