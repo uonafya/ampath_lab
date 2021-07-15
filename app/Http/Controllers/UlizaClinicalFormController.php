@@ -32,13 +32,13 @@ class UlizaClinicalFormController extends Controller
             if($user->uliza_secretariat) return $query->where('twg_id', $user->twg_id);
             if($user->uliza_reviewer) return $query->whereIn('id', $fclass::select('uliza_clinical_form_id')->where('user_id', $user->id));
         })
-        ->when($request->input('twg_id'), function($query) use($request){
+        /*->when($request->input('twg_id'), function($query) use($request){
             return $query->where('twg_id', $request->input('twg_id'));
-        })
+        })*/
         ->when($request->input('status_id'), function($query) use($request){
             return $query->where('status_id', $request->input('status_id'));
         })
-        ->when($request->has('start_date') || $request->input('end_date'), function($query) use($request){
+        /*->when($request->has('start_date') || $request->input('end_date'), function($query) use($request){
             return $query->whereBetween('created_at', [$request->input('start_date'), $request->input('end_date')]);
         })
         ->when($request->input('county_id') || $request->input('subcounty_id'), function($query) use($request){
@@ -48,7 +48,7 @@ class UlizaClinicalFormController extends Controller
             if($request->input('subcounty_id'))$query->where('subcounty_id', $request->input('subcounty_id'));
             if($request->input('county_id'))$query->where('county_id', $request->input('county_id'));
             return $query;
-        })
+        })*/
         ->where('draft', false)
         ->orderBy('id', 'desc')
         ->get();
