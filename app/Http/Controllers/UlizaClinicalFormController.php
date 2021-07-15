@@ -51,7 +51,10 @@ class UlizaClinicalFormController extends Controller
         ->where('draft', false)
         ->orderBy('id', 'desc')
         ->get();
-        return view('uliza.tables.cases', compact('forms', 'statuses'));
+        $counties = DB::table('countys')->get();
+        $subcounties = DB::table('districts')->get();
+        $twgs = DB::table('uliza_twgs')->get();
+        return view('uliza.tables.cases', compact('forms', 'statuses', 'counties', 'subcounties', 'twgs'));
     }
 
     /**
