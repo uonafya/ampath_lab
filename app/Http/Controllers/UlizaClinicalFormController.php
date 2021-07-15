@@ -47,6 +47,7 @@ class UlizaClinicalFormController extends Controller
 
             if($request->input('subcounty_id'))$query->where('subcounty_id', $request->input('subcounty_id'));
             if($request->input('county_id'))$query->where('county_id', $request->input('county_id'));
+            return $query;
         })
         ->where('draft', false)
         ->orderBy('id', 'desc')
