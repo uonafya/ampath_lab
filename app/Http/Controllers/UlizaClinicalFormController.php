@@ -38,7 +38,7 @@ class UlizaClinicalFormController extends Controller
         ->when($request->input('status_id'), function($query) use($request){
             return $query->where('status_id', $request->input('status_id'));
         })
-        /*->when($request->has('start_date') || $request->input('end_date'), function($query) use($request){
+        ->when($request->input('start_date') || $request->input('end_date'), function($query) use($request){
             return $query->whereBetween('created_at', [$request->input('start_date'), $request->input('end_date')]);
         })
         ->when($request->input('county_id') || $request->input('subcounty_id'), function($query) use($request){
@@ -48,7 +48,7 @@ class UlizaClinicalFormController extends Controller
             if($request->input('subcounty_id'))$query->where('subcounty_id', $request->input('subcounty_id'));
             if($request->input('county_id'))$query->where('county_id', $request->input('county_id'));
             return $query;
-        })*/
+        })
         ->where('draft', false)
         ->orderBy('id', 'desc')
         ->get();
