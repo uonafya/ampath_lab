@@ -78,7 +78,7 @@ class UlizaClinicalFormController extends Controller
         if($request->input('id')) $form = UlizaClinicalForm::find($request->input('id'));
         else{
             $duplicate = UlizaClinicalForm::where($request->only(['facility_id', 'cccno']))->where('status_id', '<', 3)->first();
-            if($duplicate) abort(400, 'The ')
+            if($duplicate) abort(400, 'The clinical form already exists.');
         }
         if(!$form) $form = new UlizaClinicalForm;
         $form->fill($request->except('clinical_visits'));
