@@ -80,7 +80,7 @@
                                 selected
                             @endif
 
-                            > {{ $twg->name }}
+                            > {{ $twg->twg }}
                             </option>
                         @endforeach
                     </select>
