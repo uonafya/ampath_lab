@@ -38,10 +38,10 @@ class UlizaClinicalFormController extends Controller
         ->when($request->input('status_id'), function($query) use($request){
             return $query->where('status_id', $request->input('status_id'));
         })
-        ->when($request->has(['start_date', 'end_date']), function($query) use($request){
+        ->when($request->has('start_date') || $request->input('end_date'), function($query) use($request){
             return $query->whereBetween('created_at', [$request->input('start_date'), $request->input('end_date')]);
         })
-        ->when($request->hasAny(['county_id', 'subcounty_id']), function($query) use($request){
+        ->when($request->input('county_id') || $request->input('subcounty_id'), function($query) use($request){
             $query->select('uliza_clinical_forms.*')
                 ->join('view_facilitys', 'view_facilitys.id', '=', 'uliza_clinical_forms.facility_id');
 
