@@ -43,7 +43,10 @@ class DrSusceptabilityExport implements FromArray, WithEvents, Responsable
         $user = auth()->user();
         $string = "(user_id='{$user->id}' OR facility_id='{$user->facility_id}')";
 
-        $samples = DrSample::select('dr_samples.*', 'viralpatients.patient', 'viralpatients.nat', 'dr_samples.age', 'facilitycode', 'view_facilitys.name AS facility', 'view_facilitys.county')
+        $samples = DrSample::select('dr_samples.*', 'viralpatients.patient', 'dr_samples.age', 'facilitycode', 'view_facilitys.name AS facility', 'view_facilitys.county')
+            ->when(env('APP_LAB') == 7, function($query){
+                return $query->addSelect('viralpatients.nat');
+            })
             ->where(['status_id' => 1, 'control' => 0, 'repeatt' => 0])
             ->leftJoin('viralpatients', 'dr_samples.patient_id', '=', 'viralpatients.id')
             ->leftJoin('view_facilitys', 'viralpatients.facility_id', '=', 'view_facilitys.id')
