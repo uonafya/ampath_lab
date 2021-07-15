@@ -32,9 +32,9 @@ class UlizaClinicalFormController extends Controller
             if($user->uliza_secretariat) return $query->where('twg_id', $user->twg_id);
             if($user->uliza_reviewer) return $query->whereIn('id', $fclass::select('uliza_clinical_form_id')->where('user_id', $user->id));
         })
-        /*->when($request->input('twg_id'), function($query) use($request){
+        ->when($request->input('twg_id'), function($query) use($request){
             return $query->where('twg_id', $request->input('twg_id'));
-        })*/
+        })
         ->when($request->input('status_id'), function($query) use($request){
             return $query->where('status_id', $request->input('status_id'));
         })
