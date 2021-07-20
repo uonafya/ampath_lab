@@ -129,7 +129,7 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Nat No</th>
+                                <th>Uliza No</th>
                                 <th>RTWG</th>
                                 <th>County</th>
                                 <th>Subcounty</th>
