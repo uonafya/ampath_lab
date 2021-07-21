@@ -23,7 +23,7 @@
 			<tbody>
 				@foreach($ulizaClinicalForm->feedback as $formFeedback)
 					<tr>
-						<td>{{ $formFeedback->user->full_name ?? ; }}</td>
+						<td>{{ $formFeedback->user->full_name ?? null }}</td>
 						<td>{{ $formFeedback->review_date }}</td>
 						<td>{{ $formFeedback->casesummary }}</td>
 						<td>{{ $formFeedback->observationsofsummary }}</td>
