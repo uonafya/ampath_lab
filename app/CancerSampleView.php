@@ -38,4 +38,11 @@ class CancerSampleView extends ViewModel
         else if($this->result == 2) return "P";
         else{ return "I"; }
     }
+
+    public function getTestedAtAttribute()
+    {
+        if ($this->site_entry == 2)
+            return "POC";
+        return "Lab";
+    }
 }

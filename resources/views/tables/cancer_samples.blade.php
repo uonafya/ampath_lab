@@ -28,6 +28,7 @@
                                     <th>Gender</th>
                                     <th>Date Drawn</th>
                                     <th>Received Status</th>
+                                    <th>Tested At</th>
                                     <th>Run</th>
                                     <th>Date Tested</th>
                                     <th>Worksheet</th>
@@ -47,6 +48,7 @@
                                         <td> {{ $sample->gender ?? '' }} </td>
                                         <td> {{ $sample->my_date_format('datecollected') }} </td>
                                         <td> {{ $sample->received }} </td>
+                                        <td> {{ $sample->tested_at }} </td>
                                         <td> {{ $sample->run }} </td>
                                         <td> {{ $sample->my_date_format('datetested') }} </td>
                                         <td> {{ $sample->worksheet->id ?? '' }} </td>
@@ -64,23 +66,22 @@
                                             --}}
 
                                             @if(!$sample->result && $sample->receivedstatus == 1)
-                                                @if(in_array($sample->site_entry, [0, 1]) && !$facility_user)
-                                                    @if($sample->age_in_days < 30)
-                                                    <a href="{{ url('cancersample/' . $sample->id . '/edit/') }}" target="_blank" class="btn btn-warning btn-xs" style="margin-bottom: 0.2em;">Edit</a>
-                                                    <br/>
-                                                    @endif
-                                                    @if(Auth::user()->user_type_id == 5)
-                                                        @if($sample->age_in_days < 30)
-                                                        <a href="{{ url('cancersample/' . $sample->id . '/edit_result/') }}" target="_blank" class="btn btn-success btn-xs" style="margin-bottom: 0.2em;">Update Result</a>
+                                                @if($sample->age_in_days < 30)
+                                                    @if(in_array($sample->site_entry, [0, 1]) && !$facility_user)
+                                                        <a href="{{ url('cancersample/' . $sample->id . '/edit/') }}" target="_blank" class="btn btn-warning btn-xs" style="margin-bottom: 0.2em;">Edit</a>
                                                         <br/>
+                                                        @if(!($sample->result || $param))
+                                                            <form action="{{ url('cancersample/' . $sample->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete the following sample?');">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-xs btn-danger">Delete</button>
+                                                            </form>
                                                         @endif
-                                                    @endif
-                                                    @if(!($sample->result || $param))
-                                                        <form action="{{ url('cancersample/' . $sample->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete the following sample?');">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-xs btn-danger">Delete</button>
-                                                        </form>
+                                                    @else
+                                                        @if(in_array($sample->site_entry, [2]) && $facility_user)
+                                                            <a href="{{ url('cancersample/' . $sample->id . '/edit_result/') }}" target="_blank" class="btn btn-success btn-xs" style="margin-bottom: 0.2em;">Update Result</a>
+                                                            <br/>
+                                                        @endif
                                                     @endif
                                                 @endif
                                             @else
