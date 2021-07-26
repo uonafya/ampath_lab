@@ -297,81 +297,91 @@
 
             @else
                 <li>
+                    <a href="#"><h4>To Ship To Central Lab</h4></a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('sample/create') }}">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        Add EID Sample
+                    </a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('viralsample/create') }}">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        Add VL Sample
+                    </a>
+                </li>
+                <hr />
+                <li>
+                    <a href="#"><h4>For Point of Care Testing</h4></a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('sample/create_poc') }}">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        Add POC EID Sample
+                    </a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('viralsample/create_poc') }}">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        Add POC VL Sample
+                    </a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('cancersample/create') }}">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        Add HPV Sample
+                    </a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('worklist/create/1') }}">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        Create POC EID Worklist
+                    </a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('worklist/create/2') }}">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        Create POC VL Worklist
+                    </a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('sample/list_poc/1') }}">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        Update POC EID Results
+                    </a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('viralsample/list_poc/1') }}">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        Update POC VL Results
+                    </a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('cancersample/list/1') }}">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        Update HPV Results
+                        <span class="label label-warning pull-right">{{ $widgets['hpv_resultsForUpdate'] ?? 0 }}</span>
+                    </a>
+                </li>
+                <hr />
+                <li>
                     <a href="{{ url('covid_sample/create') }}">Add Covid-19 Sample</a>
                 </li>
                 <hr />
                 <li>
                     <a href="{{ url('covid_sample') }}">Covid-19 Samples</a>
                 </li>
-                <hr />
-                <li>
-                    <a href="{{ url('sample/create') }}">Add EID Sample</a>
-                </li>
-                <hr />
-                <li>
-                    <a href="{{ url('viralsample/create') }}">Add VL Sample</a>
-                </li>
-                <hr />
-                <li>
-                    <a href="{{ url('sample/create_poc') }}">Add POC EID Sample</a>
-                </li>
-                <hr />
-                <li>
-                    <a href="{{ url('viralsample/create_poc') }}">Add POC VL Sample</a>
-                </li>
-                <hr />
-                <li>
-                    <a href="{{ url('cancersample/create') }}">Add HPV Sample</a>
-                </li>
-                <hr />
-                <li>
-                    <a href="{{ url('worklist/create/1') }}">Create POC EID Worklist</a>
-                </li>
-                <hr />
-                <li>
-                    <a href="{{ url('worklist/create/2') }}">Create POC VL Worklist</a>
-                </li>
-                <hr />
-                <li>
-                    <a href="{{ url('sample/list_poc/1') }}">Update POC EID Results</a>
-                </li>
-                <hr />
-                <li>
-                    <a href="{{ url('viralsample/list_poc/1') }}">Update POC VL Results</a>
-                </li>
-                <hr />
-                <li>
-                    <a href="{{ url('cancersample/list/1') }}">Update HPV Results<span class="label label-warning pull-right">{{ $widgets['hpv_resultsForUpdate'] ?? 0 }}</span></a>
-                </li>
-                <hr />
-                <li>
-                    <a href="{{ url('facility/reports/EID') }}">EID Reports</a>
-                </li>
-                <hr>
-                <li>
-                    <a href="{{ url('facility/reports/VL') }}">VL Reports</a>
-                </li>
-                <hr>
-                <li>
-                    <a href="{{ url('facility/reports/HPV') }}">HPV Reports</a>
-                </li>
-                <hr>
-                <li>
-                    <a href="https://eiddash.nascop.org/download/covid">Covid-19 Form</a>
-                </li>
-                <li>
-                    <a href="https://eiddash.nascop.org/download/poc">POC User Guide</a>
-                </li>
-                <li>
-                    <a href="https://eiddash.nascop.org/download/eid_req">EID Form</a>
-                </li>
-                <li>
-                    <a href="https://eiddash.nascop.org/download/vl_req">VL Form</a>
-                </li>
-                <li>
-                    <a href="https://eiddash.nascop.org/download/remotelogin">Remote Login SOP</a>
-                </li>
-
             @endif
 
         @elseif (in_array(Auth::user()->user_type_id, [11, 12, 13]) )

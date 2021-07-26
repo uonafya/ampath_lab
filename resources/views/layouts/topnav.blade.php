@@ -210,11 +210,37 @@
                                 <li class="">
                                     <a href="{{ url('worklist') }}">POC Worklists</a>
                                 </li>
-                                <li class="">
-                                    <a href="{{ url('sample/sms_log') }}">EID SMS Log</a>
+                                <li class="dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        SMS Log <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class=""><a class="dropdown-item" href="{{ url('sample/sms_log') }}">EID SMS Log</a></li>
+                                        <li class=""><a class="dropdown-item" href="{{ url('viralsample/sms_log') }}">VL SMS Log</a></li>
+                                    </ul>
                                 </li>
-                                <li class="">
-                                    <a href="{{ url('viralsample/sms_log') }}">VL SMS Log</a>
+                                <li class="dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Reports <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class=""><a class="dropdown-item" href="{{ url('facility/reports/EID') }}">EID Reports</a></li>
+                                        <li class=""><a class="dropdown-item" href="{{ url('facility/reports/VL') }}">VL Reports</a></li>
+                                        <li class=""><a class="dropdown-item" href="{{ url('facility/reports/HPV') }}">HPV Reports</a></li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Forms <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/covid">Covid-19 Form</a></li>
+                                        <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/poc">POC User Guide</a></li>
+                                        <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/eid_req">EID Form</a></li>
+
+                                        <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/vl_req">VL Form</a></li>
+                                        <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/remotelogin">Remote Login SOP</a></li>
+                                    </ul>
                                 </li>
                                 <!-- <li class="">
                                     <a href="#">EID Reports</a>
@@ -481,11 +507,37 @@
                             <li class="">
                                 <a href="{{ url('worklist') }}">POC Worklists</a>
                             </li>
-                            <li class="">
-                                <a href="{{ url('sample/sms_log') }}">EID SMS Log</a>
+                            <li class="dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    SMS Log <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class=""><a class="dropdown-item" href="{{ url('sample/sms_log') }}">EID SMS Log</a></li>
+                                    <li class=""><a class="dropdown-item" href="{{ url('viralsample/sms_log') }}">VL SMS Log</a></li>
+                                </ul>
                             </li>
-                            <li class="">
-                                <a href="{{ url('viralsample/sms_log') }}">VL SMS Log</a>
+                            <li class="dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Reports <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class=""><a class="dropdown-item" href="{{ url('facility/reports/EID') }}">EID Reports</a></li>
+                                    <li class=""><a class="dropdown-item" href="{{ url('facility/reports/VL') }}">VL Reports</a></li>
+                                    <li class=""><a class="dropdown-item" href="{{ url('facility/reports/HPV') }}">HPV Reports</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Forms <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/covid">Covid-19 Form</a></li>
+                                    <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/poc">POC User Guide</a></li>
+                                    <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/eid_req">EID Form</a></li>
+                                    
+                                    <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/vl_req">VL Form</a></li>
+                                    <li class=""><a class="dropdown-item" href="https://eiddash.nascop.org/download/remotelogin">Remote Login SOP</a></li>
+                                </ul>
                             </li>
                             <!-- <li class="">
                                 <a href="#">EID Reports</a>
