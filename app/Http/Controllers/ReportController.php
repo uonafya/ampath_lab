@@ -210,7 +210,7 @@ class ReportController extends Controller
                 }
                 $this->generate_samples_manifest($request, $data, $dateString);
             } else {
-                $data = $this->__getDateData($request, $dateString)->get();
+                // $data = $this->__getDateData($request, $dateString)->get();
                 $this->__getExcel($data, $dateString, $request);
             }
         }else if($request->input('types') == 'worksheet_report'){
@@ -233,12 +233,14 @@ class ReportController extends Controller
                 //     $data = self::__getDateData($request,$dateString)->get();
                 //     return DB::getQueryLog();
                 // }
+
                 $data = self::__getDateData($request,$dateString)->get();
+                dd($dateString);
                 return $this->__getExcel($data, $dateString, $request);
             }
         }
         session(['toast_error' => 1, 'toast_message' => 'No Data Found']);
-        return back();
+        // return back();
     }
 
     public function worksheet(Request $request)
@@ -661,7 +663,9 @@ class ReportController extends Controller
         }
 
         if($request->input('types') != 'failed') $model = $model->where('repeatt', '=', 0);
-        
+        if(auth()->user()->user_type_id == 5) {
+            $report = auth()->user()->facility->name . ' ' . $report;
+        }
         $dateString = strtoupper($report . $title . ' ' . $dateString);
         // dd($model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0)->toSql());
         return $model->orderBy('datereceived', 'asc');

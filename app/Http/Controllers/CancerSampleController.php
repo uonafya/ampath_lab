@@ -23,17 +23,23 @@ class CancerSampleController extends Controller
         $facility_user = false;
         if ($user->facility_id)
             $facility_user = true;
-
+        
         $samples = CancerSampleView::with(['facility', 'worksheet', 'user' => function($query) use ($facility_user) {
-                                    $query->when(!$facility_user, function($query) {
-                                            return $query->whereNotIn('users.user_type_id', [5]);
-                                    });
-                                }])->when($facility_user, function($query) use ($user) {
-                                    return $query->where('facility_id', $user->facility_id)
-                                                ->orWhere('user_id', $user->id);
-                                })->when($param, function($query){
-                                    return $query->whereNotNull('datedispatched')->orderBy('datedispatched', 'DESC');
-                                })->orderBy('created_at', 'DESC')->paginate();
+                        $query->when(!$facility_user, function($query) {
+                                return $query->whereNotIn('users.user_type_id', [5]);
+                        });
+                    }])->when($facility_user, function($query) use ($user) {
+                        return $query->whereRaw("(facility_id = {$user->facility_id} or user_id = {$user->id})");
+                    })->when($param, function($query) use ($param, $facility_user){
+                        if ($param == 1) {
+                            return $query->whereNull('result')
+                                ->when($facility_user, function($query){
+                                    return $query->where('site_entry', 2);
+                                });
+                        } else {
+                            return $query->whereNotNull('datedispatched')->orderBy('datedispatched', 'DESC');
+                        }
+                    })->orderBy('created_at', 'DESC')->paginate();
         
         $data['samples'] = $samples;
         $data['param'] = $param;
