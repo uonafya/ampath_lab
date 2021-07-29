@@ -240,7 +240,7 @@ class ReportController extends Controller
             }
         }
         session(['toast_error' => 1, 'toast_message' => 'No Data Found']);
-        return back();
+        // return back();
     }
 
     public function worksheet(Request $request)
