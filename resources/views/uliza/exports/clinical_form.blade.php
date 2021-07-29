@@ -405,7 +405,7 @@
 								<div class="input-group-prepend">
 									<span class="input-group-text text-left" for="review_date">Date of Review :</span>
 								</div>
-								<input class="form-control date" name="review_date" value="{{ $ulizaClinicalForm->feedback->review_date ?? '' }}" required type="text">
+								<input class="form-control date" name="review_date" value="{{ $ulizaClinicalForm->feedback->first()->review_date ?? '' }}" required type="text">
 							</div>
 						</div>
 
