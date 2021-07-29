@@ -297,7 +297,7 @@
 
             @else
                 <li>
-                    <a href="#"><h4>To Ship To Central Lab</h4></a>
+                    <a href="#"><h5>To Ship To Central Lab</h5></a>
                 </li>
                 <hr />
                 <li>
@@ -315,7 +315,7 @@
                 </li>
                 <hr />
                 <li>
-                    <a href="#"><h4>For Point of Care Testing</h4></a>
+                    <a href="#"><h5>For Point of Care Testing</h5></a>
                 </li>
                 <hr />
                 <li>
