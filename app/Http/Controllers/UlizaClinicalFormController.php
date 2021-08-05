@@ -50,7 +50,7 @@ class UlizaClinicalFormController extends Controller
             return $query;
         })
         ->where('draft', false)
-        ->orderBy('id', 'desc')
+        ->orderBy('uliza_clinical_forms.id', 'desc')
         ->get();
         $counties = DB::table('countys')->get();
         $subcounties = DB::table('districts')->get();

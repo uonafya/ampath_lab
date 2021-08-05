@@ -156,7 +156,7 @@
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">What is the primary reason for this consultation:</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $ulizaClinicalForm->primary_reason ?? '' }}" name="primary_reason" readonly="" rows="3"></textarea>
+							<textarea class="form-control" value="{{ $ulizaClinicalForm->get_prop_name($reasons, 'primary_reason') }}" name="primary_reason" readonly="" rows="3"></textarea>
 						</div>
 					</div>
 					<div class="form-group row">
@@ -224,7 +224,7 @@
 							Number of adherence counseling/assessment sessions done in the last 3-6 months:
 						</label>
 						<div class="col-md-8">
-							<input class="form-control" value="{{ $ulizaClinicalForm->no_adhearance_counseling ?? '' }}" name="no_adhearance_counseling" readonly="" type="number">
+							<input class="form-control" value="{{ $ulizaClinicalForm->no_adherance_counseling ?? '' }}" name="no_adherance_counseling" readonly="" type="number">
 						</div>
 					</div>
 					<div class="form-group row">
