@@ -90,7 +90,7 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        {{-- $samples->links() --}}
+                        {{ $samples->links() }}
                     </div>
                 </div>
             </div>
@@ -103,8 +103,10 @@
 
 @section('scripts') 
 
+    {{-- 
     @component('/tables/scripts')
 
     @endcomponent
+    --}}
 
 @endsection

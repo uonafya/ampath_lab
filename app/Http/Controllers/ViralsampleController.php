@@ -52,10 +52,10 @@ class ViralsampleController extends Controller
             ->whereRaw($string)
             ->where(['site_entry' => 2])
             ->orderBy('id', 'desc')
-            ->get();
-            // ->paginate(200);
+            // ->get();
+            ->paginate(50);
         
-        // $samples->setPath(url()->current());
+        $samples->setPath(url()->current());
         $data['samples'] = $samples;
         $data['pre'] = 'viral';
 
