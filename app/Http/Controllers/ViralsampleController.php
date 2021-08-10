@@ -53,11 +53,12 @@ class ViralsampleController extends Controller
             ->where(['site_entry' => 2])
             ->orderBy('id', 'desc')
             ->get();
-            // ->paginate(50);
-        // dd($samples);
+            // ->paginate(200);
+        
         // $samples->setPath(url()->current());
         $data['samples'] = $samples;
         $data['pre'] = 'viral';
+
         return view('tables.poc_samples', $data)->with('pageTitle', 'VL POC Samples');
     }
 

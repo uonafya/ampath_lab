@@ -40,7 +40,7 @@
 
                                 </tr>
                             </thead>
-                            <tbody> 
+                            <tbody>
                                 @foreach($samples as $key => $sample)
                                     <tr>
                                         <td> {{ $sample->id }} </td>
@@ -88,7 +88,6 @@
                                         </td>
                                     </tr>
                                 @endforeach
-
                             </tbody>
                         </table>
                         {{-- $samples->links() --}}
