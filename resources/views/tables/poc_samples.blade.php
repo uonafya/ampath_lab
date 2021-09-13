@@ -40,7 +40,7 @@
 
                                 </tr>
                             </thead>
-                            <tbody> 
+                            <tbody>
                                 @foreach($samples as $key => $sample)
                                     <tr>
                                         <td> {{ $sample->id }} </td>
@@ -73,10 +73,8 @@
                                                     <a href="{{ url($pre . 'sample/' . $sample->id . '/edit/') }}" target="_blank" class="btn btn-warning btn-xs" style="margin-bottom: 0.2em;">Edit</a>
                                                     <br/>
                                                 @endif
-                                                @if($sample->age_in_days < 30)
                                                     <a href="{{ url($pre . 'sample/' . $sample->id . '/edit_result/') }}" target="_blank" class="btn btn-success btn-xs" style="margin-bottom: 0.2em;">Update Result</a>
                                                     <br />
-                                                @endif
                                                 @if(!$sample->result)
                                                     <form action="{{ url($pre . 'sample/' . $sample->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete the following sample?');">
                                                         @csrf
@@ -88,10 +86,9 @@
                                         </td>
                                     </tr>
                                 @endforeach
-
                             </tbody>
                         </table>
-                        {{-- $samples->links() --}}
+                        {{ $samples->links() }}
                     </div>
                 </div>
             </div>
@@ -104,8 +101,10 @@
 
 @section('scripts') 
 
+    {{-- 
     @component('/tables/scripts')
 
     @endcomponent
+    --}}
 
 @endsection
