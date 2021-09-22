@@ -228,13 +228,13 @@
 		                        <a href="{{ url('cancersample/index/') }}">Samples Awaiting testing.</a>
 		                    </li>
 
-		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['hpv_pending_testing']) }}">
-		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['hpv_pending_testing']) }}">{{ $widgets['hpv_pending_testing'] }}</span>
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['hpv_worksheets_for_approval']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['hpv_worksheets_for_approval']) }}">{{ $widgets['hpv_worksheets_for_approval'] }}</span>
 		                        <a href="{{ url('cancerworksheet/create') }}">Worksheets Awaiting Approval.</a>
 		                    </li>
 
-		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['hpv_pending_testing']) }}">
-		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['hpv_pending_testing']) }}">{{ $widgets['hpv_pending_testing'] }}</span>
+		                    <li class="list-group-item" style="{{ $widgets['get_style']($widgets['hpv_samplesforRerun']) }}">
+		                        <span class="badge badge-{{ $widgets['get_badge']($widgets['hpv_samplesforRerun']) }}">{{ $widgets['hpv_samplesforRerun'] }}</span>
 		                        <a href="{{ url('cancersample/index/1') }}">Samples for Rerun.</a>
 		                    </li>
 						@endif

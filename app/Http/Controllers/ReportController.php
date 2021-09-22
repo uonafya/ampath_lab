@@ -6,6 +6,7 @@ use App\Abbotdeliveries;
 use App\Abbotprocurement;
 use App\Batch;
 use App\CancerSampleView;
+use App\CancerWorksheet;
 use App\Cd4SampleView;
 use App\Common;
 use App\Consumption;
@@ -209,6 +210,7 @@ class ReportController extends Controller
                 }
                 $this->generate_samples_manifest($request, $data, $dateString);
             } else {
+                // $data = $this->__getDateData($request, $dateString)->get();
                 $this->__getExcel($data, $dateString, $request);
             }
         }else if($request->input('types') == 'worksheet_report'){
@@ -231,12 +233,29 @@ class ReportController extends Controller
                 //     $data = self::__getDateData($request,$dateString)->get();
                 //     return DB::getQueryLog();
                 // }
+
                 $data = self::__getDateData($request,$dateString)->get();
+                // dd($dateString);
                 return $this->__getExcel($data, $dateString, $request);
             }
         }
         session(['toast_error' => 1, 'toast_message' => 'No Data Found']);
-        return back();
+        // return back();
+    }
+
+    public function worksheet(Request $request)
+    {
+        $worksheet = CancerWorksheet::find($request->input('worksheet'));
+        $dataArray = [];
+        $dataArray[] = ['Sample ID', 'Lab ID', 'Run', 'Target 1', 'Target 2', 'Target 3', 'Interpretation', 'Date Approved', 'Approved By'];
+        foreach ($worksheet->sample as $sample) {
+            $dataArray[] = [
+                $sample->patient->id, $sample->id, $sample->run, $sample->target_1, $sample->target_2, $sample->target_3, $sample->result_name, $sample->dateapproved, $sample->approver->full_name ?? ''
+            ];
+        }
+        $title = 'Worksheet No. ' . $worksheet->id . ' samples reports';
+        $title = strtoupper($title);
+        return Common::csv_download($dataArray, $title, false);
     }
 
     public function __getTATData($request, &$dateString) {
@@ -480,6 +499,8 @@ class ReportController extends Controller
                 $testtype = 'Viralload';
             else if ($request->input('testtype') == 'EID')
                 $testtype = 'EID';
+            else if ($request->input('testtype') == 'HPV')
+                $testtype = 'HPV';
         }
         
         $title = '';
@@ -540,7 +561,7 @@ class ReportController extends Controller
             $table = 'cancer_samples_view';
             $columns = "$table.id,$table.worksheet_id,machines.machine as platform,$table.patient, $table.patient_name, IF($table.site_entry = 2, poc_lab.name, labs.labdesc) as `labdesc`, view_facilitys.partner, view_facilitys.county, view_facilitys.subcounty, view_facilitys.name as facility, view_facilitys.facilitycode,";
             
-            $columns .= " gender.gender_description, $table.dob, $table.age, cancerhivstatuses.name as hiv_status, cancerjustifications.name as justification, cancersampletypes.name as sampletype, $table.datecollected, receivedstatus.name as receivedstatus, rejectedreasons.name as rejectedreason, entry_point, $table.datereceived,$table.created_at, $table.datetested, $table.dateapproved, $table.datedispatched, ir.name as result, CONCAT(users.surname, CONCAT(' ', users.oname)) AS `entered_by`";
+            $columns .= " gender.gender_description, $table.dob, $table.age, cancerhivstatuses.name as hiv_status, cancerjustifications.name as justification, cancersampletypes.name as sampletype, $table.datecollected, receivedstatus.name as receivedstatus, rejectedreasons.name as rejectedreason, entry_point, $table.datereceived,$table.created_at, $table.datetested, $table.dateapproved, $table.datedispatched, $table.target_1, $table.target_2, $table.target_3,ir.name as result, CONCAT(users.surname, CONCAT(' ', users.oname)) AS `entered_by`";
             // if ($request->input('types') == 'failed') $columns .= ",$table.interpretation";
             // $columns .= " gender.gender_description, samples_view.dob, samples_view.age, ip.name as infantprophylaxis, samples_view.datecollected, pcrtype.alias as pcrtype, samples_view.spots, receivedstatus.name as receivedstatus, rejectedreasons.name as rejectedreason, mr.name as motherresult, mp.name as motherprophylaxis, feedings.feeding, entry_points.name as entrypoint, samples_view.datereceived,samples_view.created_at, samples_view.datetested, samples_view.dateapproved, samples_view.datedispatched, ir.name as infantresult,  $table.entered_by, rec.surname as receiver";
     		$model = CancerSampleView::selectRaw($columns)
@@ -559,6 +580,10 @@ class ReportController extends Controller
                     ->leftJoin('cancerjustifications', 'cancerjustifications.id', '=', "$table.justification")
                     ->leftJoin('cancersampletypes', 'cancersampletypes.id', '=', "$table.sample_type")
                     ->leftJoin('machines', 'machines.id', '=', 'worksheets.machine_type');
+
+                    if ($request->input('category') == 'norl_facility') {
+                        $model = $model->where('view_facilitys.norl', 1);
+                    }
     	}
         
         $model = self::__getBelongingTo($request, $model, $dateString);
@@ -580,6 +605,10 @@ class ReportController extends Controller
             $report = 'VL ';
         if ($testtype == 'HPV')
             $report = 'Cancer ';
+
+        if ($request->input('category') == 'norl_facility') {
+            $report .= 'norl facilites ';
+        }
         
         if ($request->input('types') == 'tested') {
             $model = $model->where("$table.receivedstatus", "<>", '2');
@@ -634,7 +663,9 @@ class ReportController extends Controller
         }
 
         if($request->input('types') != 'failed') $model = $model->where('repeatt', '=', 0);
-        
+        if(auth()->user()->user_type_id == 5) {
+            $report = auth()->user()->facility->name . ' ' . $report;
+        }
         $dateString = strtoupper($report . $title . ' ' . $dateString);
         // dd($model->orderBy('datereceived', 'asc')->where('repeatt', '=', 0)->toSql());
         return $model->orderBy('datereceived', 'asc');
@@ -647,7 +678,7 @@ class ReportController extends Controller
         $vlDataArray = ['Lab ID', 'Batch #', 'Worksheet #', 'Plaform', 'Patient CCC No', 'Patient Names', 'Provider Identifier', 'Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Order Number', 'AMRS location', 'Recency Number', 'Sex', 'DOB', 'Age', 'PMTCT', 'Sample Type', 'Collection Date', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Current Regimen', 'ART Initiation Date', 'Justification',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Viral Load', 'Entered By', 'Received By'];
         $eidDataArray = ['Lab ID', 'Batch #', 'Worksheet #', 'Plaform', 'Sample Code', 'Infant Name','Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Order Number', 'Sex',    'DOB', 'Age(m)', 'Infant Prophylaxis', 'Date of Collection', 'PCR Type', 'Spots', 'Received Status', 'Rejected Reason / Reason for Repeat', 'HIV Status of Mother', 'Mother Age', 'PMTCT Intervention', 'Breast Feeding', 'Entry Point',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Test Result', 'Entered By', 'Received By'];
         $cd4DataArray = ['Lab Serial #', 'Facility', 'AMR Location', 'County', 'Sub-County', 'Ampath #', 'Patient Names', 'Provider ID', 'Sex', 'DOB', 'Date Collected/Drawn', 'Received Status', 'Rejected Reason( if Rejected)', 'Date Received', 'Date Registered', 'Registered By', 'Date Tested', 'Date Result Printed', 'CD3 %', 'CD3 abs', 'CD4 %', 'CD4 abs', 'Total Lymphocytes'];
-        $cancerArray = ['Lab ID', 'Worksheet #', 'Plaform', 'Sample Code', 'Patient Name','Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Sex', 'DOB', 'Age(m)', 'HIV Status', 'Justification', 'Sample Type', 'Date of Collection', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Entry Point',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Test Result', 'Entered By'];
+        $cancerArray = ['Lab ID', 'Worksheet #', 'Plaform', 'Sample Code', 'Patient Name','Testing Lab', 'Partner', 'County', 'Sub County', 'Facility Name', 'MFL Code', 'Sex', 'DOB', 'Age(m)', 'HIV Status', 'Justification', 'Sample Type', 'Date of Collection', 'Received Status', 'Rejected Reason / Reason for Repeat', 'Entry Point',  'Date Received', 'Date Entered', 'Date of Testing', 'Date of Approval', 'Date of Dispatch', 'Target 1', 'Target 2', 'Target 3', 'Test Result', 'Entered By'];
         // $VLfacilityManifestArray = ['Lab ID', 'Patient CCC #', 'Batch #', 'County', 'Sub-County', 'Facility Name', 'Facility Code', 'Gender', 'DOB', 'Sample Type', 'Justification', 'Date Collected', 'Date Tested'];
         // $EIDfacilityManifestArray = ['Lab ID', 'HEI # / Patient CCC #', 'Batch #', 'County', 'Sub-County', 'Facility Name', 'Facility Code', 'Gender', 'DOB',  'PCR Type','Spots', 'Date Collected', 'Date Tested'];
         if (auth()->user()->user_type_id == 5) {
@@ -687,7 +718,7 @@ class ReportController extends Controller
                 
         ini_set("memory_limit", "-1");
         ini_set("max_execution_time", "3000");
-        
+        // dd($data->isEmpty());
         if(!$data->isEmpty()) {
             foreach ($data as $report) {
                 // if ($request->input('types') == 'manifest')
@@ -699,6 +730,7 @@ class ReportController extends Controller
             return Common::csv_download($dataArray, $title, false);
         } else {
             session(['toast_message' => 'No data available for the criteria provided']);
+            return back();
         }
     }
 

@@ -14,6 +14,11 @@ class CancerWorksheetImport implements ToCollection, WithHeadingRow
 	protected $worksheet;
 	protected $cancelled;
     protected $daterun;
+    private $targets = [
+        'target_1' => 'Other HR HPV',
+        'target_2' => 'HPV 16',
+        'target_3' => 'HPV 18'
+    ];
 
 	public function __construct($worksheet, $request)
 	{
@@ -37,16 +42,27 @@ class CancerWorksheetImport implements ToCollection, WithHeadingRow
 
         $sample_array = $doubles = [];
 
-       
+        $collection = $collection->groupBy('sample_id');
+        $newcollection = collect([]);
+        foreach ($collection as $key => $collection) {
+            $data = $collection->first();
+            foreach ($this->targets as $key => $target) {
+                $RsTarget = $collection->where('target', $target);
+                $data[$key] = $RsTarget->first()['result'] ?? 'Invalid';
+            }
+            $newcollection->push($data);
+        }
+        
+        $collection = $newcollection;
         foreach ($collection as $key => $data) 
         {
             if(!isset($data['sample_id'])) break;
 
             $sample_id = (int) trim($data['sample_id']);
             $interpretation = rtrim($data['flag'] ?? '');
-            $control = rtrim($data['sample_type']);
-            $date_tested = $data['date_tested'] ?? NULL;
-            $date_tested =  (isset($date_tested)) ? date("Y-m-d", strtotime($data['date_tested'])) :
+            $control = rtrim($data['type']);
+            $date_tested = $data['result_creation_datetime'] ?? NULL;
+            $date_tested =  (isset($date_tested)) ? date("Y-m-d", strtotime($data['result_creation_datetime'])) :
                             date("Y-m-d");            
 
             $data_array = Misc::hpv_sample_result($data);

@@ -21,6 +21,33 @@
     <div class="content animate-panel" data-child="hpanel">
         <div class="row">
             <div class="col-lg-10 col-lg-offset-1">
+                @if(session('testingSystem') == 'HPV')
+                <div class="hpanel">
+                    <div class="alert alert-success">
+                        <center>Worksheet Sample Reports</center>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive" style="padding-left: 15px;padding-top: 2px;padding-bottom: 2px;padding-right: 15px;">
+                            <table cellpadding="1" cellspacing="1" class="table table-condensed">
+                                <tbody>
+                                    <tr>
+                                        <form action="{{ url('/reports/worksheet') }}" class="form-horizontal" method="POST" id='reports_dateSelect_form'>
+                                            @csrf
+                                        <td>Select Worksheet:</td>
+                                        <td>
+                                            <select class="form-control" id="report_cancerworksheet_search" name="worksheet"></select>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-default">Download Report</button>
+                                        </td>
+                                        </form>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                @endif
                 @if(Auth::user()->user_type_id != 5 && Session('testingSystem') != 'DR')
                 <div class="hpanel">
                     <div class="alert alert-success">
@@ -137,6 +164,16 @@
                                     <select class="form-control" id="report_facility_search" name="facility"></select>
                                 </div>
                             </div>
+                            @if(session('testingSystem') == 'HPV')
+                            <div class="row">
+                                <label class="col-sm-3 control-label">
+                                    <input type="radio" name="category" value="norl_facility" class="i-checks">NORL Facilities Only
+                                </label>
+                                <div class="col-sm-9">
+                                    
+                                </div>
+                            </div>
+                            @endif
                             @endif
                         </div>
                         <div class="form-group">
@@ -269,31 +306,35 @@
                                     </label>
                                 @else
                                 <label> <input type="radio" name="types" value="tested" required> All Samples Tested </label>
-                                <label> <input type="radio" name="types" value="awaitingtesting" required> All Samples Awaiting Testing </label>
-                                @if(Auth::user()->user_type_id != 5)
-                                @if(Session('testingSystem') == 'EID')
-                                <label> <input type="radio" name="types" value="positives" required> Positives </label>
-                                @endif
+                                @if(!($testtype == 'HPV' && Auth::user()->user_type_id == 5))
+                                    <label> <input type="radio" name="types" value="awaitingtesting" required> All Samples Awaiting Testing </label>
+                                    @if(Auth::user()->user_type_id != 5)
+                                        @if(Session('testingSystem') == 'EID')
+                                        <label> <input type="radio" name="types" value="positives" required> Positives </label>
+                                        @endif
+                                    @endif
                                 @endif
                                 <!-- <label> <input type="radio" name="types" value="worksheetsrun" class="i-checks" required> Worksheets Run </label> -->
                                 <label> <input type="radio" name="types" value="rejected" required> Rejected Samples </label>
-                                @if(Session('testingSystem') != 'HPV')
-                                <label> <input type="radio" name="types" value="cns" required> CNS </label>
-                                @if(Auth::user()->user_type_id == 5)
-                                <label> <input type="radio" name="types" value="poc" required> All POC Samples Tested </label>
-                                @else
-                                <label> <input type="radio" name="types" value="remoteentry" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Site Entry Samples </label>
-                                <label> <input type="radio" name="types" value="remoteentrydoing" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Doing Remote Entry </label>
-                                <label> <input type="radio" name="types" value="sitessupported" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Sending Samples to Lab </label>
-                                @endif
-                                <label> <input type="radio" name="types" value="tat" required> TAT Report </label>
-                                <label><input type="radio" name="types" value="failed" required> Failed Tests</label>
-                                @if(Auth::user()->user_type_id == 5)
-                                <label><input type="radio" name="types" value="manifest" required> Print/Generate Sample Manifest</label>
-                                @else
-                                <label><input type="radio" name="types" value="worksheet_report" required> Worksheet Report</label>
-                                @endif
-                                @endif
+                                @if(!($testtype == 'HPV' && Auth::user()->user_type_id == 5))
+                                    @if(Session('testingSystem') != 'HPV')
+                                    <label> <input type="radio" name="types" value="cns" required> CNS </label>
+                                    @if(Auth::user()->user_type_id == 5)
+                                    <label> <input type="radio" name="types" value="poc" required> All POC Samples Tested </label>
+                                    @else
+                                    <label> <input type="radio" name="types" value="remoteentry" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Site Entry Samples </label>
+                                    <label> <input type="radio" name="types" value="remoteentrydoing" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Doing Remote Entry </label>
+                                    <label> <input type="radio" name="types" value="sitessupported" required> @if(Session('testingSystem') == 'EID') EID @elseif(Session('testingSystem') == 'Viralload') VL @endif Sites Sending Samples to Lab </label>
+                                    @endif
+                                    <label> <input type="radio" name="types" value="tat" required> TAT Report </label>
+                                    <label><input type="radio" name="types" value="failed" required> Failed Tests</label>
+                                    @if(Auth::user()->user_type_id == 5)
+                                    <label><input type="radio" name="types" value="manifest" required> Print/Generate Sample Manifest</label>
+                                    @else
+                                    <label><input type="radio" name="types" value="worksheet_report" required> Worksheet Report</label>
+                                    @endif
+                                    @endif
+                                    @endif
                                 @endif
                             </div>
                             <div id="max_tat_row">
@@ -351,6 +392,7 @@
         set_select_facility("report_district_search", "{{ url('district/search') }}", 3, "Search for Sub-County", false);
         set_select_facility("report_county_search", "{{ url('county/search') }}", 1, "Search for County", false);
         set_select_facility("report_partner_search", "{{ url('partner/search') }}", 1, "Search for Partner", false);
+        set_select_facility("report_cancerworksheet_search", "{{ url('cancerworksheet/search') }}", 1, "Search for Worksheet", false);
 
     @endcomponent
     <script type="text/javascript">
@@ -385,6 +427,7 @@
 
             $("#generate_report").click(function(e){
                 var selValue = $('input[name=category]:checked').val();
+                // console.log(selValue);
                 var category = null;
                 if (selValue == 'county') {
                     category = $("#report_county_search").val();
@@ -401,7 +444,7 @@
                 }
 
                 @if(auth()->user()->is_lab_user)
-                if((category == '' || category == null || category == undefined) && selValue != 'overall') {
+                if((category == '' || category == null || category == undefined) && !(selValue == 'overall' || selValue == 'norl_facility')) {
                     e.preventDefault();
                     set_warning("No "+cat+" Selected</br /></br />Please Select a "+cat+" from the dropdown");
                 }

@@ -68,7 +68,13 @@
                                         <th> Patient Name </th>
                                     @endif
                                     <th>Run</th>
+                                    @if(session('testingSystem') == 'HPV')
+                                        <th>Target 1</th>
+                                        <th>Target 2</th>
+                                        <th>Target 3</th>
+                                    @else
                                     <th>Result</th>                
+                                    @endif
                                     <th>Interpretation</th>                
                                     <th>Action</th>                
                                     <th>Approved Date</th>                
@@ -84,6 +90,16 @@
                                         <td>-</td>
                                     @endif
                                     <td >-</td>
+                                    @if(session('testingSystem') == 'HPV')
+                                        @php
+                                            $result = 'Invalid';
+                                            if($worksheet->pos_control_result == 6 || $worksheet->pos_control_result == 2)
+                                                $result = 'Valid';
+                                        @endphp
+                                        <td><small><strong><font color='#FF0000'>{{ $result }}</font></strong></small></td>
+                                        <td><small><strong><font color='#FF0000'>{{ $result }}</font></strong></small></td>
+                                        <td><small><strong><font color='#FF0000'>{{ $result }}</font></strong></small></td>
+                                    @else
                                     <td ><small><strong>
                                         <font color='#FF0000'>
                                             @if($worksheet->pos_control_result == 6 || $worksheet->pos_control_result == 2)
@@ -93,7 +109,8 @@
                                             @endif
                                         </font>
                                          </strong></small>
-                                     </td>
+                                    </td>
+                                    @endif
                                     <td ><small><strong><font color='#FF0000'> {{ $worksheet->pos_control_interpretation }} </font></strong></small> </td>
                                     <td >Control </td>
                                     <td >&nbsp; </td>
@@ -108,6 +125,16 @@
                                         <td>-</td>
                                     @endif
                                     <td >-</td>
+                                    @if(session('testingSystem') == 'HPV')
+                                        @php
+                                            $result = 'Invalid';
+                                            if($worksheet->neg_control_result == 6 || $worksheet->neg_control_result == 1)
+                                                $result = 'Valid';
+                                        @endphp
+                                        <td><small><strong><font color='#339900'>{{ $result }}</font></strong></small></td>
+                                        <td><small><strong><font color='#339900'>{{ $result }}</font></strong></small></td>
+                                        <td><small><strong><font color='#339900'>{{ $result }}</font></strong></small></td>
+                                    @else
                                     <td ><small><strong>
                                         <font color='#339900'> 
                                             @if($worksheet->neg_control_result == 6 || $worksheet->neg_control_result == 1)
@@ -118,6 +145,7 @@
                                         </font>
                                          </strong></small>
                                      </td>
+                                    @endif
                                     <td ><small><strong><font color='#339900'> {{ $worksheet->neg_control_interpretation }} </font></strong></small> </td>
                                     <td >Control </td>
                                     <td >&nbsp; </td>
@@ -181,7 +209,13 @@
                                             <td> {{ $sample->patient->patient_name }} </td>
                                         @endif
                                         <td> {{ $sample->run }} </td>
+                                        @if(session('testingSystem') == 'HPV')
+                                            <th>{{ $sample->target_1 }}</th>
+                                            <th>{{ $sample->target_2 }}</th>
+                                            <th>{{ $sample->target_3 }}</th>
+                                        @else
                                         <td> {{ $sample->interpretation }} </td>
+                                        @endif
                                         <td>  
                                             @if( $class == 'noneditable' || isset($covid))
                                                 {!! $sample->get_prop_name($results, 'result', 'name_colour') !!}

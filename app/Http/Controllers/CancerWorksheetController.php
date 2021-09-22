@@ -194,6 +194,21 @@ class CancerWorksheetController extends Controller
         // // }
     }
 
+    public function labels(CancerWorksheet $worksheet)
+    {
+        $samples = CancerSampleView::where('worksheet_id', $worksheet->id)
+                    ->orderBy('run', 'desc')
+                    ->when(true, function($query){
+                        // if(in_array(env('APP_LAB'), [2])) return $query->orderBy('facility_id')->orderBy('batch_id', 'asc');
+                        // if(in_array(env('APP_LAB'), [3])) $query->orderBy('datereceived', 'asc');
+                        // if(!in_array(env('APP_LAB'), [8, 9, 1])) return $query->orderBy('batch_id', 'asc');
+                        return $query->orderBy('id', 'asc');
+                    })
+                    ->orderBy('cancer_samples_view.id', 'asc')
+                    ->where('site_entry', '!=', 2)->get();
+        return view('worksheets.labels', ['samples' => $samples, 'i' => 2]);
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -611,6 +626,18 @@ class CancerWorksheetController extends Controller
             ->get();
 
         return $samples;
+    }
+
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+
+        $worksheets = CancerWorksheet::selectRaw('id as id, id as name')
+            ->whereRaw("id like '" . $search . "%'")
+            ->paginate(10);
+
+        $worksheets->setPath(url()->current());
+        return $worksheets;
     }
 
     private function get_samples_for_run($limit = 94){

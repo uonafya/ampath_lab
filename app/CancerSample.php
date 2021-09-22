@@ -11,6 +11,11 @@ class CancerSample extends BaseModel
     	return $this->belongsTo(CancerPatient::class, 'patient_id', 'id');
     }
 
+    public function lab()
+    {
+        return $this->belongsTo(Lab::class, 'lab_id', 'id');
+    }
+
     public function facility()
     {
     	return $this->belongsTo('App\Facility');
@@ -56,6 +61,13 @@ class CancerSample extends BaseModel
     public function final_approver()
     {
         return $this->belongsTo('App\User', 'approvedby2');
+    }
+
+    public function getTestingLabAttribute()
+    {
+        if (in_array($this->site_entry, [0,1]))
+            return $this->lab;
+        return $this->facility_lab;
     }
 
 
@@ -118,34 +130,42 @@ class CancerSample extends BaseModel
     public function setTATs()
     {        
         $this->setTAT1();
-        // $this->setTAT2();
-        // $this->setTAT3();
-        // $this->setTAT4();
-        dd($this);
+        $this->setTAT2();
+        $this->setTAT3();
+        $this->setTAT4();
         return $this->save();
     }
 
     private function setTAT1()
     {
-        if (null !== $this->datecollected && null !== $this->datereceived) 
-            $this->tat1 = date_diff(date_create($this->datereceived), date_create($this->datecollected));
+        $this->tat1 = $this->getTATDaysCount($this->datereceived, $this->datecollected);
     }
 
     private function setTAT2()
     {
-        if (null !== $this->datetested && null !== $this->datereceived) 
-            $this->tat2 = date_diff(date_create($this->datetested), date_create($this->datereceived));
+        $this->tat2 = $this->getTATDaysCount($this->datetested, $this->datereceived);
     }
 
     private function setTAT3()
     {
-        if (null !== $this->datetested && null !== $this->datedispatched) 
-            $this->tat3 = date_diff(date_create($this->datedispatched), date_create($this->datetested));
+        $this->tat3 = $this->getTATDaysCount($this->datedispatched, $this->datetested);
     }
 
     private function setTAT4()
     {
-        if (null !== $this->datecollected && null !== $this->datedispatched) 
-            $this->tat3 = date_diff(date_create($this->datedispatched), date_create($this->datecollected));
+        $this->tat4 = $this->getTATDaysCount($this->datedispatched, $this->datecollected);
+    }
+
+    private function getTATDaysCount($greater_date, $lesser_data)
+    {
+        $days = NULL;
+        if (null !== $greater_date && null !== $lesser_data) {
+            $diff = date_diff(date_create($greater_date), date_create($lesser_data));
+            $days = $diff->d;
+            if ($days == 0)
+                $days = 1;
+        }
+        
+        return $days;
     }
 }
