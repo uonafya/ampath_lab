@@ -100,10 +100,9 @@
                     @if(isset($covid))            
                     <form method="POST" action="/covid_worksheet" class="form-horizontal">
                     @else
-                    <form method="POST" action="/cancerworksheet" class="form-horizontal" target="_blank">
+                    <form method="POST" action="{{ url('cancerworksheet') }}" class="form-horizontal" target="_blank">
                     @endif
                 @endif
-                    @csrf
 
                 @isset($combined)
                     <input type="hidden" value="{{ $combined }}" name="combined" >

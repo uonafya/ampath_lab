@@ -35,6 +35,7 @@ class CancerWorksheetImport implements ToCollection, WithHeadingRow
     */
     public function collection(Collection $collection)
     {
+        dd($collection);
     	$worksheet = $this->worksheet;
     	$cancelled = $this->cancelled;
         $today = $datetested = $this->daterun;
