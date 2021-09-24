@@ -7,9 +7,9 @@ use \App\CancerSample;
 use \App\CancerSampleView;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
+// use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class CancerWorksheetImport implements ToCollection, WithHeadingRow
+class CancerWorksheetImport implements ToCollection/*, WithHeadingRow*/
 {
 	protected $worksheet;
 	protected $cancelled;
@@ -35,8 +35,6 @@ class CancerWorksheetImport implements ToCollection, WithHeadingRow
     */
     public function collection(Collection $collection)
     {
-        dd('This is the file upload');
-        dd($collection);
     	$worksheet = $this->worksheet;
     	$cancelled = $this->cancelled;
         $today = $datetested = $this->daterun;
@@ -44,49 +42,107 @@ class CancerWorksheetImport implements ToCollection, WithHeadingRow
 
         $sample_array = $doubles = [];
 
-        $collection = $collection->groupBy('sample_id');
-        $newcollection = collect([]);
-        foreach ($collection as $key => $collection) {
-            $data = $collection->first();
-            foreach ($this->targets as $key => $target) {
-                $RsTarget = $collection->where('target', $target);
-                $data[$key] = $RsTarget->first()['result'] ?? 'Invalid';
-            }
-            $newcollection->push($data);
-        }
-        
-        $collection = $newcollection;
-        foreach ($collection as $key => $data) 
-        {
-            if(!isset($data['sample_id'])) break;
+        // Processing Abbott worksheet
+        if ($this->worksheet->machine_type == 2) {
+            $results = collect([]);
+            $detailedresults = collect([]);
+            $this->getAbbottFormattedData($collection, $results, $detailedresults);
+            foreach ($results as $resultkey => $result) {
+                // Do not proccess sample without sample identifier
+                if(!isset($result['SAMPLE ID'])) break;
 
-            $sample_id = (int) trim($data['sample_id']);
-            $interpretation = rtrim($data['flag'] ?? '');
-            $control = rtrim($data['type']);
-            $date_tested = $data['result_creation_datetime'] ?? NULL;
-            $date_tested =  (isset($date_tested)) ? date("Y-m-d", strtotime($data['result_creation_datetime'])) :
-                            date("Y-m-d");            
+                $sample_id = (int) trim($result['SAMPLE ID']);
+                $interpretation = rtrim($result['INTERPRETATION'] ?? '');
+                $control = rtrim($result['SAMPLE TYPE']);
 
-            $data_array = Misc::hpv_sample_result($data);
+                // Getting the details of each sample result
+                $details = $detailedresults->where('SAMPLE LOCATION', $result['SAMPLE LOCATION']);
 
-            if(\Str::contains($control, '+')){
-                $positive_control = $data_array;
-                continue;
-            }
-            else if(\Str::contains($control, '-')){
-                $negative_control = $data_array;
-                continue;
-            }
+                foreach ($this->targets as $targetkey => $target) {
+                    $RsTarget = $details->where('ASSAY NAME', $target);
+                    $result[$targetkey] = $RsTarget->first()['RESULT'] ?? 'Invalid';
+                }
+                // $data_array = Misc::hpv_sample_result($result);
+                // dd($data_array);
+                if (\Str::contains($result['RESULT'], ['Not Detected'])) {
+                    $data_array = ['result' => 1, 'interpretation' => $result['RESULT']];
+                } else if (\Str::contains($result['RESULT'], ['Passed', 'Valid'])) {
+                    $data_array = ['result' => 6, 'interpretation' => 'Valid'];
+                } else if ($result['RESULT'] == NULL || \Str::contains($result['RESULT'], ['Failed', 'Invalid'])) {
+                    $data_array = ['result' => 3, 'interpretation' => $result['ERROR CODE/DESCRIPTION']];
+                } else if (\Str::contains($result['RESULT'], ['HPV'])) {
+                    $data_array = ['result' => 2, 'interpretation' => $result['RESULT']];
+                }
 
-            $data_array = array_merge($data_array, ['datemodified' => $today, 'datetested' => $datetested]);
-            $sample = CancerSample::find($sample_id);
-            if(!$sample) continue;
-
-            $sample->fill($data_array);
-            if($cancelled) $sample->worksheet_id = $worksheet->id;
-            else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
+                if(\Str::contains($result['SAMPLE ID'], 'POS')){
+                    $positive_control = $data_array;
+                    continue;
+                }
+                else if(\Str::contains($result['SAMPLE ID'], 'NEG')){
+                    $negative_control = $data_array;
+                    continue;
+                }
                 
-            $sample->save();
+                $data_array = array_merge($data_array, ['target_1' => $result['target_1'], 'target_2' => $result['target_2'], 'target_3' => $result['target_3'], 'datemodified' => $today, 'datetested' => $datetested]);
+                $sample = CancerSample::find($sample_id);
+                if(!$sample) continue;
+
+                $sample->fill($data_array);
+                if($cancelled) $sample->worksheet_id = $worksheet->id;
+                else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
+                    
+                $sample->save();
+            }
+        }
+        // Processing C8800 worksheet
+        else {
+            // ->pluck();
+            // dd($collection->pluck($collection->where(0, "Test")->first()));
+            $collection = $collection->groupBy(1);
+            $collection->pull('Sample ID');
+            $newcollection = collect([]);
+            foreach ($collection as $key => $collection) {
+                $data = $collection->first();
+                foreach ($this->targets as $key => $target) {
+                    $RsTarget = $collection->where(5, $target);
+                    $data[$key] = $RsTarget->first()[6] ?? 'Invalid';
+                }
+                $newcollection->push($data);
+            }
+            
+            $collection = $newcollection;
+            foreach ($collection as $key => $data) 
+            {
+                if(!isset($data['1'])) break;
+
+                $sample_id = (int) trim($data['1']);
+                $interpretation = rtrim($data['3'] ?? '');
+                $control = rtrim($data['4']);
+                $date_tested = $data['8'] ?? NULL;
+                $date_tested =  (isset($date_tested)) ? date("Y-m-d", strtotime($data['8'])) :
+                                date("Y-m-d");            
+
+                $data_array = Misc::hpv_sample_result($data);
+
+                if(\Str::contains($control, '+')){
+                    $positive_control = $data_array;
+                    continue;
+                }
+                else if(\Str::contains($control, '-')){
+                    $negative_control = $data_array;
+                    continue;
+                }
+
+                $data_array = array_merge($data_array, ['datemodified' => $today, 'datetested' => $datetested]);
+                $sample = CancerSample::find($sample_id);
+                if(!$sample) continue;
+
+                $sample->fill($data_array);
+                if($cancelled) $sample->worksheet_id = $worksheet->id;
+                else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
+                    
+                $sample->save();
+            }   
         }
         
         CancerSample::where(['worksheet_id' => $worksheet->id, 'run' => 0])->update(['run' => 1]);
@@ -106,5 +162,31 @@ class CancerWorksheetImport implements ToCollection, WithHeadingRow
 
         Misc::requeue($worksheet->id, $worksheet->daterun, 'hpv');
         session(['toast_message' => "The worksheet has been updated with the results."]);
+    }
+
+    private function getAbbottFormattedData($collection, &$results, &$detailedresults)
+    {
+        $titlecount = 0;
+        $resultdata = $collection->whereNotNull(3);
+        $titleArray = NULL;
+
+        foreach($resultdata as $data) {
+            if ($data[0] == "SAMPLE LOCATION"){
+                $titleArray = $data;
+                $titlecount++;
+                continue;
+            }
+            $newdata = [];
+            foreach ($data as $key => $item) {
+                $newdata[$titleArray[$key]] = $data[$key];
+            }
+
+
+            if ($titlecount == 1){
+                $results->push($newdata);
+            } else {
+                $detailedresults->push($newdata);
+            }
+        }
     }
 }
