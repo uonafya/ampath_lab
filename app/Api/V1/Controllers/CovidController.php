@@ -16,6 +16,7 @@ use App\ViewFacility;
 use App\CovidModels\Lab;
 use GuzzleHttp\Client;
 use DB;
+use Exception;
 
 use App\CovidTestModels\CovidPatient as TestPatient;
 use App\CovidTestModels\CovidSample as TestSample;
@@ -136,7 +137,7 @@ class CovidController extends Controller
         // $p = $patient_class::where($request->only('national_id'))->whereNotNull('national_id')->first();
         // if(!$p) $p = $patient_class::where($request->only(['identifier']))->where($patient_column, $request->input('patient_id'))->first();
         $p = new $patient_class;
-        $p->fill($request->only(['case_id', 'nationality', 'national_id', 'identifier_type_id', 'identifier', 'patient_name', 'justification', 'county', 'subcounty', 'phone_no', 'ward', 'residence', 'dob', 'sex', 'occupation', 'health_status', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death']));
+        $p->fill($request->only(['nationality', 'national_id', 'identifier_type_id', 'identifier', 'patient_name', 'justification', 'county', 'subcounty', 'phone_no', 'ward', 'residence', 'dob', 'sex', 'occupation', 'health_status', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death']));
         $p->$patient_column = $request->input('patient_id');
         // if($lab->id == 11) $p->cif_patient_id = $request->input('patient_id');
         // else{
@@ -147,20 +148,35 @@ class CovidController extends Controller
             $county = DB::table('countys')->where('name', $p->county)->first();
             $p->county_id = $county->id ?? null;
         }
-        $p->save();
+        try {
+            $p->save();
+        } catch (Exception $e) {
+            return response()->json([
+              'status' => 'Bad Request',
+              'error' => $e->getMessage(),
+              'patient' => null,
+              'sample' => null,
+            ], 400);
+            
+        }
+        $s = null;
 
         // $s = new CovidSample;
         // if(\Str::contains(url()->current(), 'test')) $s = new TestSample;
-        $s = $sample_class::where(['lab_id' => $lab->id, $sample_column => $request->input('specimen_id')])->first();
+        //$s = $sample_class::where(['lab_id' => $lab->id, $sample_column => $request->input('specimen_id'), 'datecollected' => $request->input('datecollected')])->whereNotNull($sample_column)->first();
+        if(!$s && $request->input('identifier')) $s = $sample_class::where(['lab_id' => $lab->id, $sample_column => $request->input('identifier'), 'datecollected' => $request->input('datecollected')])->first();
         if(!$s) $s = $sample_class::where(['lab_id' => $lab->id, 'patient_id' => $p->id, 'datecollected' => $request->input('datecollected')])->first();
         if(!$s) $s = new $sample_class;
-        $s->fill($request->only(['lab_id', 'test_type', 'health_status', 'symptoms', 'temperature', 'observed_signs', 'underlying_conditions', 'result', 'age', 'age_unit', 'datecollected', 'datereceived', 'datetested']));
+        // $s = new $sample_class;
+        $s->fill($request->only(['lab_id', 'border_point', 'test_type', 'health_status', 'symptoms', 'temperature', 'observed_signs', 'underlying_conditions', 'result', 'age', 'age_unit', 'datecollected', 'datereceived', 'datetested']));
         $s->patient_id = $p->id;
-        $s->$sample_column = $request->input('specimen_id');
+        $s->$sample_column = $request->input('identifier');
         // if($lab->id == 11) $s->cif_sample_id = $request->input('specimen_id');
         // else{
         //     $s->nhrl_sample_id = $request->input('specimen_id');
         // }
+
+        if($request->input('case_id')) $s->$sample_column = $request->input('case_id');
 
         $s->datedispatched = $s->datetested;
         
@@ -168,7 +184,7 @@ class CovidController extends Controller
         $s->save();
 
         return response()->json([
-          'status' => 'ok',
+          'status' => 'received',
           'patient' => $p,
           'sample' => $s,
         ], 201);

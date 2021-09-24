@@ -81,10 +81,11 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
             'facility_id' => $this->facility_id ?? null,
             'quarantine_site_id' => $this->quarantine_site_id ?? null,
             'patient_name' => $row->name ?? $row->patient_name,
+            'email_address' => $row->email_address ?? null,
             'sex' => $row->sex,
             'national_id' => $row->idpassport ?? $row->national_id ?? null,
             'current_health_status' => $row->health_status ?? null,
-            'nationality' => DB::table('nationalities')->where('name', $row->nationality)->first()->id ?? 1,
+            'nationality' => DB::table('nationalities')->where('name', ($row->nationality ?? 'Kenyan'))->first()->id ?? 1,
             'phone_no' => $row->phone_number ?? $row->phone_no ?? null,
             'county' => $row->county ?? null,
             'subcounty' => $row->subcounty ?? null,  
@@ -125,6 +126,7 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
             'datereceived' => $datereceived,
             'receivedstatus' => 1,
             'sample_type' => 1,
+            'vaccination_status' => $row->vaccination_status ?? 1, 
         ]);
         $sample->pre_update();
 

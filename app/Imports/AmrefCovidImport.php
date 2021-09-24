@@ -95,6 +95,7 @@ class AmrefCovidImport implements OnEachRow, WithHeadingRow
             'datereceived' => $datereceived,
             'receivedstatus' => 1,
             'sample_type' => 1,
+            'vaccination_status' => $row->vaccination_status ?? 1, 
         ]);
         if(isset($row->repeat) && $row->repeat) $sample->test_type = 2;
         $sample->pre_update();

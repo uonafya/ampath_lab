@@ -5,25 +5,28 @@
 @endcomponent
 
 @section('content')
-
+ 
 <div class="content">
     <div class="row">
         <div class="col-md-12">
             Click To View: 
-            <a href="{{ url('dr_extraction_worksheet/index/0') }}" title="All Worksheets">
-                All Worksheets
+            <a href="{{ url($link_extra . 'pool/index/0') }}" title="All Pools">
+                All Pools
             </a> |
-            <a href="{{ url('dr_extraction_worksheet/index/1') }}" title="In-Process Worksheets">
-                In-Process Worksheets
+            <a href="{{ url($link_extra . 'pool/index/1') }}" title="In-Process Pools">
+                In-Process Pools
             </a> |
-            <a href="{{ url('dr_extraction_worksheet/index/2') }}" title="Tested Worksheets">
-                Tested Worksheets
+            <a href="{{ url($link_extra . 'pool/index/12') }}" title="In-Process Pools">
+                In-Process Pools (With Reruns)
             </a> |
-            <a href="{{ url('dr_extraction_worksheet/index/3') }}" title="Approved Worksheets">
-                Approved Worksheets
+            <a href="{{ url($link_extra . 'pool/index/2') }}" title="Tested Pools">
+                Tested Pools
             </a> |
-            <a href="{{ url('dr_extraction_worksheet/index/4') }}" title="Cancelled Worksheets">
-                Cancelled Worksheets
+            <a href="{{ url($link_extra . 'pool/index/3') }}" title="Approved Pools">
+                Approved Pools
+            </a> |
+            <a href="{{ url($link_extra . 'pool/index/4') }}" title="Cancelled Pools">
+                Cancelled Pools
             </a>
         </div>
     </div>
@@ -73,7 +76,7 @@
 
         </div>
     </div>
-        
+    
     <div class="row">
         <div class="col-lg-12">
             <div class="hpanel">
@@ -82,70 +85,58 @@
                         <a class="showhide"><i class="fa fa-chevron-up"></i></a>
                         <!-- <a class="closebox"><i class="fa fa-times"></i></a> -->
                     </div>
-                    Worksheets
+                    Pools
                 </div>
                 <div class="panel-body">
                     <table class="table table-striped table-bordered table-hover" >
                         <thead>
-                            <tr>
-                                    <th> W No </th>
-                                    <th> Date Created </th>
-                                    <th> Created By </th>
-                                    <th> # Samples </th>
-                                    <!-- <th> Date Run </th> -->
-                                    <th> Date of Gel Documentation </th>
-                                    <th> Task </th>                 
+                            <tr class="colhead">
+                                <th>W No</th>
+                                <th>Date Created</th>
+                                <th>Created By</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Worksheets</th>
+                                <th>Task</th>
                             </tr>
                         </thead>
                         <tbody>
-
-                            @foreach($worksheets as $key => $worksheet)
+                            @foreach($pools as $key => $pool)
                                 <tr>
-                                    <td>{{ $worksheet->id }} </td>
-                                    <td> {{ $worksheet->my_date_format('created_at') }} </td>
-                                    <td> {{ $worksheet->creator->full_name ?? '' }} </td>
-
-                                    <td> {{ $worksheet->sample_count }} </td>
-
-                                    <td> {{ $worksheet->my_date_format('date_gel_documentation') }} </td>
+                                    <td>{{ $pool->id }} </td>
+                                    <td> {{ $pool->my_date_format('created_at') }} </td>
+                                    <td> {{ $pool->creator->full_name ?? '' }} </td>
+                                    <td> {!! $pool->machine !!} </td>
+                                    <td> {!! $pool->status !!} </td>
+                                    <td>
+                                        @foreach($pool->worksheet as $worksheet)
+                                            {!! $worksheet->hyper_link !!} <br />
+                                        @endforeach
+                                    </td>
                                     <td> 
-                                        <a href="{{ url('dr_extraction_worksheet/download/' . $worksheet->id) }}" title="Click to Download Worksheet">
-                                            Download Bulk Template
+                                        <a href="{{ url('covid_pool/' . $pool->id) }}" title="Click to Show Worksheet Pool" target='_blank'>
+                                            Show
                                         </a> | 
-                                        <a href="{{ url('dr_extraction_worksheet/print/' . $worksheet->id) }}" title="Click to Print Worksheet">
+                                        <a href="{{ url('covid_pool/print/' . $pool->id) }}" title="Click to Download Worksheet Pool" target='_blank'>
                                             Print
                                         </a> | 
+                                        <a href="{{ url('covid_pool/cancel/' . $pool->id) }}" title="Click to Cancel Worksheet Pool">
+                                            Cancel
+                                        </a> | 
 
-                                        @if($worksheet->date_gel_documentation)
-                                            @if($worksheet->status_id != 3 && $worksheet->sequencing)
-                                                <a href="{{ url('dr_worksheet/create/' . $worksheet->id) }}" title="Click to Create Worksheet">
-                                                    Create Sequencing Worksheet
-                                                </a> | 
-                                            @endif
-                                        @else
-
-                                            <a href="{{ url('dr_extraction_worksheet/gel_documentation/' . $worksheet->id) }}" title="Click to Submit the Gel Documentation">
-                                                Proceed to Gel Documentation
-                                            </a> |  
-
-                                            <a href="{{ url('dr_extraction_worksheet/cancel/' . $worksheet->id) }}" title="Click to Cancel Worksheet">
-                                                Cancel Worksheet
-                                            </a>
-                                        @endif
-
+                                        <!-- $pool->mylinks  -->
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
 
-                    {{ $worksheets->links() }} 
+                    {{ $pools->links() }} 
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 
 @endsection
 

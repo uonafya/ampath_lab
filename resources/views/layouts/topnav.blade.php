@@ -102,6 +102,9 @@
                             <a href="{{ url('covid_worksheet') }}">Worksheets</a>
                         </li>
                         <li class="">
+                            <a href="{{ url('covid_pool') }}">Pools</a>
+                        </li>
+                        <li class="">
                             <a href="{{ url('covid_sample/index/2') }}">Results List</a>
                         </li>
                         <li class="">
@@ -388,6 +391,9 @@
                     </li>
                     <li class="">
                         <a href="{{ url('covid_worksheet') }}">Worksheets</a>
+                    </li>
+                    <li class="">
+                        <a href="{{ url('covid_pool') }}">Pools</a>
                     </li>
                     <li class="">
                         <a href="{{ url('covid_sample/index/2') }}">Results List</a>

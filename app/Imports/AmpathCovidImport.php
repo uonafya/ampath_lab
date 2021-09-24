@@ -105,6 +105,7 @@ class AmpathCovidImport implements OnEachRow, WithHeadingRow
             'datereceived' => $datereceived,
             'receivedstatus' => 1,
             'sample_type' => 1,
+            'vaccination_status' => $row->vaccination_status ?? 1, 
         ]);
         if(isset($row->symptoms) && strlen($row->symptoms) > 1) $sample->symptoms = explode(',', $row->symptoms);
         $sample->pre_update();

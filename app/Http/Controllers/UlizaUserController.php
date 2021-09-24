@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\User;
 use DB;
+use Str;
 use Hash;
+
+use App\Notifications\NewUlizaUserNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -61,9 +64,17 @@ class UlizaUserController extends Controller
     {
         $user = new User;
         $user->fill($request->all());
-        $user->password = 'password';
+        // $user->password = 'password';
+        $password = \Str::random(15);
+        $user->password = $password;
         $user->save();
         session(['toast_message' => 'The user has been created']);
+        try {
+            $user->notify(new NewUlizaUserNotification($password));
+        } catch (\Exception $e) {
+            session(['toast_error' => 1, 'toast_message' => 'The user has been created but the email could not go out.']);
+        }
+
         return back();
     }
 
@@ -101,7 +112,7 @@ class UlizaUserController extends Controller
     public function update(Request $request, User $user)
     {
         $user->fill($request->all());
-        $user->password = 'password';
+        // $user->password = 'password';
         $user->save();
         session(['toast_message' => 'The user has been updated']);
         return redirect('uliza-user');
@@ -116,5 +127,19 @@ class UlizaUserController extends Controller
     public function destroy(User $user)
     {
         //
+    }
+
+    public function change_password()
+    {
+        return view('uliza.uliza-update-password');
+    }
+
+    public function update_password(Request $request)
+    {
+        $user = auth()->user();
+        $user->password = $request->input('password');
+        $user->save();
+        session(['toast_message' => 'The password has been updated']);
+        return redirect('uliza-form');
     }
 }

@@ -554,7 +554,7 @@ class Lookup
             'amount_units' => DB::table('amount_units')->get(),
             'dr_plate_statuses' => DB::table('dr_plate_statuses')->get(),
             'dr_sample_statuses' => DB::table('dr_sample_statuses')->get(),
-            'warning_codes' => DB::table('dr_warning_codes')->get(),
+            // 'warning_codes' => DB::table('dr_warning_codes')->get(),
             // 'regimens' => DB::table('dr_viralprophylaxis')->get(),
             'regimen_classes' => DB::table('regimen_classes')->get(),
 
@@ -591,7 +591,7 @@ class Lookup
 
     public static function covid_form()
     {
-        $tables = ['identifier_types', 'health_statuses', 'covid_justifications', 'covid_test_types', 'covid_symptoms', 'observed_signs', 'underlying_conditions', 'covid_isolations', 'covid_sample_types', 'viralrejectedreasons', 'amrslocations', 'receivedstatus', 'gender', 'results', 'countys', 'nationalities', 'quarantine_sites', 'districts'];
+        $tables = ['identifier_types', 'health_statuses', 'covid_justifications', 'covid_test_types', 'covid_symptoms', 'covid_vaccination_statuses', 'observed_signs', 'underlying_conditions', 'covid_isolations', 'covid_sample_types', 'viralrejectedreasons', 'amrslocations', 'receivedstatus', 'gender', 'results', 'countys', 'nationalities', 'quarantine_sites', 'districts'];
 
         $data = [];
 
@@ -606,7 +606,7 @@ class Lookup
     public static function covid_arrays()
     {
         return [
-            'sample' => ['test_type', 'amrs_location', 'provider_identifier', 'order_no', 'health_status', 'symptoms', 'temperature', 'observed_signs', 'underlying_conditions', 'comments', 'labcomment', 'sample_type', 'receivedstatus', 'rejectedreason', 'datecollected', 'datereceived', 'datetested', 'result', 'age', 'highpriority'],
+            'sample' => ['test_type', 'amrs_location', 'provider_identifier', 'order_no', 'health_status', 'symptoms', 'temperature', 'observed_signs', 'underlying_conditions', 'comments', 'labcomment', 'sample_type', 'vaccination_status', 'receivedstatus', 'rejectedreason', 'datecollected', 'datereceived', 'datetested', 'result', 'age', 'highpriority'],
             'patient' => ['identifier_type', 'identifier', 'national_id', 'nationality', 'patient_name', 'occupation', 'justification', 'county', 'subcounty', 'ward', 'residence', 'hospital_admitted', 'dob', 'sex', 'date_symptoms', 'date_admission', 'date_isolation', 'date_death', 'facility_id', 'county_id', 'subcounty_id', 'patient_name', 'email_address', 'phone_no', 'contact_email_address', 'contact_phone_no', 'quarantine_site_id'],
         ];
     }

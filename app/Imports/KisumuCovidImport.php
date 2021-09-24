@@ -66,7 +66,7 @@ class KisumuCovidImport implements OnEachRow, WithHeadingRow
             'sex' => $row->gender,
             'national_id' => $row->national_id ?? null,
             'current_health_status' => $row->health_status ?? null,
-            'nationality' => DB::table('nationalities')->where('name', $row->nationality)->first()->id ?? 1,
+            'nationality' => DB::table('nationalities')->where('name', ($row->nationality ?? 'Kenyan'))->first()->id ?? 1,
             'phone_no' => $row->phone_number ?? null,
             'county' => $row->county ?? null,
             'subcounty' => $row->subcounty ?? null,  
@@ -98,6 +98,7 @@ class KisumuCovidImport implements OnEachRow, WithHeadingRow
             'datereceived' => $datereceived,
             'receivedstatus' => 1,
             'sample_type' => 1,
+            'vaccination_status' => $row->vaccination_status ?? 1, 
         ]);
         if(isset($row->repeat) && $row->repeat) $sample->test_type = 2;
         if(isset($row->symptoms) && strlen($row->symptoms) > 1) $sample->symptoms = explode(',', $row->symptoms);
