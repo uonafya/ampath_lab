@@ -642,6 +642,32 @@ class ViralworksheetController extends Controller
         return redirect($worksheet->route_name);  
     }
 
+    public function cns_worksheet(Viralworksheet $worksheet)
+    {
+        if($worksheet->status_id != 1){
+            session(['toast_error' => 1, 'toast_message' => "The worksheet is not eligible to be dispatched as CNS."]);
+            return back();
+        }
+        $worksheet->status_id = 3;
+        $worksheet->daterun = $worksheet->datereviewed = $worksheet->datereviewed2 = date('Y-m-d');
+        $worksheet->save();
+        
+        $samples = Viralsample::where(['worksheet_id' => $worksheet->id])
+                    ->where('site_entry', '!=', 2) 
+                    ->select('viralsamples.*')
+                    ->join('viralbatches', 'viralbatches.id', '=', 'viralsamples.batch_id')
+                    ->get();
+
+        foreach ($samples as $key => $sample) {
+            $sample->repeatt = 0;
+            $sample->result = 'Collect New Sample';
+            $sample->dateapproved = $sample->dateapproved2 = date('Y-m-d');
+            $sample->pre_update();
+        }
+        session(['toast_message' => "The worksheet has been dispatched as CNS."]);
+        return redirect($worksheet->route_name);  
+    }
+
     public function download_dump(Viralworksheet $worksheet)
     {
         return MiscViral::dump_worksheet($worksheet->id);

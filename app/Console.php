@@ -322,7 +322,7 @@ class Console
 
                 } */         
             } catch (\Exception $e) {
-                
+		dd($e);                
             }
         }
     }

@@ -25,6 +25,12 @@ Artisan::command('nphl', function () {
     \App\Covid::synch_to_nphl();
 })->describe('Synch to NPHL');
 
+Artisan::command('backlog', function () {
+    \App\Random::county_backlog();
+    // \App\Random::backlog_report('eid');
+    // \App\Random::backlog_report('vl');
+})->describe('Backlog report');
+
 Artisan::command('mysql8', function () {
     \App\AlterRegimen::mysql8_update();
 })->describe('Mysql 8 update');
@@ -452,6 +458,11 @@ Artisan::command('transfer:deliveries', function(){
 // })->describe('Checking for Chege');
 
 // Quick fixes
+Artisan::command('kisumu:approval', function(){
+    $str = \App\Common::fix_kisumu_approval('eid');
+    $str = \App\Common::fix_kisumu_approval('vl');
+    $this->info($str);
+})->describe('Fix results that have first approval but not second approval.');
 Artisan::command('correct:repeats', function(){
     $str = \App\Random::temp_correct_repeats();
     $this->info($str);

@@ -241,7 +241,7 @@ class Synch
 
 		$body = json_decode($response->getBody());
 		// dd($body);
-		Cache::store('file')->put('api_token', $body->token, 60);
+		Cache::store('file')->put('api_token', $body->token, (60*60));
 
 		// dd($body);
 	}

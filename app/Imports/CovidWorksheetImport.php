@@ -13,12 +13,14 @@ class CovidWorksheetImport implements ToCollection
 	protected $worksheet;
 	protected $cancelled;
     protected $daterun;
+    protected $worksheet_data;
 
 	public function __construct($worksheet, $request)
 	{
         $cancelled = false;
         if($worksheet->status_id == 4) $cancelled =  true;
         $worksheet->fill($request->except(['_token', 'upload']));
+        $this->worksheet_data = $request->except(['_token', '_method', 'upload']);
         $this->cancelled = $cancelled;
         $this->worksheet = $worksheet;
         $this->daterun = $request->input('daterun', date("Y-m-d"));
@@ -32,6 +34,10 @@ class CovidWorksheetImport implements ToCollection
     {
     	$worksheet = $this->worksheet;
     	$cancelled = $this->cancelled;
+
+        if($worksheet->pool_id){
+            $worksheet_ids = $worksheet->pool->worksheet->pluck('id')->toArray();
+        }
 
         $today = $datemodified = $datetested = $this->daterun;
         $positive_control = $negative_control = null;
@@ -62,6 +68,8 @@ class CovidWorksheetImport implements ToCollection
                 }
 
                 $result_array = MiscCovid::roche_sample_result($target1, $target2, $flag);
+                $result_array['datetested'] = $datetested;
+                if($worksheet->pool_id && $result_array['result'] == 2) $result_array['repeatt'] = 1;
 
                 MiscCovid::dup_worksheet_rows($doubles, $sample_array, $sample_id, $result_array['result']);
 
@@ -79,11 +87,14 @@ class CovidWorksheetImport implements ToCollection
                 $sample = CovidSample::find($sample_id);
                 if(!$sample) continue;
 
-                $sample->datetested = $datetested;
                 $sample->fill($result_array);
                 if($cancelled) $sample->worksheet_id = $worksheet->id;
                 else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
                 $sample->save();
+
+                if($sample->pool_sample_id){
+                    $sample->pool_sample->sample()->whereNull('dateapproved')->whereIn('worksheet_id', $worksheet_ids)->update($result_array);
+                }
             }            
         }
         // C8800
@@ -99,6 +110,8 @@ class CovidWorksheetImport implements ToCollection
                 $flag = $value[3];
 
                 $result_array = MiscCovid::roche_sample_result($target1, $target2, $flag);
+                $result_array['datetested'] = $datetested;
+                if($worksheet->pool_id && $result_array['result'] == 2) $result_array['repeatt'] = 1;
 
                 MiscCovid::dup_worksheet_rows($doubles, $sample_array, $sample_id, $result_array['result']);
 
@@ -116,11 +129,14 @@ class CovidWorksheetImport implements ToCollection
                 $sample = CovidSample::find($sample_id);
                 if(!$sample) continue;
 
-                $sample->datetested = $datetested;
                 $sample->fill($result_array);
                 if($cancelled) $sample->worksheet_id = $worksheet->id;
                 else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
                 $sample->save();
+
+                if($sample->pool_sample_id){
+                    $sample->pool_sample->sample()->whereNull('dateapproved')->whereIn('worksheet_id', $worksheet_ids)->update($result_array);
+                }
             }
         }
         // Abbott
@@ -137,35 +153,37 @@ class CovidWorksheetImport implements ToCollection
                     $interpretation = $value[5];
                     $error = $value[10];
 
-                    $data_array = MiscCovid::sample_result($interpretation, $error);
+                    $result_array = MiscCovid::sample_result($interpretation, $error);
+                    $result_array['datetested'] = $datetested;
+                    if($worksheet->pool_id && $result_array['result'] == 2) $result_array['repeatt'] = 1;
 
 
                     MiscCovid::dup_worksheet_rows($doubles, $sample_array, $sample_id, $interpretation);
 
-                    // if($sample_id == "COV-2_NEG") $negative_control = $data_array;
-                    // if($sample_id == "COV-2_POS") $positive_control = $data_array;
+                    // if($sample_id == "COV-2_NEG") $negative_control = $result_array;
+                    // if($sample_id == "COV-2_POS") $positive_control = $result_array;
 
                     if(!is_numeric($sample_id)){
                         $s = strtolower($sample_id);
 
-                        if(Str::contains($s, 'neg')) $negative_control = $data_array;
-                        else if(Str::contains($s, 'pos')) $positive_control = $data_array;
+                        if(Str::contains($s, 'neg')) $negative_control = $result_array;
+                        else if(Str::contains($s, 'pos')) $positive_control = $result_array;
 
                     }
-
-                    $data_array = array_merge($data_array, ['datetested' => $today]);
-                    // $search = ['id' => $sample_id, 'worksheet_id' => $worksheet->id];
-                    // Sample::where($search)->update($data_array);
 
                     $sample_id = (int) $sample_id;
                     $sample = CovidSample::find($sample_id);
                     if(!$sample) continue;
 
-                    $sample->fill($data_array);
+                    $sample->fill($result_array);
                     if($cancelled) $sample->worksheet_id = $worksheet->id;
                     else if($sample->worksheet_id != $worksheet->id || $sample->dateapproved) continue;
 
                     $sample->save();
+
+                    if($sample->pool_sample_id){
+                        $sample->pool_sample->sample()->whereNull('dateapproved')->whereIn('worksheet_id', $worksheet_ids)->update($result_array);
+                    }
                 }
 
                 if($bool && $value[5] == "RESULT") break;
@@ -230,14 +248,35 @@ class CovidWorksheetImport implements ToCollection
 
         CovidSample::where(['worksheet_id' => $worksheet->id])->whereNull('result')->update(['repeatt' => 1]);
 
-        $worksheet->neg_control_interpretation = $negative_control['interpretation'] ?? null;
+        $control_array = [
+            'neg_control_interpretation' => $negative_control['interpretation'] ?? null,
+            'neg_control_result' => $negative_control['result'] ?? null,
+
+            'pos_control_interpretation' => $positive_control['interpretation'] ?? null,
+            'pos_control_result' => $positive_control['result'] ?? null,
+
+            'daterun' => $datetested,
+            'uploadedby' => auth()->user()->id ?? null,
+            // 'status_id' => 2,
+        ];
+
+        $worksheet_data = array_merge($this->worksheet_data, $control_array);
+
+        /*$worksheet->neg_control_interpretation = $negative_control['interpretation'] ?? null;
         $worksheet->neg_control_result = $negative_control['result'] ?? null;
 
         $worksheet->pos_control_interpretation = $positive_control['interpretation'] ?? null;
         $worksheet->pos_control_result = $positive_control['result'] ?? null;
         $worksheet->daterun = $datetested;
         $worksheet->uploadedby = auth()->user()->id ?? null;
+        $worksheet->save();*/
+
+        $worksheet->fill($worksheet_data);
         $worksheet->save();
+
+        if($worksheet->pool_id){
+            $worksheet->pool->worksheet()->where(['status_id' => 1])->update($worksheet_data);
+        }
 
         session(compact('doubles'));
 

@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use Exception;
 use App\EquipmentMailingList as MailingList;
 use Mpdf\Mpdf;
+use DB;
 
 use App\Synch;
 
@@ -671,6 +672,22 @@ class Common
 			$s = $sample_model::find($sample->id);
 			$s->age = \App\Lookup::$func_name($sample->datecollected, $sample->dob);
 			$s->pre_update();
+		}
+	}
+
+	public static function fix_kisumu_approval($type)
+	{
+		$worksheet_class = Synch::$synch_arrays[$type]['worksheet_class'];
+
+		$worksheets = $worksheet_class::where('datereviewed2', '>', date('Y-m-d', strtotime('-6 months')))
+			->whereNotNull('datereviewed2')->whereNull('datereviewed')
+			->get();
+
+		foreach ($worksheets as $key => $worksheet) {
+			$worksheet->datereviewed = $worksheet->datereviewed2;
+			$worksheet->save();
+
+			$worksheet->sample()->update(['dateapproved' => $worksheet->datereviewed]);
 		}
 	}
 
