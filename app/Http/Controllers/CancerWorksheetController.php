@@ -110,9 +110,9 @@ class CancerWorksheetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($limit=94)
+    public function create($machine_type=3, $limit=94, $entered_by=null)
     {
-        $data = $this->get_samples_for_run(94);
+        $data = $this->get_samples_for_run($machine_type, $limit, $entered_by);
         
         return view('forms.cancerworksheet', $data)->with('pageTitle', "Create Worksheet ($limit)");
     }
@@ -125,7 +125,6 @@ class CancerWorksheetController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
         $worksheet = new CancerWorksheet;
         $worksheet->fill($request->except('_token', 'limit'));
         $worksheet->createdby = auth()->user()->id;
@@ -640,13 +639,16 @@ class CancerWorksheetController extends Controller
         return $worksheets;
     }
 
-    private function get_samples_for_run($limit = 94){
+    private function get_samples_for_run($machine_type, $limit, $entered_by){
         $samples = CancerSample::whereNull('worksheet_id')->where('receivedstatus', '<>', 2)->whereNull('result')
                                     ->where('site_entry', '<>', 2)
+                                    ->when($entered_by, function($query) use ($entered_by) {
+                                        return $query->where('user_id', $entered_by);
+                                    })
                                     ->orderBy('datereceived', 'asc')->orderBy('parentid', 'desc')->orderBy('id', 'asc')
                                     ->limit($limit)->get();
         // dd($samples);
-        $machine = Machine::find(3);
+        $machine = Machine::find($machine_type);
         return [
             'count' => $samples->count(),
             'limit' => $limit,
