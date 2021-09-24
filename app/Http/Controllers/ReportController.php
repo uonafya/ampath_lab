@@ -235,7 +235,7 @@ class ReportController extends Controller
                 // }
 
                 $data = self::__getDateData($request,$dateString)->get();
-                dd($dateString);
+                // dd($dateString);
                 return $this->__getExcel($data, $dateString, $request);
             }
         }
