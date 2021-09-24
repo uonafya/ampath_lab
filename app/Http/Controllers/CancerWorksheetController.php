@@ -286,8 +286,6 @@ class CancerWorksheetController extends Controller
      */
     public function save_results(Request $request, CancerWorksheet $worksheet)
     {
-        $test = $request->all()['upload'];
-        dd($test);
         if(!in_array($worksheet->status_id, [1, 4])){
             session(['toast_error' => 1, 'toast_message' => 'You cannot update results for this worksheet.']);
             return back();
@@ -296,7 +294,6 @@ class CancerWorksheetController extends Controller
         $file = $request->upload->path();
         $path = $request->upload->store('public/results/hpv'); 
 
-        dd($path);
         $c = new CancerWorksheetImport($worksheet, $request);
         Excel::import($c, $path);
         
