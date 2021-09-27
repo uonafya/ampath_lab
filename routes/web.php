@@ -216,6 +216,7 @@ Route::middleware(['auth'])->group(function(){
 			});
 
 			Route::get('print/{worksheet}', 'CancerWorksheetController@print')->name('print');
+			Route::get('create/{machine?}/{limit?}/{entered_by?}', 'CancerWorksheetController@create')->name('create_worksheet');
 		});
 		Route::resource('cancerworksheet', 'CancerWorksheetController');
 

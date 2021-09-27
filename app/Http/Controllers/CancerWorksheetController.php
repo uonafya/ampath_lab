@@ -131,7 +131,7 @@ class CancerWorksheetController extends Controller
         $worksheet->lab_id = auth()->user()->lab_id;
         $worksheet->save();
 
-        $data = $this->get_samples_for_run(94);
+        $data = $this->get_samples_for_run($request->machine_type, $request->limit, null);
 
         if(!$data || !$data['create']){
             $worksheet->delete();
@@ -625,6 +625,19 @@ class CancerWorksheetController extends Controller
             ->get();
 
         return $samples;
+    }
+
+    public function convert_worksheet(CancerWorksheet $worksheet, $machine_type)
+    {
+        // if($machine_type == 1 || $worksheet->machine_type == 1 || $worksheet->status_id != 1){
+        if($worksheet->status_id != 1){
+            session(['toast_error' => 1, 'toast_message' => 'The worksheet cannot be converted to the requested type.']);
+            return back();            
+        }
+        $worksheet->machine_type = $machine_type;
+        $worksheet->save();
+        session(['toast_message' => 'The worksheet has been converted.']);
+        return back();
     }
 
     public function search(Request $request)
