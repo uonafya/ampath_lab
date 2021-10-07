@@ -51,6 +51,9 @@
                             @include('partial.date', ['model' => $m, 'required' => true, 'prop' => 'datereceived', 'label' => 'Date of Receipt',])
 
 
+
+                            @include('partial.date', ['model' => $m, 'required' => true, 'prop' => 'datetested', 'label' => 'Date of Testing',])
+                            @include('partial.date', ['model' => $m, 'required' => true, 'prop' => 'datedispatched', 'label' => 'Date of Dispatch',])
                             <div class="hr-line-dashed"></div>
 
 

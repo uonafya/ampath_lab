@@ -28,7 +28,7 @@
 			</a> |
 		@endif
 
-		@if($worksheet->machine_type != 2 && session('testingSystem') != 'HPV')
+		@if($worksheet->machine_type != 2)
 		<a href="{{ url($worksheet->route_name . '/convert/' . $worksheet->id . '/2') }}" title="Convert Worksheet">
 			Convert to Abbott
 		</a> |

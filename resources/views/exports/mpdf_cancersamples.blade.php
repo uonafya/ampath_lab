@@ -124,29 +124,44 @@ p.breakhere {page-break-before: always}
 			</tr>
 
 			<tr>
-				{{-- <td colspan="2" class="style4 style1 comment"><strong> Gender</strong></td>
-				<td colspan="1"  ><span class="style5"> {{ $sample->patient->gender }} </span></td> --}}
-				<td class="style4 style1 comment" colspan="3" ><strong> Entry Point	</strong></td>
-				<td colspan="4" class="comment">
+				<td colspan="3" class="style4 style1 comment"><strong>Entry Point:</strong></td>
+
+				<td colspan="1" class="style4 style1 comment">
 					<span class="style5">
                         {{ $sample->patient->entry_point }}
 					</span>
 				</td>
-			</tr>
-
-			<tr>
-				<td colspan="3" class="style4 style1 comment" ><strong>Date	Collected </strong></td>
-				<td class="comment" colspan="4">
-					<span class="style5">{{ $sample->my_date_format('datecollected') }}</span>
+				<td colspan="1" class="style4 style1 comment"><strong>Target 1:</strong></td>
+				<td colspan="2" class="style4 style1 comment">
+					{{ $sample->target_1 }}
 				</td>
 			</tr>
 
 			<tr>
-				<td colspan="3" class="style4 style1 comment"><strong>Date Received </strong></td>
-				<td colspan="4" class="comment" >
+				<td colspan="3" class="style4 style1 comment"><strong>Date	Collected: </strong></td>
+
+				<td colspan="1" class="style4 style1 comment">
 					<span class="style5">
-						{{ $sample->my_date_format('datereceived') }} 
+                        {{ $sample->my_date_format('datecollected') }}
 					</span>
+				</td>
+				<td colspan="1" class="style4 style1 comment"><strong>Target 2:</strong></td>
+				<td colspan="2" class="style4 style1 comment">
+					{{ $sample->target_2 }}
+				</td>
+			</tr>
+
+			<tr>
+				<td colspan="3" class="style4 style1 comment"><strong>Date Received: </strong></td>
+
+				<td colspan="1" class="style4 style1 comment">
+					<span class="style5">
+                        {{ $sample->my_date_format('datereceived') }}
+					</span>
+				</td>
+				<td colspan="1" class="style4 style1 comment"><strong>Target 3:</strong></td>
+				<td colspan="2" class="style4 style1 comment">
+					{{ $sample->target_3 }}
 				</td>
 			</tr>
 
@@ -198,6 +213,29 @@ p.breakhere {page-break-before: always}
 				</td>
 			@endif
 			</tr>
+			{{-- @if($sample->receivedstatus != 2)
+			<tr>
+				<td colspan="1" class="style4 style1 comment"><strong>Target 1:</strong></td>
+
+				<td colspan="2" class="style4 style1 comment">
+					<strong> 
+	                   {{ $sample->target_1 }}
+					</strong>
+				</td>
+				<td colspan="1" class="style4 style1 comment"><strong>Target 2:</strong></td>
+				<td colspan="1" class="style4 style1 comment">
+					<strong> 
+	                   {{ $sample->target_2 }}
+					</strong>
+				</td>
+				<td colspan="1" class="style4 style1 comment"><strong>Target 3:</strong></td>
+				<td colspan="1" class="style4 style1 comment">
+					<strong> 
+	                   {{ $sample->target_3 }}
+					</strong>
+				</td>
+			</tr>
+			@endif --}}
 		
 
 			<tr>

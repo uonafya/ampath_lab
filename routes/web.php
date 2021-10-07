@@ -37,10 +37,10 @@ Route::get('testtracker', function(){
 	return view('exports.mpdf_labtracker', ['data' => $data, 'lab' => $lab, 'download' => true]);
 });
 
-Route::redirect('/', '/login');
-Route::redirect('/eid', '/login');
-Route::redirect('/knh', '/login');
-Route::redirect('/nyumbani', '/login');
+Route::redirect('/', '/lab/login');
+Route::redirect('/eid', '/lab/login');
+Route::redirect('/knh', '/lab/login');
+Route::redirect('/nyumbani', '/lab/login');
 
 Route::get('/eid/{param?}', 'RandomController@send_to_login')->where('param', '(.*\\.*)');
 Route::get('labtrackertest', 'RandomController@testlabtracker');
@@ -221,6 +221,7 @@ Route::middleware(['auth'])->group(function(){
 			});
 
 			Route::get('print/{worksheet}', 'CancerWorksheetController@print')->name('print');
+			Route::get('create/{machine?}/{limit?}/{entered_by?}', 'CancerWorksheetController@create')->name('create_worksheet');
 		});
 		Route::resource('cancerworksheet', 'CancerWorksheetController');
 
