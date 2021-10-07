@@ -4080,4 +4080,11 @@ class Random
         DB::statement("ALTER TABLE `users` ADD COLUMN `covid_consumption_allowed` TINYINT NOT NULL DEFAULT '0' AFTER `last_access`");
 
     }
+
+    public static function standardizeCCCNo()
+    {
+        $c = new \App\Imports\StandardizeCCCNumbersImport();
+        Excel::import($c, public_path('TujengeJamiiStandardizedCCCNumbersampath.csv'));
+        return true;
+    }
 }
