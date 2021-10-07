@@ -95,6 +95,7 @@ class Random
 
     public static function fix_ccc()
     {
+	ini_set('memory_limit', '-1');
         $c = new \App\Imports\AmpathMflImport;
         Excel::import($c, base_path('ampath_fixed_ccc.xlsx'));
     }
