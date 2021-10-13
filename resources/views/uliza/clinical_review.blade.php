@@ -2,6 +2,45 @@
 
 @section('content')
 
+@if(!auth()->user()->uliza_reviewer)
+	<div class="col-md-12">
+		<table class="table table-bordered table-hover table-striped">
+			<thead>
+				<tr>
+					<th> Reviewer </th>
+					<th> Date </th>
+					<th> Case Summary </th>
+					<th> Observations </th>
+					<th> Diagnosis </th>
+					<th> Supportive Management </th>
+					<th> Definative Management </th>
+					<th> Comments </th>
+					<th> Recommendation </th>
+					<th> Facility Feedback </th>
+					<th> Requested Info </th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach($ulizaClinicalForm->feedback as $formFeedback)
+					<tr>
+						<td>{{ $formFeedback->user->full_name ?? null }}</td>
+						<td>{{ $formFeedback->review_date }}</td>
+						<td>{{ $formFeedback->casesummary }}</td>
+						<td>{{ $formFeedback->observationsofsummary }}</td>
+						<td>{{ $formFeedback->get_prop_name($reasons, 'diagnosis') }}</td>
+						<td>{{ $formFeedback->supportivemanagement }}</td>
+						<td>{{ $formFeedback->definativemanagement }}</td>
+						<td>{{ $formFeedback->reviewer_comments }}</td>
+						<td>{{ $formFeedback->get_prop_name($recommendations, 'recommendation_id') }}</td>
+						<td>{{ $formFeedback->get_prop_name($feedbacks, 'facility_recommendation_id') }}</td>
+						<td>{{ $formFeedback->requested_info }}</td>
+					</tr>
+				@endforeach
+			</tbody>
+		</table>
+	</div>
+@endif
+
 <div class="col-md-6">
 	<div class="card mr-2">
 		<div class="card-body">
@@ -117,7 +156,7 @@
 					<div class="form-group row">
 						<label class="col-md-4 col-form-label">What is the primary reason for this consultation:</label>
 						<div class="col-md-8">
-							<textarea class="form-control" value="{{ $ulizaClinicalForm->primary_reason ?? '' }}" name="primary_reason" readonly="" rows="3"></textarea>
+							<textarea class="form-control" value="{{ $ulizaClinicalForm->get_prop_name($reasons, 'primary_reason') }}" name="primary_reason" readonly="" rows="3"></textarea>
 						</div>
 					</div>
 					<div class="form-group row">
@@ -185,7 +224,7 @@
 							Number of adherence counseling/assessment sessions done in the last 3-6 months:
 						</label>
 						<div class="col-md-8">
-							<input class="form-control" value="{{ $ulizaClinicalForm->no_adhearance_counseling ?? '' }}" name="no_adhearance_counseling" readonly="" type="number">
+							<input class="form-control" value="{{ $ulizaClinicalForm->no_adherance_counseling ?? '' }}" name="no_adherance_counseling" readonly="" type="number">
 						</div>
 					</div>
 					<div class="form-group row">
@@ -464,7 +503,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text text-left" for="review_date">Date of Review :</span>
 									</div>
-									<input class="form-control date" name="review_date" value="{{ $ulizaClinicalForm->feedback->review_date ?? '' }}" required type="text">
+									<input class="form-control date" name="review_date" value="{{ $userFeedback->review_date ?? '' }}" required type="text">
 								</div>
 							</div>
 
@@ -484,7 +523,7 @@
 							<div class="form-group row">
 								<label class="col-md-4 col-form-label">Case Summary of consultation:</label>
 								<div class="col-md-8">
-									<textarea class="form-control" name="casesummary" rows="5">{{ $ulizaClinicalForm->feedback->casesummary ?? null }}</textarea>
+									<textarea class="form-control" name="casesummary" rows="5">{{ $userFeedback->casesummary ?? null }}</textarea>
 								</div>
 							</div>
 
@@ -508,7 +547,7 @@
 							<div class="form-group row">
 								<label class="col-md-4 col-form-label">Observations/Interpretation on summary provided:</label>
 								<div class="col-md-8">
-									<textarea class="form-control" name="observationsofsummary" rows="5">{{ $ulizaClinicalForm->feedback->observationsofsummary ?? null }}</textarea>
+									<textarea class="form-control" name="observationsofsummary" rows="5">{{ $userFeedback->observationsofsummary ?? null }}</textarea>
 								</div>
 							</div>
 
@@ -537,14 +576,14 @@
 									Supportive Management: (Includes palliative care, social, psychosocial etc.)
 								</label>
 								<div class="col-md-8">
-									<textarea class="form-control" name="supportivemanagement"  rows="5">{{ $ulizaClinicalForm->feedback->supportivemanagement ?? null }}</textarea>
+									<textarea class="form-control" name="supportivemanagement"  rows="5">{{ $userFeedback->supportivemanagement ?? null }}</textarea>
 								</div>
 							</div>
 
 							<div class="form-group row">
 								<label class="col-md-4 col-form-label">Definative Management: (Includes recommended investigations, medicines).</label>
 								<div class="col-md-8">
-									<textarea class="form-control" name="definativemanagement" rows="5">{{ $ulizaClinicalForm->feedback->definativemanagement ?? null }}</textarea>
+									<textarea class="form-control" name="definativemanagement" rows="5">{{ $userFeedback->definativemanagement ?? null }}</textarea>
 								</div>
 							</div>
 
@@ -553,21 +592,21 @@
 									Additional Information Required:(Includes recommended investigations, medicines.)
 								</label>
 								<div class="col-md-8">
-									<textarea class="form-control" name="additionalinfo" rows="5">{{ $ulizaClinicalForm->feedback->additionalinfo ?? null }}</textarea>
+									<textarea class="form-control" name="additionalinfo" rows="5">{{ $userFeedback->additionalinfo ?? null }}</textarea>
 								</div>
 							</div>
 
 							<div class="form-group row">
 								<label class="col-md-4 col-form-label">NASCOP Comments</label>
 								<div class="col-md-8">
-									<textarea class="form-control" name="nascop_comments"  rows="5">{{ $ulizaClinicalForm->feedback->nascop_comments ?? null }}</textarea>
+									<textarea class="form-control" name="nascop_comments"  rows="5">{{ $userFeedback->nascop_comments ?? null }}</textarea>
 								</div>
 							</div>
 
 							<div class="form-group row">
 								<label class="col-md-4 col-form-label">Reviewer Comments</label>
 								<div class="col-md-8">
-									<textarea class="form-control" name="reviewer_comments"  rows="5">{{ $ulizaClinicalForm->feedback->reviewer_comments ?? null }}</textarea>
+									<textarea class="form-control" name="reviewer_comments"  rows="5">{{ $userFeedback->reviewer_comments ?? null }}</textarea>
 								</div>
 							</div>
 
@@ -576,7 +615,7 @@
 							<div class="form-group row">
 								<label class="col-md-4 col-form-label">Technical Advisors Comments</label>
 								<div class="col-md-8">
-									<textarea class="form-control" name="technical_reviewer_comments"  rows="5">{{ $ulizaClinicalForm->feedback->technical_reviewer_comments ?? null }}</textarea>
+									<textarea class="form-control" name="technical_reviewer_comments"  rows="5">{{ $userFeedback->technical_reviewer_comments ?? null }}</textarea>
 								</div>
 							</div>
 
@@ -622,7 +661,7 @@
 							</div>
 
 
-							@if(auth()->user()->user_type_id != 104)
+							@if(!auth()->user()->uliza_reviewer)
 							<div class="row ng-star-inserted" id="reviewers_row" v-if="myForm.recommendation_id == 2">
 								<div class="col-md-12">
 									<h4> Choose Reviewers: </h4>
@@ -630,7 +669,7 @@
 
 								@foreach($reviewers as $reviewer)
 									<div class="col-md-6">
-										<input class="form-check-input" name="reviewer_id" type="checkbox" value="{{ $reviewer->id }}" id="user_{{ $reviewer->id }}" @if($ulizaClinicalForm->reviewer_id == $reviewer->id) checked  @endif >
+										<input class="form-check-input" name="reviewers[]" type="checkbox" value="{{ $reviewer->id }}" id="user_{{ $reviewer->id }}" @if(in_array($reviewer->id, $ulizaClinicalForm->reviewers)) checked  @endif >
 										<label class="form-check-label" for="user_{{ $reviewer->id }}">
 											{{ $reviewer->full_name }}                  
 										</label>
@@ -639,6 +678,18 @@
 							</div>
 							@endif
 						</div>
+						
+						@if(!$view)
+						<div class="card my-1 ml-2">
+							<div class="card-body p-2">
+								<div class="d-flex justify-content-end align-items-center w-100">
+									<button class="btn btn-warning btn-sm" type="submit">
+										Submit Review
+									</button>
+								</div>
+							</div>
+						</div>
+						@endif
 					</form>
 				</div>
 			</div>
@@ -667,9 +718,9 @@
         	data: {
         		successful_submission: null,
         		myForm: {
-        			recommendation_id: "{{ $ulizaClinicalForm->feedback->recommendation_id ?? null }}",
-        			diagnosis: "{{ $ulizaClinicalForm->feedback->diagnosis ?? null }}",
-        			facility_recommendation_id: "{{ $ulizaClinicalForm->feedback->facility_recommendation_id ?? null }}",
+        			recommendation_id: "{{ $userFeedback->recommendation_id ?? null }}",
+        			diagnosis: "{{ $userFeedback->diagnosis ?? null }}",
+        			facility_recommendation_id: "{{ $userFeedback->facility_recommendation_id ?? null }}",
         			reviewer_id: "{{ $ulizaClinicalForm->reviewer_id ?? null }}",
         		},
         	},

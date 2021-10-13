@@ -392,166 +392,170 @@
 			</div>			
 		</div>
 
-		<div class="row">
-			<div class="col-md-12">
-				<div class="panel panel-default border-secondary mb-4">
-					<div class="text-center">
-						<h6 class="mb-0 text-white">Clinical TWG Feedback Form</h6>
-					</div>
+		@foreach($ulizaClinicalForm->feedback as $clinicalFeedback)
 
-					<div class="panel-body text-secondary">
-						<div class="form-row mb-3 required">
-							<div class="col-md-12 input-group">
-								<div class="input-group-prepend">
-									<span class="input-group-text text-left" for="review_date">Date of Review :</span>
-								</div>
-								<input class="form-control date" name="review_date" value="{{ $ulizaClinicalForm->feedback->review_date ?? '' }}" required type="text">
-							</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="panel panel-default border-secondary mb-4">
+						<div class="text-center">
+							<h6 class="mb-0 text-white">Clinical TWG Feedback Form</h6>
 						</div>
 
-						<div class="form-row mb-3">
-							<div class="col-md-12 input-group">
-								<p class="font-weight-bold">A. Case Summary of consultation</p>
-								<br>
-								<p class="font-italic">
-									(A summary of the clinical consultation and reason for consultation or description of the problem for which consultation
-									is sought.) 
+						<div class="panel-body text-secondary">
+							<div class="form-row mb-3 required">
+								<div class="col-md-12 input-group">
+									<div class="input-group-prepend">
+										<span class="input-group-text text-left" for="review_date">Date of Review :</span>
+									</div>
+									<input class="form-control date" name="review_date" value="{{ $clinicalFeedback->review_date ?? '' }}" required type="text">
+								</div>
+							</div>
+
+							<div class="form-row mb-3">
+								<div class="col-md-12 input-group">
+									<p class="font-weight-bold">A. Case Summary of consultation</p>
 									<br>
-									Note: this section is primarily to give the TWG reviewers a snap-shot of the patient history. This is a summary of the known information, but not an interpretation/judgment of the management:
-								</p>
-							</div>
-						</div>
-
-						<div class="form-group row">
-							<label class="col-md-4 col-form-label">Case Summary of consultation:</label>
-							<div class="col-md-8">
-								<textarea class="form-control" name="casesummary" rows="5">{{ $ulizaClinicalForm->feedback->casesummary ?? null }}</textarea>
-							</div>
-						</div>
-
-						<div class="form-row mb-3">
-							<div class="col-md-12 input-group">
-								<p class="font-weight-bold">
-									B. Observations/Interpretation on summary provided. A summary of observations about the management the patient has received.
-								</p>
-								<br>
-								<p class="font-italic">
-									(Should include interpretation of clinical parameters e.g. weight changes or clinical symptoms and presentations, interpretation of laboratory data, radiologic or other investigations, observation of how patient has been managed etc.) <br />
-									Note: this section is primarily for teaching purposes for the facility staff, to show the thought process of the TWG reviewer when evaluating the patient history. <br>
-								</p>
-
-								<p class="font-weight-bold">
-									Comment on what was done well and any apparent gaps in care were. Use bullet points for ease of reading.
-								</p>
-							</div>
-						</div>
-
-						<div class="form-group row">
-							<label class="col-md-4 col-form-label">Observations/Interpretation on summary provided:</label>
-							<div class="col-md-8">
-								<textarea class="form-control" name="observationsofsummary" rows="5">{{ $ulizaClinicalForm->feedback->observationsofsummary ?? null }}</textarea>
-							</div>
-						</div>
-
-						<div class="form-row mb-3">
-							<div class="col-md-12 input-group">
-								<p class="font-weight-bold">C. Recommendations for management:</p>
-							</div>
-						</div>
-
-						<div class="form-row mb-3 required">
-							<div class="col-md-12 input-group">
-								<div class="input-group-prepend">
-									<span class="input-group-text text-left" >Diagnosis:</span>
+									<p class="font-italic">
+										(A summary of the clinical consultation and reason for consultation or description of the problem for which consultation
+										is sought.) 
+										<br>
+										Note: this section is primarily to give the TWG reviewers a snap-shot of the patient history. This is a summary of the known information, but not an interpretation/judgment of the management:
+									</p>
 								</div>
-								<input class="form-control date" value="{{ $ulizaClinicalForm->feedback->get_prop_name($reasons, 'diagnosis') }}" >
 							</div>
-						</div>
 
-
-
-						<div class="form-group row">
-							<label class="col-md-4 col-form-label">
-								Supportive Management: (Includes palliative care, social, psychosocial etc.)
-							</label>
-							<div class="col-md-8">
-								<textarea class="form-control" name="supportivemanagement"  rows="5">{{ $ulizaClinicalForm->feedback->supportivemanagement ?? null }}</textarea>
+							<div class="form-group row">
+								<label class="col-md-4 col-form-label">Case Summary of consultation:</label>
+								<div class="col-md-8">
+									<textarea class="form-control" name="casesummary" rows="5">{{ $clinicalFeedback->casesummary ?? null }}</textarea>
+								</div>
 							</div>
-						</div>
 
-						<div class="form-group row">
-							<label class="col-md-4 col-form-label">Definative Management: (Includes recommended investigations, medicines).</label>
-							<div class="col-md-8">
-								<textarea class="form-control" name="definativemanagement" rows="5">{{ $ulizaClinicalForm->feedback->definativemanagement ?? null }}</textarea>
+							<div class="form-row mb-3">
+								<div class="col-md-12 input-group">
+									<p class="font-weight-bold">
+										B. Observations/Interpretation on summary provided. A summary of observations about the management the patient has received.
+									</p>
+									<br>
+									<p class="font-italic">
+										(Should include interpretation of clinical parameters e.g. weight changes or clinical symptoms and presentations, interpretation of laboratory data, radiologic or other investigations, observation of how patient has been managed etc.) <br />
+										Note: this section is primarily for teaching purposes for the facility staff, to show the thought process of the TWG reviewer when evaluating the patient history. <br>
+									</p>
+
+									<p class="font-weight-bold">
+										Comment on what was done well and any apparent gaps in care were. Use bullet points for ease of reading.
+									</p>
+								</div>
 							</div>
-						</div>
 
-						<div class="form-group row">
-							<label class="col-md-4 col-form-label">
-								Additional Information Required:(Includes recommended investigations, medicines.)
-							</label>
-							<div class="col-md-8">
-								<textarea class="form-control" name="additionalinfo" rows="5">{{ $ulizaClinicalForm->feedback->additionalinfo ?? null }}</textarea>
+							<div class="form-group row">
+								<label class="col-md-4 col-form-label">Observations/Interpretation on summary provided:</label>
+								<div class="col-md-8">
+									<textarea class="form-control" name="observationsofsummary" rows="5">{{ $clinicalFeedback->observationsofsummary ?? null }}</textarea>
+								</div>
 							</div>
-						</div>
 
-						<div class="form-group row">
-							<label class="col-md-4 col-form-label">NASCOP Comments</label>
-							<div class="col-md-8">
-								<textarea class="form-control" name="nascop_comments"  rows="5">{{ $ulizaClinicalForm->feedback->nascop_comments ?? null }}</textarea>
+							<div class="form-row mb-3">
+								<div class="col-md-12 input-group">
+									<p class="font-weight-bold">C. Recommendations for management:</p>
+								</div>
 							</div>
-						</div>
 
-						<div class="form-group row">
-							<label class="col-md-4 col-form-label">Reviewer Comments</label>
-							<div class="col-md-8">
-								<textarea class="form-control" name="reviewer_comments"  rows="5">{{ $ulizaClinicalForm->feedback->reviewer_comments ?? null }}</textarea>
+							<div class="form-row mb-3 required">
+								<div class="col-md-12 input-group">
+									<div class="input-group-prepend">
+										<span class="input-group-text text-left" >Diagnosis:</span>
+									</div>
+									<input class="form-control date" value="{{ $ulizaClinicalForm->feedback->get_prop_name($reasons, 'diagnosis') }}" >
+								</div>
 							</div>
-						</div>
 
 
-						<div class="form-group row">
-							<label class="col-md-4 col-form-label">Technical Advisors Comments</label>
-							<div class="col-md-8">
-								<textarea class="form-control" name="technical_reviewer_comments"  rows="5">{{ $ulizaClinicalForm->feedback->technical_reviewer_comments ?? null }}</textarea>
-							</div>
-						</div>
 
-
-						<div class="form-group row">
-							<div class="col-md-6">
-								<label class=" col-form-label">
-									Case-Summary (Recomendation feedback)
+							<div class="form-group row">
+								<label class="col-md-4 col-form-label">
+									Supportive Management: (Includes palliative care, social, psychosocial etc.)
 								</label>
+								<div class="col-md-8">
+									<textarea class="form-control" name="supportivemanagement"  rows="5">{{ $clinicalFeedback->supportivemanagement ?? null }}</textarea>
+								</div>
 							</div>
-							<div class="col-md-6">
-								<input class="form-control" value="{{ $ulizaClinicalForm->feedback->get_prop_name($recommendations, 'recommendation_id') }}" >
-							</div>
-						</div>
 
-						<div class="form-group row" v-if="myForm.recommendation_id == 1 || myForm.recommendation_id == 5">
-							<label class="col-md-4 col-form-label">Request for Info</label>
-							<div class="col-md-8">
-								<textarea class="form-control" name="requested_info"  rows="5"></textarea>
+							<div class="form-group row">
+								<label class="col-md-4 col-form-label">Definative Management: (Includes recommended investigations, medicines).</label>
+								<div class="col-md-8">
+									<textarea class="form-control" name="definativemanagement" rows="5">{{ $clinicalFeedback->definativemanagement ?? null }}</textarea>
+								</div>
 							</div>
-						</div>
 
-						<div class="form-group row" v-if="myForm.recommendation_id == 3">
-							<div class="col-md-6">
-								<label class=" col-form-label">
-									Facility Feedback Recomendations
+							<div class="form-group row">
+								<label class="col-md-4 col-form-label">
+									Additional Information Required:(Includes recommended investigations, medicines.)
 								</label>
+								<div class="col-md-8">
+									<textarea class="form-control" name="additionalinfo" rows="5">{{ $clinicalFeedback->additionalinfo ?? null }}</textarea>
+								</div>
 							</div>
-							<div class="col-md-6">
-								<input class="form-control" value="{{ $ulizaClinicalForm->feedback->get_prop_name($feedbacks, 'facility_recommendation_id') }}" >
+
+							<div class="form-group row">
+								<label class="col-md-4 col-form-label">NASCOP Comments</label>
+								<div class="col-md-8">
+									<textarea class="form-control" name="nascop_comments"  rows="5">{{ $clinicalFeedback->nascop_comments ?? null }}</textarea>
+								</div>
 							</div>
+
+							<div class="form-group row">
+								<label class="col-md-4 col-form-label">Reviewer Comments</label>
+								<div class="col-md-8">
+									<textarea class="form-control" name="reviewer_comments"  rows="5">{{ $clinicalFeedback->reviewer_comments ?? null }}</textarea>
+								</div>
+							</div>
+
+
+							<div class="form-group row">
+								<label class="col-md-4 col-form-label">Technical Advisors Comments</label>
+								<div class="col-md-8">
+									<textarea class="form-control" name="technical_reviewer_comments"  rows="5">{{ $clinicalFeedback->technical_reviewer_comments ?? null }}</textarea>
+								</div>
+							</div>
+
+
+							<div class="form-group row">
+								<div class="col-md-6">
+									<label class=" col-form-label">
+										Case-Summary (Recomendation feedback)
+									</label>
+								</div>
+								<div class="col-md-6">
+									<input class="form-control" value="{{ $clinicalFeedback->get_prop_name($recommendations, 'recommendation_id') }}" >
+								</div>
+							</div>
+
+							{{-- <div class="form-group row" v-if="myForm.recommendation_id == 1 || myForm.recommendation_id == 5">
+								<label class="col-md-4 col-form-label">Request for Info</label>
+								<div class="col-md-8">
+									<textarea class="form-control" name="requested_info"  rows="5"></textarea>
+								</div>
+							</div> --}}
+
+							<div class="form-group row" v-if="myForm.recommendation_id == 3">
+								<div class="col-md-6">
+									<label class=" col-form-label">
+										Facility Feedback Recomendations
+									</label>
+								</div>
+								<div class="col-md-6">
+									<input class="form-control" value="{{ $clinicalFeedback->get_prop_name($feedbacks, 'facility_recommendation_id') }}" >
+								</div>
+							</div>
+
+
 						</div>
-
-
 					</div>
-				</div>
-			</div>			
-		</div>
+				</div>			
+			</div>
+
+		@endforeach
 
 	@endif
 	</div>

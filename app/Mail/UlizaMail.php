@@ -36,7 +36,8 @@ class UlizaMail extends Mailable
      */
     public function build()
     {
-        if($this->view_name == 'received_clinical_form'){
+        // if($this->view_name == 'received_clinical_form'){
+        if(in_array($this->view_name, ['received_clinical_form', 'new_clinical_form', 'case_referral'])){
             $this->uliza_clinical_form->entry_pdf();
             $this->attach($this->uliza_clinical_form->entry_path, ['as' => 'Clinical Form.pdf']);
         }

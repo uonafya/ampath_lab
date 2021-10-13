@@ -669,6 +669,7 @@
                     @endif
                     <li><a href="#"><select class="form-control" id="sidebar_covid_worksheet_search"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_covidlabID_search"></select></a></li>
+                    <li><a href="#"><select class="form-control" id="sidebar_covid_cert_search"></select></a></li>
                 @elseif(Session('testingSystem') == 'CD4')
                     <li><a href="#"><select class="form-control" id="sidebar_cd4_patientname"></select></a></li>
                     <li><a href="#"><select class="form-control" id="sidebar_cd4labID_search"></select></a></li>

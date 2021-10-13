@@ -53,7 +53,7 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
             return;
         }
 
-        if(!$row->name || !$row->unique_identifier || !$row->sex){
+        if((!isset($row->name) && !isset($row->patient_name)) || !$row->unique_identifier || !$row->sex){
             $rows = session('skipped_rows', []);
             $rows[] = $row_array;  
             session(['skipped_rows' => $rows]);          
@@ -77,7 +77,7 @@ class AlupeCovidImport implements OnEachRow, WithHeadingRow
 
 
         $p->fill([
-            'identifier' => $row->unique_identifier ?? $row->name,
+            'identifier' => $row->unique_identifier ?? $row->name ?? $row->patient_name ?? '',
             'facility_id' => $this->facility_id ?? null,
             'quarantine_site_id' => $this->quarantine_site_id ?? null,
             'patient_name' => $row->name ?? $row->patient_name,

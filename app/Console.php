@@ -254,8 +254,8 @@ class Console
         $prophylaxis = \DB::table('viralregimen')->get();
         $justifications = \DB::table('viraljustifications')->orderBy('rank_id', 'asc')->where('flag', 1)->get();
 
-        // $min_date = date('Y-m-d', strtotime('-3 weeks'));
-        $min_date = date('Y-m-d', strtotime('-9 months'));
+        $min_date = date('Y-m-d', strtotime('-3 weeks'));
+        // $min_date = date('Y-m-d', strtotime('-9 months'));
         $samples = ViralsampleView::join('view_facilitys', 'view_facilitys.id', '=', 'viralsamples_view.facility_id')
                 ->select('viralsamples_view.*')
                 ->where(['repeatt' => 0, 'county_id' => 17])                
@@ -302,7 +302,7 @@ class Console
                 ]);   
                 $body = json_decode($response->getBody());
                 $s->time_sent_to_edarp = date('Y-m-d H:i:s');
-                $s->edarp_error = $body[0] ?? $body;
+                $s->edarp_error = $body[0]->message ?? $body;
                 $s->save();
                 /*if($response->getStatusCode() > 399){
                     $s->edarp_error = $body[0] ?? $body;

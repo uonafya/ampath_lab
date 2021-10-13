@@ -984,6 +984,12 @@ class CovidSampleController extends Controller
         return $cities;
     }
 
+    public function national_sample($national_sample_id)
+    {
+        $covidSample = CovidSample::where(['national_sample_id' => $national_sample_id])->firstOrFail();
+        return redirect('covid_sample/' . $covidSample->id);
+    }
+
 
 
     public function search(Request $request)
@@ -997,6 +1003,30 @@ class CovidSampleController extends Controller
 
         $samples = CovidSample::select('covid_samples.id')
             ->whereRaw("covid_samples.id like '" . $search . "%'")
+            ->when($user->facility_user, function($query) use ($string){
+                return $query->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')->whereRaw($string);
+            })
+            ->when($user->quarantine_site, function($query) use ($user){
+                return $query->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')
+                    ->where('quarantine_site_id', $user->facility_id);
+            })
+            ->paginate(10);
+
+        $samples->setPath(url()->current());
+        return $samples;
+    }
+
+    public function search_by_cert(Request $request)
+    {
+        $user = auth()->user();
+        $search = $request->input('search');
+        $facility_user = false;
+
+        if($user->user_type_id == 5) $facility_user=true;
+        $string = "(covid_patients.facility_id='{$user->facility_id}' OR covid_samples.user_id='{$user->id}')";
+
+        $samples = CovidSample::select('covid_samples.national_sample_id AS id')
+            ->whereRaw("covid_samples.national_sample_id like '" . $search . "%'")
             ->when($user->facility_user, function($query) use ($string){
                 return $query->join('covid_patients', 'covid_samples.patient_id', '=', 'covid_patients.id')->whereRaw($string);
             })

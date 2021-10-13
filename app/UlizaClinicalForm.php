@@ -41,17 +41,22 @@ class UlizaClinicalForm extends BaseModel
 
     public function feedback()
     {
-        return $this->hasOne('App\UlizaTwgFeedback', 'uliza_clinical_form_id');
+        return $this->hasMany('App\UlizaTwgFeedback', 'uliza_clinical_form_id');
     }
 
     public function getNatNumberAttribute()
     {
-        return "NAT-{$this->id}";
+        return "Uliza-{$this->id}";
     }
 
     public function getSubjectIdentifierAttribute()
     {
-        return 'CCC#: ' . $this->cccno . ' Nat#: ' . $this->nat_number;
+        return 'CCC#: ' . $this->cccno . ' Uliza#: ' . $this->nat_number;
+    }
+
+    public function getReviewersAttribute()
+    {
+        return $this->feedback()->get()->pluck('user_id')->toArray();
     }
 
     public function getEntryPathAttribute()

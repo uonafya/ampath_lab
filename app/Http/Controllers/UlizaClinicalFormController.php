@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\UlizaMail;
 use App\Notifications\UlizaNotification;
 use App\UlizaClinicalForm;
+use App\UlizaTwgFeedback;
 use App\UlizaClinicalVisit;
 use App\UlizaAdditionalInfo;
 use App\UlizaTwg;
@@ -20,20 +21,41 @@ class UlizaClinicalFormController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
         $statuses = DB::table('uliza_case_statuses')->get();
         if(!$user) return redirect('uliza/uliza');
-        $forms = UlizaClinicalForm::with(['facility', 'twg'])
-        ->when(true, function($query) use ($user){
+        $fclass = UlizaTwgFeedback::class;
+        $forms = UlizaClinicalForm::with(['view_facility', 'twg'])
+        ->when(true, function($query) use ($user, $fclass){
             if($user->uliza_secretariat) return $query->where('twg_id', $user->twg_id);
-            if($user->uliza_reviewer) return $query->where('reviewer_id', $user->id);
+            if($user->uliza_reviewer) return $query->whereIn('id', $fclass::select('uliza_clinical_form_id')->where('user_id', $user->id));
+        })
+        ->when($request->input('twg_id'), function($query) use($request){
+            return $query->where('twg_id', $request->input('twg_id'));
+        })
+        ->when($request->input('status_id'), function($query) use($request){
+            return $query->where('status_id', $request->input('status_id'));
+        })
+        ->when($request->input('start_date') || $request->input('end_date'), function($query) use($request){
+            return $query->whereBetween('created_at', [$request->input('start_date'), $request->input('end_date')]);
+        })
+        ->when($request->input('county_id') || $request->input('subcounty_id'), function($query) use($request){
+            $query->select('uliza_clinical_forms.*')
+                ->join('view_facilitys', 'view_facilitys.id', '=', 'uliza_clinical_forms.facility_id');
+
+            if($request->input('subcounty_id'))$query->where('subcounty_id', $request->input('subcounty_id'));
+            if($request->input('county_id'))$query->where('county_id', $request->input('county_id'));
+            return $query;
         })
         ->where('draft', false)
-        ->orderBy('id', 'desc')
+        ->orderBy('uliza_clinical_forms.id', 'desc')
         ->get();
-        return view('uliza.tables.cases', compact('forms', 'statuses'));
+        $counties = DB::table('countys')->get();
+        $subcounties = DB::table('districts')->get();
+        $twgs = DB::table('uliza_twgs')->get();
+        return view('uliza.tables.cases', compact('forms', 'statuses', 'counties', 'subcounties', 'twgs'));
     }
 
     /**
@@ -58,6 +80,10 @@ class UlizaClinicalFormController extends Controller
     {        
         $form = null;
         if($request->input('id')) $form = UlizaClinicalForm::find($request->input('id'));
+        else{
+            $duplicate = UlizaClinicalForm::where($request->only(['facility_id', 'cccno']))->where('status_id', '<', 3)->first();
+            if($duplicate) abort(400, 'The clinical form already exists.');
+        }
         if(!$form) $form = new UlizaClinicalForm;
         $form->fill($request->except('clinical_visits'));
         $f = $form->view_facility;
@@ -65,6 +91,7 @@ class UlizaClinicalFormController extends Controller
         $twg = UlizaTwg::where('default_twg', 1)->first();
         $form->twg_id = $county->twg_id ?? $twg->id ?? null;
         $form->save();
+        $twg = $form->twg;
 
         $visits = $request->input('clinical_visits');
 
@@ -148,6 +175,6 @@ class UlizaClinicalFormController extends Controller
      */
     public function destroy(UlizaClinicalForm $ulizaClinicalForm)
     {
-        //
+        
     }
 }

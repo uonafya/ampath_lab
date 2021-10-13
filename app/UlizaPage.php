@@ -5,6 +5,9 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Mpdf\Mpdf;
 use DB;
+use Str;
+use Exception;
+use App\Notifications\NewUlizaUserNotification;
 
 class UlizaPage extends Model
 {
@@ -133,6 +136,8 @@ class UlizaPage extends Model
             ['id' => 2, 'name' => 'Under Review'],
             ['id' => 3, 'name' => 'Completed'],
             ['id' => 4, 'name' => 'Finalised'],
+            ['id' => 5, 'name' => 'Approved For DRT'],
+            ['id' => 6, 'name' => 'Undergoing DRT'],
         ]);
     }
 
@@ -178,6 +183,64 @@ class UlizaPage extends Model
         if($download) return $mpdf->Output($file_name, \Mpdf\Output\Destination::DOWNLOAD);
         else{
             $mpdf->Output($file_path, \Mpdf\Output\Destination::FILE);
+        }
+    }
+
+    public static function add_users(){
+        // ALTER TABLE `users` ADD COLUMN `sent_email` tinyint default 1 AFTER twg_id;
+        $twg_id = 5;
+
+        $file = base_path('uliza_nyawest_reviewer.csv');
+
+        $line = fgets(fopen($file, 'r'));
+        $delimiter = ',';
+        if(Str::contains($line, ';')) $delimiter = ';';
+
+        $handle = fopen($file, "r");
+
+        while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE){
+            if($row[0] == '#') continue;
+
+            $user = User::where('email', $row[2])->first();
+            if(!$user) $user = new User;
+            
+            $user->twg_id = $twg_id;
+            $user->receive_emails = true;
+            $user->sent_email = false;
+
+            $names = explode(' ', $row[1]);
+            $user->surname = Str::title(array_pop($names));
+            $user->oname = Str::title(implode(' ', $names));
+
+            $user->email = $row[2];
+            $user->telephone = $row[3];
+
+            if(Str::startsWith($row[4], 'Tech')) $user->user_type_id = 104;
+            else{
+                $user->user_type_id = 103;
+            }
+            $password = \Str::random(15);
+            $user->password = $password;
+            $user->save();
+        }
+        self::send_user_emails();
+    }
+
+    public static function send_user_emails()
+    {
+        $users  = User::where('sent_email', false)->where('user_type_id', '>', 100)->get();
+        foreach ($users as $key => $user) {
+            $password = Str::random(15);
+            $user->password = $password;
+            $user->save();
+
+            try {
+                $user->notify(new NewUlizaUserNotification($password));  
+                $user->sent_email = true;
+                $user->save();              
+            } catch (Exception $e) {
+                
+            }
         }
     }
 

@@ -64,7 +64,7 @@ Route::prefix('uliza')->name('uliza.')->group(function(){
 });
 
 Route::prefix('uliza-form')->name('uliza-form.')->group(function(){
-
+	Route::post('index', 'UlizaClinicalFormController@index');
 });
 Route::resource('uliza-form', 'UlizaClinicalFormController');
 Route::post('uliza/login', 'UlizaUserController@login');
@@ -79,6 +79,11 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('uliza/logout', 'UlizaUserController@logout');
 	Route::get('uliza/update-password', 'UlizaUserController@change_password');
 	Route::post('uliza/update-password', 'UlizaUserController@update_password');
+
+	Route::prefix('uliza-user')->name('uliza-user.')->group(function(){
+		Route::get('resend_email/{id}', 'UlizaUserController@resend_email');
+		Route::put('restore/{id}', 'UlizaUserController@restore');
+	});
 	Route::resource('uliza-user', 'UlizaUserController');
 });
 
@@ -268,8 +273,10 @@ Route::middleware(['auth'])->group(function(){
 				Route::post('transfer_samples', 'CovidSampleController@transfer_samples');	
 			});
 			
+			Route::get('national_sample/{national_sample_id}', 'CovidSampleController@national_sample')->name('national_sample');
 			Route::post('kem_id/', 'CovidSampleController@kemri_id')->name('kemri_id');
 			Route::post('search/', 'CovidSampleController@search')->name('search');
+			Route::post('certno/', 'CovidSampleController@search_by_cert')->name('search_by_cert');
 			Route::post('new_patient/', 'CovidSampleController@new_patient')->name('new_patient');
 			Route::post('cif_patient/', 'CovidSampleController@cif_patient')->name('cif_patient');
 		});

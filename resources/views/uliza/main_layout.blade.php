@@ -14,7 +14,9 @@
     <!-- Vendor styles -->
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/font-awesome.css') }}" />
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4-4.1.1/dt-1.10.21/datatables.min.css"/>
+	<!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4-4.1.1/dt-1.10.21/datatables.min.css"/> -->
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.25/b-1.7.1/b-html5-1.7.1/b-print-1.7.1/sb-1.1.0/datatables.min.css"/>
+
 
     <link rel="stylesheet" href="{{ asset('css/toastr/toastr.min.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('css/select2/select2.min.css') }}" type="text/css">
@@ -72,6 +74,12 @@
 
 					<!-- <a class="p-2" routerlinkactive="active" href="/uliza-twg">TWGs</a> -->
 					<!-- <a class="p-2" routerlinkactive="active" href="/uliza-user">Users</a> -->
+				@elseif(auth()->user()->uliza_secretariat)
+					<a class="btn btn-outline-primary " href="#" role="button" id="dropdownMenuLinkTwo" data-toggle="collapse" data-target="#userDropdown" aria-haspopup="true" aria-expanded="false"> Users </a>
+					<div class="collapse" aria-labelledby="dropdownMenuLinkTwo" id="userDropdown">
+						<a class="collapse-item" href="/uliza-user">View Users</a>
+						<a class="collapse-item" href="/uliza-user/create">Create Users</a>
+					</div>
 				@endif
 				<a class="p-2" href="/uliza/update-password">Change Password</a>
 			</nav>
@@ -95,6 +103,10 @@
     <script src="{{ asset('js/summernote/summernote.js') }}"></script>
 	<script src="{{ asset('js/select2/select2.full.min.js') }}"></script>
 	<script src="{{ asset('js/validate/jquery.validate.min.js') }}"></script>
+	<!-- <script type="text/javascript" src="https://cdn.datatables.net/v/bs4-4.1.1/dt-1.10.21/datatables.min.js"></script> -->
+
+ 
+	<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.25/b-1.7.1/b-html5-1.7.1/b-print-1.7.1/sb-1.1.0/datatables.min.js"></script>
 
 
 	<script type="text/javascript">	    
@@ -104,6 +116,19 @@
 	                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 	            }
 	        });
+        
+        
+		    $('.data-table').dataTable({
+		        dom: "<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>tp",
+		        responsive: true,
+		        // "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+		        buttons: [
+		            {extend: 'copy',className: 'btn-sm'},
+		            {extend: 'csv',title: 'Download', className: 'btn-sm'},
+		            /*{extend: 'pdf', title: 'Download', className: 'btn-sm'},
+		            {extend: 'print',className: 'btn-sm'}*/
+		        ]
+		    });
 
 	        @php
 	            $toast_message = session()->pull('toast_message');

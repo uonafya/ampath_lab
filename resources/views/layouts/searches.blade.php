@@ -10,6 +10,7 @@
 			set_select_patient("sidebar_covid_kemri_id_search", "{{ url('/covid_sample/kem_id') }}", 2, "Search for AMREF ID", true);
 		@endif
 		set_select("sidebar_covidlabID_search", "{{ url('/covid_sample/search') }}", 1, "Search by Covid-19 Lab ID");
+		set_select("sidebar_covid_cert_search", "{{ url('/covid_sample/national_sample/certno') }}", 2, "Search by Covid-19 Certificate Number");
 		set_select("sidebar_covid_worksheet_search", "{{ url('/covid_worksheet/search') }}", 1, "Search for Covid-19 worksheet", true);
 		
 
