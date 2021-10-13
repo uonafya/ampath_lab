@@ -274,7 +274,7 @@ Route::middleware(['auth'])->group(function(){
 			Route::get('national_sample/{national_sample_id}', 'CovidSampleController@national_sample')->name('national_sample');
 			Route::post('kem_id/', 'CovidSampleController@kemri_id')->name('kemri_id');
 			Route::post('search/', 'CovidSampleController@search')->name('search');
-			Route::post('certno/', 'CovidSampleController@search_by_cert')->name('search_by_cert');
+			Route::post('national_sample/search/', 'CovidSampleController@search_by_cert')->name('search_by_cert');
 			Route::post('new_patient/', 'CovidSampleController@new_patient')->name('new_patient');
 			Route::post('cif_patient/', 'CovidSampleController@cif_patient')->name('cif_patient');
 		});
