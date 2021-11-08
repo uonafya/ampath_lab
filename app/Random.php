@@ -95,6 +95,7 @@ class Random
 
     public static function fix_ccc()
     {
+	ini_set('memory_limit', '-1');
         $c = new \App\Imports\AmpathMflImport;
         Excel::import($c, base_path('ampath_fixed_ccc.xlsx'));
     }
@@ -4085,5 +4086,12 @@ class Random
     {
         DB::statement("ALTER TABLE `users` ADD COLUMN `covid_consumption_allowed` TINYINT NOT NULL DEFAULT '0' AFTER `last_access`");
 
+    }
+
+    public static function standardizeCCCNo()
+    {
+        $c = new \App\Imports\StandardizeCCCNumbersImport();
+        Excel::import($c, public_path('TujengeJamiiStandardizedCCCNumbersampath.csv'));
+        return true;
     }
 }

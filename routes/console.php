@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Inspiring;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -324,6 +325,13 @@ Artisan::command('synch:consumptions', function(){
     $str = \App\Synch::synch_consumptions();
     $this->info($str);
 })->describe('Synch consumptions from lab to national databases');
+
+Artisan::command('synch:equipmentlogs', function() {
+    $str = \App\Synch::synchMachineMapping();
+    $str = \App\Synch::synchLabPerformanceTrackers();
+    $str = \App\Synch::synchLabEquipmentTrackers();
+    $this->info($str);
+})->describe('Synch equipment tracker and log from the labs to national database.');
 
 Artisan::command('synch:deliveries', function(){
     $str = \App\Synch::synch_deliveries();

@@ -274,6 +274,7 @@ class BatchController extends Controller
         $samples->load(['patient.mother']);
         $batch->load(['view_facility', 'receiver', 'creator.facility']);
         $data = Lookup::get_lookups();
+        dd($data);
         $data['batch'] = $batch;
         $data['samples'] = $samples;
 

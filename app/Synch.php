@@ -28,7 +28,8 @@ use App\Mail\TestMail;
 
 class Synch
 {
-	public static $base = 'https://eiddash.nascop.org/api/';
+	public static $base = 'http://national/api/';
+	// public static $base = 'https://eiddash.nascop.org/api/';
 	// public static $base = 'http://lab-2.test.nascop.org/api/';
 	public static $p3_base = 'https://kemrinairobi.nascop.org/api/';
 	// public static $cov_base = 'https://lab-covid19.health.go.ke/api';
@@ -242,8 +243,7 @@ class Synch
 		$body = json_decode($response->getBody());
 		// dd($body);
 		Cache::store('file')->put('api_token', $body->token, (60*60));
-
-		// dd($body);
+		return true;
 	}
 
 	public static function covid_login()
@@ -761,7 +761,7 @@ class Synch
 
 		while (true) {
 			echo "\n\t Getting consumptions data 20\n";
-			$consumptions = Consumption::where('synched', 0)->limit(20)->get();
+			$consumptions = Consumption::with('details')->where('synched', 0)->limit(100)->get();
 			if($consumptions->isEmpty())
 				break;
 			echo "\t Pushing consumptions data to national DB\n";
@@ -778,6 +778,12 @@ class Synch
 			]);
 			echo "\t Receiving national db respose\n";
 			$body = json_decode($response->getBody());
+			if (empty($body->consumptions)){
+				$subject = "CONSUMPTION SYNCH MISMATCH LAB " . env('APP_LAB');
+				Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail(null, $subject, json_encode($consumptions->pluck('id'))));
+				break;
+			}
+
 			echo "\t Updating consumptions data\n";
 			foreach ($body->consumptions as $key => $value) {
 				$update_data = ['national_id' => $value->national_id, 'synched' => 1, 'datesynched' => $today];
@@ -1762,6 +1768,134 @@ class Synch
 			}
 		}
 		return false;
+	}
+
+	public static function synchMachineMapping()
+	{
+		$client = new Client(['base_uri' => self::$base]);
+		$url = 'insert/machinemapping';
+
+		while (true) {
+			$mappings = LabEquipment::where('lab', env('APP_LAB'))->where('synched', 0)->get();
+			if ($mappings->isEmpty())
+				break;
+
+			$response = $client->request('post', $url, [
+				'http_errors' => false,
+				'debug' => false,
+				'headers' => [
+					'Accept' => 'application/json',
+					'Authorization' => 'Bearer ' . self::get_token(),
+				],
+				'json' => [
+					'mappings' => $mappings->toJson(),
+					'lab' => env('APP_LAB')
+				]
+			]);
+			
+			$body = json_decode($response->getBody());
+			if (isset($body->error)) {
+				$subject = "Machine Mapping syncing failed for lab " . env('APP_LAB');
+				Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail(null, $subject, json_encode($body)));
+				print_r('Error: ');print_r($body->error);
+				return false;
+			} else {
+				foreach($body as $key => $item) {
+					// dd($item);
+					$equipment = LabEquipment::findOrFail($item->original_id);
+					$equipment->national_id = $item->national_id;
+					$equipment->synched = 1;
+					$equipment->datesynched = now();
+					$equipment->save();
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static function synchLabPerformanceTrackers()
+	{
+		$client = new Client(['base_uri' => self::$base]);
+		$url = 'insert/labperformancetracker';
+
+		while (true) {
+			$performances = LabPerformanceTracker::with(['submitter'])->where('synched', 0)->limit(100)->get();
+			if ($performances->isEmpty())
+				break;
+
+			$response = $client->request('post', $url, [
+				'http_errors' => false,
+				'debug' => false,
+				'headers' => [
+					'Accept' => 'application/json',
+					'Authorization' => 'Bearer ' . self::get_token(),
+				],
+				'json' => [
+					'performances' => $performances->toJson(),
+					'lab' => env('APP_LAB')
+				]
+			]);
+			
+			$body = json_decode($response->getBody());
+			if (isset($body->error)) {
+				$subject = "Lab Performance syncing failed for lab " . env('APP_LAB');
+				Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail(null, $subject, json_encode($body)));
+				print_r('Error: ');print_r($body->error);
+				return false;
+			} else {
+				foreach($body as $key => $item) {
+					$equipment = LabPerformanceTracker::findOrFail($item->original_id);
+					$equipment->national_id = $item->national_id;
+					$equipment->synched = 1;
+					$equipment->datesynched = now();
+					$equipment->save();
+				}				
+			}
+		}
+		return true;
+	}
+
+	public static function synchLabEquipmentTrackers()
+	{
+		$client = new Client(['base_uri' => self::$base]);
+		$url = 'insert/labpequipmenttracker';
+
+		while (true) {
+			$trackings = LabEquipmentTracker::with(['equipment', 'submitter'])->where('synched', 0)->limit(100)->get();
+			if ($trackings->isEmpty())
+				break;
+
+			$response = $client->request('post', $url, [
+				'http_errors' => false,
+				'debug' => false,
+				'headers' => [
+					'Accept' => 'application/json',
+					'Authorization' => 'Bearer ' . self::get_token(),
+				],
+				'json' => [
+					'trackings' => $trackings->toJson(),
+					'lab' => env('APP_LAB')
+				]
+			]);
+			
+			$body = json_decode($response->getBody());
+			if (isset($body->error)) {
+				$subject = "Machine Mapping syncing failed for lab " . env('APP_LAB');
+				Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail(null, $subject, json_encode($body)));
+				print_r('Error: ');print_r($body->error);
+				return false;
+			} else {
+				foreach($body as $key => $item) {
+					$equipment = LabEquipmentTracker::findOrFail($item->original_id);
+					$equipment->national_id = $item->national_id;
+					$equipment->synched = 1;
+					$equipment->datesynched = now();
+					$equipment->save();
+				}
+			}
+		}
+		return true;
 	}
 
 	private static function sendAllocationReviewEmail()

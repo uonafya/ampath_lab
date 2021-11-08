@@ -60,7 +60,9 @@ class CancerWorksheetImport implements ToCollection/*, WithHeadingRow*/
 
                 foreach ($this->targets as $targetkey => $target) {
                     $RsTarget = $details->where('ASSAY NAME', $target);
-                    $result[$targetkey] = $RsTarget->first()['RESULT'] ?? 'Invalid';
+                    $result[$targetkey] = 'Invalid';
+                    if (!$RsTarget->isEmpty())
+                        $result[$targetkey] = $RsTarget->first()['ASSAY NAME'] . ' ' . $RsTarget->first()['RESULT'];
                 }
                 // $data_array = Misc::hpv_sample_result($result);
                 // dd($data_array);
