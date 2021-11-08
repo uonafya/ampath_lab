@@ -110,6 +110,7 @@
                                     <th>DOB</th>
                                     <th>Age (Months)</th>
                                     <th>Infant Prophylaxis</th>
+                                    <th>Sample Type</th>
 
                                     <th>Worksheet</th>
                                     <th>Date Collected</th>
@@ -139,6 +140,7 @@
                                         <td> {{ $sample->patient->my_date_format('dob') }} </td>
                                         <td> {{ $sample->age }} </td>
                                         <td> {{ $sample->get_prop_name($iprophylaxis, 'regimen') }} </td>
+                                        <td> {{ $sample->get_prop_name($sample_types, 'sample_type') }} </td>
 
                                         <td> {!! $sample->get_link('worksheet_id') !!} </td>
                                         <td> {{ $sample->my_date_format('datecollected') }} </td>

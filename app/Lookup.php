@@ -283,6 +283,7 @@ class Lookup
             'received_statuses' => Cache::get('received_statuses'),
             'pcrtypes' => Cache::get('pcr_types'),
             'amrs_locations' => Cache::get('amrs_locations'),
+            'sample_types' => Cache::get('sample_types'),
         ];
     }
 

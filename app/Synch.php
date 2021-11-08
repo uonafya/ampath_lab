@@ -761,7 +761,7 @@ class Synch
 
 		while (true) {
 			echo "\n\t Getting consumptions data 20\n";
-			$consumptions = Consumption::where('synched', 0)->limit(20)->get();
+			$consumptions = Consumption::with('details')->where('synched', 0)->limit(100)->get();
 			if($consumptions->isEmpty())
 				break;
 			echo "\t Pushing consumptions data to national DB\n";
@@ -778,6 +778,12 @@ class Synch
 			]);
 			echo "\t Receiving national db respose\n";
 			$body = json_decode($response->getBody());
+			if (empty($body->consumptions)){
+				$subject = "CONSUMPTION SYNCH MISMATCH LAB " . env('APP_LAB');
+				Mail::to(['bakasajoshua09@gmail.com'])->send(new TestMail(null, $subject, json_encode($consumptions->pluck('id'))));
+				break;
+			}
+
 			echo "\t Updating consumptions data\n";
 			foreach ($body->consumptions as $key => $value) {
 				$update_data = ['national_id' => $value->national_id, 'synched' => 1, 'datesynched' => $today];
