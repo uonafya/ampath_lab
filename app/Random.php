@@ -4094,4 +4094,26 @@ class Random
         Excel::import($c, public_path('TujengeJamiiStandardizedCCCNumbersampath.csv'));
         return true;
     }
+
+
+	/*
+	Function fixes a mistaken nullification of all HPV samples on 29 Nov 2021
+	public static function mess()
+	{
+		$path = "app/public/results/hpv/abbott";
+		$files = scandir(storage_path($path));
+		
+		echo "*********************** Starting imports ***********************\n";
+		foreach ($files as $filekey => $file) {
+			if (!($file == "." || $file == ".." || str_contains($file, '.xml'))) {
+				echo "==> Importing file {$file}" . date('H:i:s') . " \n";
+				$import_class = new \App\Imports\TempImport();
+				Excel::import($import_class, storage_path("{$path}/{$file}"));
+				echo "==> Finished importing file {$file} at " . date('H:i:s') . " \n";
+			}
+		}
+		echo "*********************** Finished imports ***********************\n";
+
+		return true;
+	}*/
 }
