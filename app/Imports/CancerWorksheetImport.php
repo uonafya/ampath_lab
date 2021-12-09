@@ -112,6 +112,7 @@ class CancerWorksheetImport implements ToCollection/*, WithHeadingRow*/
                 $newcollection->push($data);
             }
             
+            // Returning this back to collection (old habits)
             $collection = $newcollection;
             foreach ($collection as $key => $data) 
             {
