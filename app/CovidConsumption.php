@@ -68,7 +68,7 @@ class CovidConsumption extends BaseModel
         $user = auth()->user();
 
         // Getting the first date covid tests where done
-        $firsttestdate = CovidSampleView::selectRaw("min(`datetested`) AS `datetested`")
+        $firsttestdate = CovidSampleView::selectRaw("max(`datetested`) AS `datetested`")
             ->whereNotNull('datetested')
             ->when($user, function ($query) use ($user) {
                 if ($user->user_type_id == 12)
