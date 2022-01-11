@@ -34,80 +34,6 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
 
     $u = \App\User::where('email', 'like', 'joelkith%')->first(); $viralbatches = \App\Viralbatch::where('user_id', $u->id)->where('created_at', '>', date('Y-m-d'))->get(); $batch_ids = $viralbatches->pluck('id')->toArray(); \App\Viralsample::whereIn('batch_id', $batch_ids)->delete(); \App\Viralbatch::whereIn('id', $batch_ids)->delete(); \App\Viralworksheet::where('createdby', $u->id)->where('created_at', '>', date('Y-m-d'))->delete();
     */
-
-    private function createSamples($samples, $receivedby)
-    {
-        $lookups = Lookup::get_viral_lookups();
-        $processed_samples = [];
-
-        # Group samples by facility since batches are created per facility
-        $facilities_samples = $samples->groupBy('mflcode');
-        foreach ($facilities_samples as $facility_sample_key => $facility_samples) {
-            $facility = Facility::where('facilitycode', '=', $facility_sample_key)->first();
-            
-            # Chunk the facility samples to the required batch size
-            $imported_batches = $facility_samples->chunk(10);
-            foreach ($imported_batches as $imported_batch_key => $imported_batch) {
-                $datereceived = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($imported_batch->max('datereceived')))->format('Y-m-d');
-                $batch = $this->createBatch($facility, $receivedby, $datereceived);
-
-                foreach ($imported_batch as $imported_sample_key => $imported_sample) {
-                    $dob = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($imported_sample['dob']))->format('Y-m-d');
-                    $initiation_date = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($imported_sample['art_init_date']))->format('Y-m-d');
-                    $datecollected = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($imported_sample['datecollected']))->format('Y-m-d');
-
-                    $existing_patient = Viralpatient::existing($facility->id, $imported_sample['specimenclientcode'])->first();
-            
-                    if ($existing_patient){
-                        $patient = $existing_patient;
-                    } else {            
-                        $patient = new Viralpatient();
-                        $patient->patient = $imported_sample['specimenclientcode'];
-                        $patient->facility_id = $facility->id;
-                        $patient->sex = $lookups['genders']->where('gender', strtoupper($imported_sample['sex']))->first()->id;
-                        $patient->dob = $dob;
-                        // $patient->initiation_date = $initiation_date;
-                        $patient->save();
-                    }
-
-                    $existing_sample = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $datecollected])->first();
-
-                    if($existing_sample) {
-                        # Add DB ID to the samples collection
-                        $original_imported_sample = $samples->where('specimenclientcode', $imported_sample['specimenclientcode'])->first();
-                        $original_imported_sample['id'] = $existing_sample->id;
-                        $processed_samples[] = $original_imported_sample;
-                        continue;
-                    }
-                
-                    $sample = new Viralsample();
-                    $sample->batch_id = $batch->id;
-                    $sample->receivedstatus = $imported_sample['receivedstatus'];
-                    $sample->age = $imported_sample['age'];
-                    $sample->patient_id = $patient->id;
-                    $sample->pmtct = $imported_sample['pmtct'];
-                    $sample->dateinitiatedonregimen = $initiation_date;
-                    $sample->datecollected = $datecollected;
-                    $sample->regimenline = $imported_sample['regimenline'];
-                    $sample->prophylaxis = $lookups['prophylaxis']->where('code', $imported_sample['currentregimen'])->first()->id ?? 15;
-                    $sample->justification = $lookups['justifications']->where('rank_id', $imported_sample['justification'])->first()->id ?? 8;
-                    $sample->sampletype = $imported_sample['sampletype'];
-                    $sample->save();
-
-                    $batch_sample_count = $batch->sample->count();
-
-                    if($batch_sample_count > 9 || $batch_sample_count == $imported_batch->count())
-                        $batch->full_batch();
-
-                    # Add DB ID to the samples collection
-                    $original_imported_sample = $samples->where('specimenclientcode', $imported_sample['specimenclientcode'])->first();
-                    $original_imported_sample['id'] = $sample->id;
-                    $processed_samples[] = $original_imported_sample;
-                }
-            }
-        }
-        return collect($processed_samples);
-    }
     
     /**
     * @param Collection $collection
@@ -210,6 +136,80 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
         *
         * End of old way of doing it
         */
+    }
+
+    private function createSamples($samples, $receivedby)
+    {
+        $lookups = Lookup::get_viral_lookups();
+        $processed_samples = [];
+
+        # Group samples by facility since batches are created per facility
+        $facilities_samples = $samples->groupBy('mflcode');
+        foreach ($facilities_samples as $facility_sample_key => $facility_samples) {
+            $facility = Facility::where('facilitycode', '=', $facility_sample_key)->first();
+            
+            # Chunk the facility samples to the required batch size
+            $imported_batches = $facility_samples->chunk(10);
+            foreach ($imported_batches as $imported_batch_key => $imported_batch) {
+                $datereceived = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($imported_batch->max('datereceived')))->format('Y-m-d');
+                $batch = $this->createBatch($facility, $receivedby, $datereceived);
+
+                foreach ($imported_batch as $imported_sample_key => $imported_sample) {
+                    $dob = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($imported_sample['dob']))->format('Y-m-d');
+                    $initiation_date = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($imported_sample['art_init_date']))->format('Y-m-d');
+                    $datecollected = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($imported_sample['datecollected']))->format('Y-m-d');
+
+                    $existing_patient = Viralpatient::existing($facility->id, $imported_sample['specimenclientcode'])->first();
+            
+                    if ($existing_patient){
+                        $patient = $existing_patient;
+                    } else {            
+                        $patient = new Viralpatient();
+                        $patient->patient = $imported_sample['specimenclientcode'];
+                        $patient->facility_id = $facility->id;
+                        $patient->sex = $lookups['genders']->where('gender', strtoupper($imported_sample['sex']))->first()->id;
+                        $patient->dob = $dob;
+                        // $patient->initiation_date = $initiation_date;
+                        $patient->save();
+                    }
+
+                    $existing_sample = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $datecollected])->first();
+
+                    if($existing_sample) {
+                        # Add DB ID to the samples collection
+                        $original_imported_sample = $samples->where('specimenclientcode', $imported_sample['specimenclientcode'])->first();
+                        $original_imported_sample['id'] = $existing_sample->id;
+                        $processed_samples[] = $original_imported_sample;
+                        continue;
+                    }
+                
+                    $sample = new Viralsample();
+                    $sample->batch_id = $batch->id;
+                    $sample->receivedstatus = $imported_sample['receivedstatus'];
+                    $sample->age = $imported_sample['age'];
+                    $sample->patient_id = $patient->id;
+                    $sample->pmtct = $imported_sample['pmtct'];
+                    $sample->dateinitiatedonregimen = $initiation_date;
+                    $sample->datecollected = $datecollected;
+                    $sample->regimenline = $imported_sample['regimenline'];
+                    $sample->prophylaxis = $lookups['prophylaxis']->where('code', $imported_sample['currentregimen'])->first()->id ?? 15;
+                    $sample->justification = $lookups['justifications']->where('rank_id', $imported_sample['justification'])->first()->id ?? 8;
+                    $sample->sampletype = $imported_sample['sampletype'];
+                    $sample->save();
+
+                    $batch_sample_count = $batch->sample->count();
+
+                    if($batch_sample_count > 9 || $batch_sample_count == $imported_batch->count())
+                        $batch->full_batch();
+
+                    # Add DB ID to the samples collection
+                    $original_imported_sample = $samples->where('specimenclientcode', $imported_sample['specimenclientcode'])->first();
+                    $original_imported_sample['id'] = $sample->id;
+                    $processed_samples[] = $original_imported_sample;
+                }
+            }
+        }
+        return collect($processed_samples);
     }
 
     private function createBatch($facility, $receivedby, $datereceived)
