@@ -18,11 +18,13 @@ use Carbon\Carbon;
 
 class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
 {
-	private $receivedby;
+	private $receivedby, $machinetype, $sampletype;
 
 	public function __construct($request)
 	{
 		$this->receivedby = $request->input('receivedby');
+        $this->machinetype = $request->input('machinetype');
+        $this->sampletype = $request->input('sampletype');
 	}
 
     /*$u = \App\User::where('email', 'like', 'joelkith%')->first();
@@ -41,7 +43,9 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
     public function collection(Collection $collection)
     {
         $receivedby = $this->receivedby;
-
+        $machinetype = $this->machinetype;
+        $sampletype = $this->sampletype;
+        
         # Filter out the duplicate patient samples and no null rows
         $unique_samples_collection = $collection->unique('specimenclientcode')->whereNotNull('specimenclientcode');
         
@@ -52,7 +56,7 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
         $imported_worksheets = $stored_samples->chunk(93);
         foreach ($imported_worksheets as $imported_worksheet_key => $imported_worksheet) {
             $imported_samples_ids = $imported_worksheet->pluck('id');
-            $worksheet = $this->createWorksheet($receivedby);
+            $worksheet = $this->createWorksheet($receivedby, $machinetype, $sampletype);
             $samples = Viralsample::whereIn('id', $imported_samples_ids)->get();
             foreach($samples as $sample) {
                 $sample->worksheet_id = $worksheet->id;
@@ -237,12 +241,12 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
         return $batch;
     }
 
-    private function createWorksheet($receivedby)
+    private function createWorksheet($receivedby, $machinetype, $sampletype)
     {
         $worksheet = new Viralworksheet();
         $worksheet->lab_id = env('APP_LAB');
-        $worksheet->machine_type = 1;
-        $worksheet->sampletype = 2;
+        $worksheet->machine_type = $machinetype;
+        $worksheet->sampletype = $sampletype;
         $worksheet->createdby = $receivedby;
         $worksheet->sample_prep_lot_no = 44444;
         $worksheet->bulklysis_lot_no = 44444;

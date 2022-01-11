@@ -2,20 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Viralsample;
-use App\ViralsampleView;
-use App\Viralpatient;
-use App\Viralbatch;
 use App\Facility;
+use App\Http\Requests\ViralsampleRequest;
+use App\Imports\ViralInterLabSampleImport;
 use App\Lookup;
+use App\Machine;
 use App\MiscViral;
 use App\User;
-
-use App\Imports\ViralInterLabSampleImport;
-
+use App\Viralbatch;
+use App\Viralpatient;
+use App\Viralsample;
+use App\ViralsampleView;
 use Excel;
-
-use App\Http\Requests\ViralsampleRequest;
 use Illuminate\Http\Request;
 
 class ViralsampleController extends Controller
@@ -142,6 +140,8 @@ class ViralsampleController extends Controller
     public function excelupload(Request $request) {
         if ($request->method() == "GET") {
             $data['excelusers'] = User::where('user_type_id', '<>', 5)->get();
+            $data['machines'] = Machine::where('id', '<>', 0)->get();
+            $data['sampletypes'] = Lookup::get_viral_lookups()["sample_types"];
             return view('forms.viralsamplesexcel', $data)->with('pageTitle', 'Add Sample');
         } else {
             ini_set('memory_limit', '-1');

@@ -19,16 +19,34 @@
                     <div class="panel-body">
                         <div class="form-group"><label class="col-sm-4 control-label">User to put samples under</label>
                             <div class="col-sm-8">
-                                <select name="receivedby" class="form-control">
+                                <select name="receivedby" class="form-control" required="true">
                                 @foreach($excelusers as $user)
                                 <option value="{{ $user->id }}">{{ $user->full_name }}</option>
                                 @endforeach
                                 </select>
                             </div>
                         </div>
+                        <div class="form-group"><label class="col-sm-4 control-label">Platform samples to run on</label>
+                            <div class="col-sm-8">
+                                <select name="machinetype" class="form-control" required="true">
+                                @foreach($machines as $machine)
+                                <option value="{{ $machine->id }}">{{ $machine->machine }}</option>
+                                @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group"><label class="col-sm-4 control-label">Samples Type</label>
+                            <div class="col-sm-8">
+                                <select name="sampletype" class="form-control" required="true">
+                                @foreach($sampletypes as $sampletype)
+                                <option value="{{ $sampletype->id }}">{{ $sampletype->name }}</option>
+                                @endforeach
+                                </select>
+                            </div>
+                        </div>
                         <div class="form-group"><label class="col-sm-4 control-label">Excel to upload</label>
                             <div class="col-sm-8">
-                                <input type="file" name="excelupload" class="form-control">
+                                <input type="file" name="excelupload" class="form-control" required="true">
                             </div>
                         </div>
                     </div>
