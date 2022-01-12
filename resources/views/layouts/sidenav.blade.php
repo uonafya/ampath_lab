@@ -266,6 +266,18 @@
                 </li>
                 <hr />
                 <li>
+                    <a href="{{ url('cancerworksheet/create/3/22') }}">Create C8800 Worksheet(24)</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('cancerworksheet/create/3/46') }}">Create C8800 Worksheet(48)</a>
+                </li>
+                <hr />
+                <li>
+                    <a href="{{ url('cancerworksheet/create/3/70') }}">Create C8800 Worksheet(72)</a>
+                </li>
+                <hr />
+                <li>
                     <a href="{{ url('cancerworksheet/create/3') }}">Create C8800 Worksheet(96)</a>
                 </li>
                 <hr />
