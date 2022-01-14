@@ -49,7 +49,7 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
         $calibrations = (int) $this->calibrations;
         
         # Filter out the duplicate patient samples and no null rows
-        $unique_samples_collection = $collection->unique('specimenclientcode')->whereNotNull('specimenclientcode');
+        $unique_samples_collection = $collection/*->unique('specimenclientcode')*/->whereNotNull('specimenclientcode');
         
         # Create samples in batches and return samples with DB ids
         $stored_samples = $this->createSamples($unique_samples_collection, $receivedby);
@@ -152,7 +152,6 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
     private function createSamples($samples, $receivedby)
     {
         $lookups = Lookup::get_viral_lookups();
-        dd($lookups);
         $processed_samples = [];
 
         # Group samples by facility since batches are created per facility
@@ -185,15 +184,15 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
                         $patient->save();
                     }
 
-                    $existing_sample = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $datecollected])->first();
+                    // $existing_sample = ViralsampleView::existing(['facility_id' => $facility->id, 'patient' => $patient->patient, 'datecollected' => $datecollected])->first();
 
-                    if($existing_sample) {
-                        # Add DB ID to the samples collection
-                        $original_imported_sample = $samples->where('specimenclientcode', $imported_sample['specimenclientcode'])->first();
-                        $original_imported_sample['id'] = $existing_sample->id;
-                        $processed_samples[] = $original_imported_sample;
-                        continue;
-                    }
+                    // if($existing_sample) {
+                    //     # Add DB ID to the samples collection
+                    //     $original_imported_sample = $samples->where('specimenclientcode', $imported_sample['specimenclientcode'])->first();
+                    //     $original_imported_sample['id'] = $existing_sample->id;
+                    //     $processed_samples[] = $original_imported_sample;
+                    //     continue;
+                    // }
                 
                     $sample = new Viralsample();
                     $sample->batch_id = $batch->id;
@@ -209,16 +208,17 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
                     $sample->sampletype = $imported_sample['sampletype'];
                     $sample->save();
 
-                    $batch_sample_count = $batch->sample->count();
+                    // $batch_sample_count = $batch->sample->count();
 
-                    if($batch_sample_count > 9 || $batch_sample_count == $imported_batch->count())
-                        $batch->full_batch();
+                    // if(($batch_sample_count > 9) || ($batch_sample_count == $imported_batch->count()))
+                        
 
                     # Add DB ID to the samples collection
                     $original_imported_sample = $samples->where('specimenclientcode', $imported_sample['specimenclientcode'])->first();
                     $original_imported_sample['id'] = $sample->id;
                     $processed_samples[] = $original_imported_sample;
                 }
+                $batch->full_batch();
             }
         }
         return collect($processed_samples);
