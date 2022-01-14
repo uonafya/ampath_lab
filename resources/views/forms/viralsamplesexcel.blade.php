@@ -44,6 +44,11 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="form-group"><label class="col-sm-4 control-label">No. Of Calibration Worksheets</label>
+                            <div class="col-sm-8">
+                                <input type="number" name="calibrations" class="form-control" value="0" min="0" max="10">
+                            </div>
+                        </div>
                         <div class="form-group"><label class="col-sm-4 control-label">Excel to upload</label>
                             <div class="col-sm-8">
                                 <input type="file" name="excelupload" class="form-control" required="true">

@@ -148,8 +148,14 @@ class ViralsampleController extends Controller
             $file = $request->excelupload->path();
             $path = $request->excelupload->store('public/samples/otherlab');
             $importclass = new ViralInterLabSampleImport($request);            
-            Excel::import($importclass, $path);
+            $worksheets = Excel::import($importclass, $path);
 
+            $data = Lookup::worksheet_lookups();
+            $data['worksheets'] = session('temp_worksheets');
+            
+            return view('tables.viralworksheetsexcel', $data);
+            
+            // return back();
             // $batch = null;
             // $lookups = Lookup::get_viral_lookups();
             // dd($lookups);
@@ -261,7 +267,6 @@ class ViralsampleController extends Controller
 
                 // })->download('csv');
             // }
-            return back();
         }
         
     }

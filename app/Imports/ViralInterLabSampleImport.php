@@ -18,13 +18,14 @@ use Carbon\Carbon;
 
 class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
 {
-	private $receivedby, $machinetype, $sampletype;
+	private $receivedby, $machinetype, $sampletype, $calibrations;
 
 	public function __construct($request)
 	{
 		$this->receivedby = $request->input('receivedby');
         $this->machinetype = $request->input('machinetype');
         $this->sampletype = $request->input('sampletype');
+        $this->calibrations = $request->input('calibrations');
 	}
 
     /*$u = \App\User::where('email', 'like', 'joelkith%')->first();
@@ -45,6 +46,7 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
         $receivedby = $this->receivedby;
         $machinetype = $this->machinetype;
         $sampletype = $this->sampletype;
+        $calibrations = (int) $this->calibrations;
         
         # Filter out the duplicate patient samples and no null rows
         $unique_samples_collection = $collection->unique('specimenclientcode')->whereNotNull('specimenclientcode');
@@ -54,19 +56,24 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
 
         # Create worksheet for the created samples, this is the 93samples/worksheet configuration
         $imported_worksheets = $stored_samples->chunk(93);
+        $created_worksheets = [];
         foreach ($imported_worksheets as $imported_worksheet_key => $imported_worksheet) {
             $imported_samples_ids = $imported_worksheet->pluck('id');
-            $worksheet = $this->createWorksheet($receivedby, $machinetype, $sampletype);
+            $worksheet = $this->createWorksheet($receivedby, $machinetype, $sampletype, $calibrations);
             $samples = Viralsample::whereIn('id', $imported_samples_ids)->get();
             foreach($samples as $sample) {
                 $sample->worksheet_id = $worksheet->id;
                 $sample->save();
             }
+            $created_worksheets[] = $worksheet;
+            $calibrations -= 1;
         }
         
-
+        // dd($created_worksheets);
+        session()->flash('temp_worksheets', $created_worksheets);
         session(['toast_message' => "The worksheet has been updated with the results."]);
-        return back();
+        return collect($created_worksheets);
+        // return back();
 
         /*
         * Old way of doing it
@@ -145,6 +152,7 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
     private function createSamples($samples, $receivedby)
     {
         $lookups = Lookup::get_viral_lookups();
+        dd($lookups);
         $processed_samples = [];
 
         # Group samples by facility since batches are created per facility
@@ -171,7 +179,7 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
                         $patient = new Viralpatient();
                         $patient->patient = $imported_sample['specimenclientcode'];
                         $patient->facility_id = $facility->id;
-                        $patient->sex = $lookups['genders']->where('gender', strtoupper($imported_sample['sex']))->first()->id;
+                        $patient->sex = $lookups['genders']->where('gender', strtoupper($imported_sample['sex']))->first()->id ?? $imported_sample['sex'];
                         $patient->dob = $dob;
                         // $patient->initiation_date = $initiation_date;
                         $patient->save();
@@ -196,7 +204,7 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
                     $sample->dateinitiatedonregimen = $initiation_date;
                     $sample->datecollected = $datecollected;
                     $sample->regimenline = $imported_sample['regimenline'];
-                    $sample->prophylaxis = $lookups['prophylaxis']->where('code', $imported_sample['currentregimen'])->first()->id ?? 15;
+                    $sample->prophylaxis = $lookups['prophylaxis']->where('code', $imported_sample['currentregimen'])->first()->id ?? $imported_sample['currentregimen'] ?? 15;
                     $sample->justification = $lookups['justifications']->where('rank_id', $imported_sample['justification'])->first()->id ?? 8;
                     $sample->sampletype = $imported_sample['sampletype'];
                     $sample->save();
@@ -241,7 +249,7 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
         return $batch;
     }
 
-    private function createWorksheet($receivedby, $machinetype, $sampletype)
+    private function createWorksheet($receivedby, $machinetype, $sampletype, $calibrations=0)
     {
         $worksheet = new Viralworksheet();
         $worksheet->lab_id = env('APP_LAB');
@@ -251,13 +259,16 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
         $worksheet->sample_prep_lot_no = 44444;
         $worksheet->bulklysis_lot_no = 44444;
         $worksheet->control_lot_no = 44444;
-        $worksheet->calibrator_lot_no = 44444;
         $worksheet->amplification_kit_lot_no = 44444;
         $worksheet->sampleprepexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
         $worksheet->bulklysisexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
         $worksheet->controlexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
-        $worksheet->calibratorexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
         $worksheet->amplificationexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
+        if ($calibrations > 0) {
+            $worksheet->calibrator_lot_no = 44444;
+            $worksheet->calibratorexpirydate = date('Y-m-d', strtotime("+ 6 Months"));
+            $worksheet->calibration = 1;
+        }
         $worksheet->save();
         return $worksheet;
     }
