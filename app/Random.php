@@ -4095,6 +4095,22 @@ class Random
         return true;
     }
 
+    public static function delete_by_worksheet($id)
+    {
+        $worksheet = Viralworksheet::find($id);
+        $samples = $worksheet->sample;
+        $batches_ids = $samples->pluck('batch_id');
+        $batches_to_be_deleted = Viralbatch::whereIn('id', $batches_ids)->get();
+        foreach ($batches_to_be_deleted as $key => $batch) {
+            $batch->delete();
+        }
+        foreach ($samples as $key => $sample) {
+            $sample->delete();
+        }
+        $worksheet->delete();
+        return true;
+    }
+
 
 	/*
 	Function fixes a mistaken nullification of all HPV samples on 29 Nov 2021
