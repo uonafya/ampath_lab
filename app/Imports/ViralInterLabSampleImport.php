@@ -158,7 +158,15 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
 
         // Storing the samples first so that we maintain the order of the worksheet as the one in the excel
         foreach ($samples as $sample_key => $sample) {
-            $facility = Facility::where('facilitycode', '=', $sample['mflcode'])->first();
+            $existing_facility = Facility::where('facilitycode', '=', $sample['mflcode'])->first();
+            if ($existing_facility){
+                $facility = $existing_facility;
+            } else {            
+                $facility = new Facility();
+                $facility->facilitycode = $sample['mflcode'];
+                $facility->name = $sample['facilityname'];
+                $facility->save();
+            }
 
             $dob = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($sample['dob']))->format('Y-m-d');
             $initiation_date = NULL;
