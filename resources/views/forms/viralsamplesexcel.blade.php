@@ -39,7 +39,7 @@
                             <div class="col-sm-8">
                                 <select name="sampletype" class="form-control" required="true">
                                 @foreach($sampletypes as $sampletype)
-                                <option value="{{ $sampletype->id }}">{{ $sampletype->name }}</option>
+                                <option value="{{ $sampletype->typecode }}">{{ $sampletype->name }}</option>
                                 @endforeach
                                 </select>
                             </div>
