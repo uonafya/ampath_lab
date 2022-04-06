@@ -27,8 +27,15 @@
 		@if(in_array(env('APP_LAB'), [3, 5]) && get_class($worksheet) == "App\Viralworksheet")
 			<br /> {{ $sample->comments }}
 		@endif
-		@if(env('APP_LAB') != 5) 
+		 
+			@isset( $sample->recency_number)
+			<br /> Rec_No - {{ $sample->recency_number ?? '' }} 	
+			@endisset
+		@if(env('APP_LAB') != 5 and env('APP_LAB') != 3)			
 			<br /> Date Collected - {{ $sample->my_date_format('datecollected') }} 
+		@endif 
+		@if(env('APP_LAB') == 3 ) 
+		<br /> Date Received - {{ $sample->batch->my_date_format('datereceived') }} 
 		@endif 
 		@if(env('APP_LAB') == 8)
 			<br /> Label ID - {{ $sample->label_id }}
@@ -57,8 +64,8 @@
 	<br />
 	{{ $sample->id }}
 
-	@if(in_array(env('APP_LAB'), [9, 2]))
-		@if(env('APP_LAB') == 9)
+	@if(in_array(env('APP_LAB'), [9, 2, 1, 3, 5]))
+		@if(env('APP_LAB') == 9 or env('APP_LAB') == 2 or env('APP_LAB') == 1 or env('APP_LAB') == 3 or env('APP_LAB') == 5 )
 			@if(get_class($worksheet) == "App\Viralworksheet")
 				- ({{ $i+3 }})
 			@else

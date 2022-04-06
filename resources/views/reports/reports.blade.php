@@ -306,13 +306,12 @@
                                     </label>
                                 @else
                                 <label> <input type="radio" name="types" value="tested" required> All Samples Tested </label>
-                                @if(!($testtype == 'HPV' && Auth::user()->user_type_id == 5))
-                                    <label> <input type="radio" name="types" value="awaitingtesting" required> All Samples Awaiting Testing </label>
-                                    @if(Auth::user()->user_type_id != 5)
-                                        @if(Session('testingSystem') == 'EID')
-                                        <label> <input type="radio" name="types" value="positives" required> Positives </label>
-                                        @endif
-                                    @endif
+                                <label><input type="radio" name="types" value="recency_report" required> Recency Report</label>
+                                <label> <input type="radio" name="types" value="awaitingtesting" required> All Samples Awaiting Testing </label>
+                                @if(Auth::user()->user_type_id != 5)
+                                @if(Session('testingSystem') == 'EID')
+                                <label> <input type="radio" name="types" value="positives" required> Positives </label>
+                                @endif
                                 @endif
                                 <!-- <label> <input type="radio" name="types" value="worksheetsrun" class="i-checks" required> Worksheets Run </label> -->
                                 <label> <input type="radio" name="types" value="rejected" required> Rejected Samples </label>

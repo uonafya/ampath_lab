@@ -43,10 +43,10 @@ class Controller extends BaseController
     public function eligibleForEidVlConsumptions()
     {
         if (!in_array(env('APP_LAB'), [23, 25])) {
-            if (auth()->user()->eidvl_consumption_allowed)
-                return true;
-            if (auth()->user()->user_type_id == 1 && date('d') > 15)
-                return true;
+            // if (auth()->user()->eidvl_consumption_allowed)
+            //     return true;
+            // if (auth()->user()->user_type_id == 1 && date('d') > 20)
+            //     return true;
         }
         return false;
     }
@@ -65,10 +65,10 @@ class Controller extends BaseController
     public function eligibleForEquipmentUtilization()
     {
         if (!in_array(env('APP_LAB'), [23, 25])) {
-            if (auth()->user()->equipment_allowed)
-                return true;
-            if (auth()->user()->user_type_id == 1 && date('d') > 15)
-                return true;
+            // if (auth()->user()->equipment_allowed)
+            //     return true;
+            // if (auth()->user()->user_type_id == 1 && date('d') > 20)
+            //     return true;
         }
         return false;
     }

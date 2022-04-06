@@ -122,7 +122,7 @@
                             <input type="hidden" name="facility_id" value="{{$batch->facility_id}}" id="facility_id">
                         @endif
                         
-                        @if(auth()->user()->user_type_id != 5 && in_array(env('APP_LAB'), [2, 3, 4]))
+                        {{-- @if(auth()->user()->user_type_id != 5 && in_array(env('APP_LAB'), [2, 3, 4])) --}}
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">High Priority</label>
                                 <div class="col-sm-8">
@@ -134,7 +134,7 @@
                                  />
                                 </div>
                             </div>
-                        @endif
+                        {{-- @endif --}}
 
                         <div class="form-group ampath-div">
                             <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Location</label>
@@ -162,14 +162,14 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Specimen Label ID </label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" name="label_id" type="text" value="{{ $viralsample->label_id ?? '' }}" id="label_id">
+                                    <input class="form-control" name="label_id" type="text" value="{{ $viralsample->label_id ?? '' }}" id="label_id" required>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Area Name </label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" name="areaname" type="text" value="{{ $viralsample->areaname ?? '' }}" id="areaname">
+                                    <input class="form-control" name="areaname" type="text" value="{{ $viralsample->areaname ?? '' }}" id="areaname" required>
                                 </div>
                             </div>
 
@@ -188,27 +188,56 @@
                         <center>Patient Information</center>
                     </div>
                     <div class="panel-body">
+                        
+                    <div class="form-group">
+                            <label class="col-sm-1 control-label">Patient Facility MFL
+                            </label>
+                            {{-- <div class="col-sm-8"> --}}
+                                <div class="col-sm-3">
+                                    <select class="form-control "  name="patient_facility_id" onChange="showFacilityCode(this.value)" id="patient_facility_id">
+                                        @isset($viralsample)
+                                        <option value="{{ $viralsample->batch->facility->id }}" selected>{{ $viralsample->batch->facility->facilitycode }} {{ $viralsample->batch->facility->name }}</option>
+                                        @endisset
+                                    </select>
+                                </div>
+                                {{-- <div class="col-sm-8"> --}}
+                                    <label class="col-sm-1 control-label">Patient serial No.
+                                    </label>
+                                    <div class="col-sm-3">
+                                        <input class="form-control " id="patient_serial"   name="patient_serial" onChange="showSerial(this.value)" type="text"            maxlength="5" value="" id="patient_serial">
+                                    </div>
+                                {{-- </div> --}}
+                                {{-- <div class="col-sm-3 "> --}}
+                                    <label class="col-sm-1 control-label">CCC No.
+                                    </label>  <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                    <div class="col-sm-3">
+                                    <input class="form-control " id="patient" onKeyUp="fetchPatientDetails(this.value)"  name="patient" type="text" value="{{ $viralsample->patient->patient ?? '' }}" id="patient" disabled>
+                                </div>
+                            {{-- </div> --}}
+                        </div>
+
 
                         @if( in_array(env('APP_LAB'), $sms))
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Phone No (format 254725******)</strong>
+                                    <strong><div style='color: #ff0000; display: inline;'></div></strong>
                                 </label>
                                 <div class="col-sm-3">
-                                    <input class="form-control" name="patient_phone_no" id="patient_phone_no" type="text" value="{{ $viralsample->patient->patient_phone_no ?? '' }}">
+                                    <input class="form-control" name="patient_phone_no" id="patient_phone_no" type="text" value="{{ $viralsample->patient->patient_phone_no ?? '' }}" >
                                 </div>
 
                                 <div class="col-sm-1">Patient's Preferred Language</div>
 
                                 <div class="col-sm-4">
                                     @foreach($languages as $key => $value)
-                                        <label><input type="radio" class="i-checks" name="preferred_language" value={{ $key }} 
+                                        <label><input type="radio" class="i-chszecks" id="preferred_language" name="preferred_language" value="{{ $key }}" 
 
                                             @if(isset($viralsample) && $viralsample->patient->preferred_language == $key)
                                                 checked="checked"
                                             @endif
-                                            > 
-                                            {{ $value }} 
+                                            >
+                                            {{ $value }}
                                         </label>
 
                                     @endforeach
@@ -217,15 +246,7 @@
 
                         @endif
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Patient / Sample ID
-                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
-                            </label>
-                            <div class="col-sm-8">
-                                <input class="form-control requirable" required name="patient" type="text" value="{{ $viralsample->patient->patient ?? '' }}" id="patient">
-                            </div>
-                        </div>
-
+                       
                         @if(env('APP_LAB') == 4)
 
                             <div class="form-group">
@@ -246,12 +267,12 @@
 
                         @if(!isset($viralsample) && auth()->user()->user_type_id != 5)
 
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label class="col-sm-4 control-label">Confirm Re-Entry (Sample Exists but should not be flagged as a double-entry)</label>
                                 <div class="col-sm-8">
                                 <input type="checkbox" class="i-checks" name="reentry" value="1" />
                                 </div>
-                            </div>
+                            </div> --}}
 
                         @endif
 
@@ -263,9 +284,11 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Patient Names</label>
+                            <label class="col-sm-4 control-label">Patient Names
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
-                                <input class="form-control" name="patient_name" type="text" value="{{ $viralsample->patient->patient_name ?? '' }}">
+                                <input class="form-control" id="name" name="patient_name" type="text" value="{{ $viralsample->patient->patient_name ?? '' }}" required>
                             </div>
                         </div>
 
@@ -280,16 +303,18 @@
                                     @if(auth()->user()->user_type_id == 5)
                                         required
                                     @endif
-                                     value="{{ $viralsample->patient->dob ?? '' }}" name="dob">
+                                     value="{{ $viralsample->patient->dob ?? '' }}" name="dob" required>
                                 </div>
                             </div>                            
                         </div>
 
                         @if(auth()->user()->user_type_id != 5)
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">Age (In Years)</label>
+                                <label class="col-sm-4 control-label">Age (In Years)
+                                    <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                </label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" type="text" name="age" id='age' number='number' placeholder="Fill this or set the DOB." value="{{ $viralsample->age ?? '' }}">
+                                    <input class="form-control" type="text" name="age" id='age' number='number' placeholder="Fill this or set the DOB." value="{{ $viralsample->age ?? '' }}" required>
                                 </div>
                             </div>
                         @endif
@@ -303,7 +328,7 @@
                             <div class="col-sm-8">
                                 <select class="form-control lockable requirable" required name="sex" id="sex">
 
-                                    <option></option>
+                                    <option value="3">- Select Option -</option>
                                     @foreach ($genders as $gender)
                                         <option value="{{ $gender->id }}"
 
@@ -321,9 +346,11 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">PMTCT(If Female)</label>
+                            <label class="col-sm-4 control-label">PMTCT(If Female)
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
-                                <select class="form-control requirable" name="pmtct" id="pmtct">
+                                <select class="form-control requirable" name="pmtct" id="pmtct" required>
 
                                     <option></option>
                                     @foreach ($pmtct_types as $pmtct)
@@ -395,7 +422,9 @@
                         </div>                      
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Date of Separation / Centrifugation</label>
+                            <label class="col-sm-4 control-label">Date of Separation / Centrifugation
+                                {{-- <strong><div style='color: #ff0000; display: inline;'>*</div></strong> --}}
+                            </label>
                             <div class="col-sm-8">
                                 <div class="input-group date date-normal">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -405,7 +434,7 @@
                                             value="{{ $viralsample->my_date_format('dateseparated', 'Y-m-d') }}"
                                         @endif
 
-                                      name="dateseparated">
+                                      name="dateseparated" >
                                 </div>
                             </div>                            
                         </div> 
@@ -413,7 +442,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Time of Separation / Centrifugation</label>
                             <div class="col-sm-8">
-                                <select class="form-control" id="separating_hour" name="separating_hour">
+                                <select class="form-control" id="separating_hour" name="separating_hour" >
 
                                     <option></option>
                                     @for($i=1; $i<13; $i++)
@@ -459,11 +488,13 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Date Dispatched from Facility</label>
+                            <label class="col-sm-4 control-label">Date Dispatched from Facility
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <div class="input-group date date-dispatched">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="datedispatched" class="form-control" value="{{ $viralsample->batch->datedispatchedfromfacility ?? $batch->datedispatchedfromfacility ?? '' }}" name="datedispatchedfromfacility">
+                                    <input type="text" id="datedispatched" class="form-control" value="{{ $viralsample->batch->datedispatchedfromfacility ?? $batch->datedispatchedfromfacility ?? '' }}" name="datedispatchedfromfacility" required>
                                 </div>
                             </div>                            
                         </div>
@@ -504,11 +535,13 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Date Initiated on Current Regimen</label>
+                            <label class="col-sm-4 control-label">Date Initiated on Current Regimen
+                                <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                            </label>
                             <div class="col-sm-8">
                                 <div class="input-group date date-art">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="dateinitiatedonregimen" class="form-control" value="{{ $viralsample->dateinitiatedonregimen ?? '' }}" name="dateinitiatedonregimen">
+                                    <input type="text" id="dateinitiatedonregimen" class="form-control" value="{{ $viralsample->dateinitiatedonregimen ?? '' }}" name="dateinitiatedonregimen" required>
                                 </div>
                             </div>                            
                         </div>
@@ -523,6 +556,7 @@
                                 <select class="form-control requirable" required name="justification" id="justification">
                                     <option></option>
                                     @foreach ($justifications as $justification)
+                                    @if($justification->id != 7)
                                         @continue($justification->id == 8 && auth()->user()->user_type_id == 5)
                                         <option value="{{ $justification->id }}"
 
@@ -532,15 +566,17 @@
 
                                         > {{ $justification->rank_id . ' ' . $justification->name }}
                                         </option>
+                                    @endif
                                     @endforeach
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">Recency Number</label>
+                            <label class="col-sm-4 control-label">Recency Number
+                            </label>
                             <div class="col-sm-8">
-                                <input class="form-control" id="recency_number" name="recency_number" type="text" value="{{ $viralsample->recency_number ?? '' }}">
+                                <input class="form-control" id="recency_number" name="recency_number" type="text" value="{{ $viralsample->recency_number ?? '' }}" disabled >
                             </div>
                         </div>
 
@@ -584,7 +620,7 @@
                         <div class="form-group alupe-div">
                             <label class="col-sm-4 control-label">VL Test Request Number</label>
                             <div class="col-sm-8">
-                                <input class="form-control" name="vl_test_request_no" number="number" min=0 max=10 type="text" value="{{ $viralsample->vl_test_request_no ?? '' }}">
+                                <input class="form-control" name="vl_test_request_no" number="number" min=0 max=10 type="text" value="{{ $viralsample->vl_test_request_no ?? '' }}" required>
                             </div>
                         </div>
 
@@ -745,21 +781,34 @@
         @slot('val_rules')
            ,
             rules: {
-                dob: {
-                    lessThan: ["#datecollected", "Date of Birth", "Date Collected"],
-                    lessThanTwo: ["#initiation_date", "Date of Birth", "ART Inititation Date"]
+               dob: {
+                    lessThan: ["#datecollected", "Date Collected", "Date of Birth"],
+                    lessThan: ["#initiation_date","ART Inititation Date","Date of Birth"],
+                    lessThan: ["#dateseparated", "Date of Separation / Centrifugation", "Date of Birth"],
+                    lessThan: ["#datedispatched", "Date Dispatched from Facility", "Date of Birth"],
+                    lessThan: ["#dateinitiatedonregimen", "Date Initiated on Current Regimen", "Date of Birth"],
+                    lessThan: ["#datereceived", "Date Received","Date of Birth"]
                 },
-                initiation_date:{
+           datecollected: {
+           greaterThan: ["#dob","Date Collected","Date of Birth"],
+           },
+           initiation_date:{
+           GreaterThanSpecific: ["1990-01-01", "Date of Initiating ART"],
+           lessThan: ["#datecollected","ART Inititation Date","Date Collected"],
+           },
+{{--                initiation_date:{
                     GreaterThanSpecific: ["1990-01-01", "Date of Initiating ART"]
                 },
                 datecollected: {
+                    greaterThan: ["#initiation_date", "Date of Initiating ART", "Date Collected"],
                     lessThan: ["#datedispatched", "Date Collected", "Date Dispatched From Facility"],
                     @if(auth()->user()->user_type_id != 5)
                         lessThanTwo: ["#datereceived", "Date Collected", "Date Received"]
                     @endif
                 },
-                datedispatched: {
-                    lessThan: ["#datereceived", "Date Dispatched From Facility", "Date Received"]
+                --}}
+                datereceived: {
+                    greaterThan: ["#datedispatched","Date Received", "Date Dispatched From Facility"],
                 },
                 @if(auth()->user()->user_type_id != 5)
                     age: {
@@ -816,6 +865,7 @@
         });
 
         set_select_facility("facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
+        set_select_facility_mfl("patient_facility_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
         set_select_facility("lab_id", "{{ url('/facility/search') }}", 3, "Search for facility", false);
 
     @endcomponent
@@ -823,7 +873,7 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
-
+            let concat_patient_id;
 
             @if(in_array(env('APP_LAB'), [3, 1]) && auth()->user()->is_lab_user() && !isset($viralsample))
                 $("#samples_form input,select").change(function(){
@@ -847,11 +897,15 @@
                     $("#pmtct").attr("disabled", "disabled");
                 @endif
             @else
-                $("#patient").blur(function(){
-                    var patient = $(this).val();
-                    var facility = $("#facility_id").val();
-                    check_new_patient(patient, facility);
-                });
+                // $("#patient").change(function(){
+                //     var patient = $(this).val();
+                //     var facility = $("#facility_id").val();
+                //     concat_patient_id = $("#patient_facility_id").val() + "-" + patient;
+                //     document.getElementById("patient").value = concat_patient_id;
+                //     // document.getElementById("patient_facility_id").value = concat_patient_id.slice(0,4); 
+                //     // console.log(concat_patient_id)
+                //     check_new_patient(concat_patient_id, facility);
+                // });
             @endif
 
             $("#facility_id").change(function(){
@@ -864,6 +918,21 @@
                     $('.requirable').attr("required", "required");
                 }
             });  
+            $("#patient_facility_id").change(function(){
+                
+                document.getElementById("patient").value = "";
+            }); 
+            // $("#patient").blur(function(){
+            //         var patient = $(this).val();
+            //         var facility = $("#facility_id").val();
+            //         if (patient == null){
+            //         concat_patient_id = $("#patient_facility_id").val() + "-" + patient;
+            //         document.getElementById("patient").value = concat_patient_id;
+            //         // document.getElementById("patient_facility_id").value = concat_patient_id.slice(0,4); 
+            //         console.log(concat_patient_id)
+            //         check_new_patient(concat_patient_id, facility);
+            //     }
+            // }); 
 
             $("#sampletype").change(function(){
                 var val = $(this).val();
@@ -905,24 +974,18 @@
                 var val = $(this).val();
                 if(val == 12){
                     $("#recency_number").attr("required", "required");
-                    $("#patient").removeAttr("required");
-                    $("#initiation_date").removeAttr("required");
-                    $("#prophylaxis").removeAttr("required");
+                    $("#recency_number").removeAttr("disabled");
 
-                    $("#patient").removeClass("requirable");
-                    $("#initiation_date").removeClass("requirable");
-                    $("#prophylaxis").removeClass("requirable");
+                    $("#patient").removeAttr("required");
+                    $("#patient_facility_id").removeAttr("required");
+
                 }
                 else{
                     $("#recency_number").removeAttr("required");
-                    $("#patient").attr("required", "required");
-                    $("#initiation_date").attr("required", "required");
-                    $("#prophylaxis").attr("required", "required");
-                    
-                    $("#patient").addClass("requirable");
-                    $("#initiation_date").addClass("requirable");
-                    $("#prophylaxis").addClass("requirable");
+                    $("#recency_number").attr("disabled", "disabled");
 
+                    $("#patient").attr("required","required");
+                    $("#patient_facility_id").attr("required","required");
                 }
             });
 
@@ -950,62 +1013,62 @@
             
         });
 
-        function check_new_patient(patient, facility_id){
-            $.ajax({
-               type: "POST",
-               data: {
-                _token : "{{ csrf_token() }}",
-                patient : patient,
-                facility_id : facility_id
-               },
-               url: "{{ url('/viralsample/new_patient') }}",
+        // function check_new_patient(patient, facility_id){
+        //     $.ajax({
+        //        type: "POST",
+        //        data: {
+        //         _token : "{{ csrf_token() }}",
+        //         patient : patient,
+        //         facility_id : facility_id
+        //        },
+        //        url: "{{ url('/viralsample/new_patient') }}",
 
-               success: function(data){
+        //        success: function(data){
 
-                    console.log(data);
+        //             // console.log(data);
 
-                    $("#new_patient").val(data[0]);
+        //             $("#new_patient").val(data[0]);
 
-                    if(data[0] == 0){
-                        localStorage.setItem("new_patient", 0);
-                        var patient = data[1];
-                        var prev = data[2];
+        //             if(data[0] == 0){
+        //                 localStorage.setItem("new_patient", 0);
+        //                 var patient = data[1];
+        //                 var prev = data[2];
 
-                        // console.log(patient.dob);
+        //                 // console.log(patient.dob);
 
-                        $("#dob").val(patient.dob);
-                        $("#initiation_date").val(patient.initiation_date);
-                        $("#patient_phone_no").val(patient.patient_phone_no);
-                        // $('#sex option[value='+ patient.sex + ']').attr('selected','selected').change();
+        //                 $("#dob").val(patient.dob);
+        //                 $("#initiation_date").val(patient.initiation_date);
+        //                 $("#patient_phone_no").val(patient.patient_phone_no);
+        //                 // $('#sex option[value='+ patient.sex + ']').attr('selected','selected').change();
 
-                        $("#sex").val(patient.sex).change();
+        //                 $("#sex").val(patient.sex).change();
 
-                        $('<input>').attr({
-                            type: 'hidden',
-                            name: 'patient_id',
-                            value: patient.id,
-                            id: 'hidden_patient',
-                            class: 'patient_details'
-                        }).appendTo("#samples_form");
+        //                 $('<input>').attr({
+        //                     type: 'hidden',
+        //                     name: 'patient_id',
+        //                     value: patient.id,
+        //                     id: 'hidden_patient',
+        //                     class: 'patient_details'
+        //                 }).appendTo("#samples_form");
 
-                        if(data[3] != 0)
-                        {
-                            set_message(data[3]);
-                        }
+        //                 if(data[3] != 0)
+        //                 {
+        //                     set_message(data[3]);
+        //                 }
 
-                        // $(".lockable").attr("disabled", "disabled");
-                    }
-                    else{
-                        localStorage.setItem("new_patient", 1);
-                        // $(".lockable").removeAttr("disabled");
-                        // $(".lockable").val('').change();
+        //                 // $(".lockable").attr("disabled", "disabled");
+        //             }
+        //             else{
+        //                 localStorage.setItem("new_patient", 1);
+        //                 // $(".lockable").removeAttr("disabled");
+        //                 // $(".lockable").val('').change();
 
-                        $('.patient_details').remove();
-                    }
+        //                 $('.patient_details').remove();
+        //             }
 
-                }
-            });
-        }
+        //         }
+        //     });
+        // }
 
         function check_similar_samples(json_data){
             json_data['_token'] = "{{ csrf_token() }}";
@@ -1024,3 +1087,114 @@
 
 
 @endsection
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function(){
+
+        $("#dob").change(function(){
+            var value = $("#dob").val();
+            var dob = new Date(value);
+            var today = new Date();
+            var age = Math.floor((today-dob) / (365.25 * 24 * 60 * 60 * 1000));
+            if(isNaN(age)) {
+
+                // will set 0 when value will be NaN
+                age=0;
+
+            }
+            else{
+                age=age;
+            }
+            $('#age').val(age);
+
+        });
+
+    });
+
+
+    function fetchPatientDetails(ccc){
+        
+        // get the ccc number and fetch the details
+
+        
+//         let json_data = [];
+//         json_data['_token'] = "{{ csrf_token() }}";
+//         json_data['ccc'] = ccc;
+
+
+// console.log('Getting '+json_data);
+
+
+            $.ajax({
+               type: "POST",
+               data: ccc,
+               url: "{{ url('/viralsample/getPatientDetails') }}",
+               success: function(data){
+                    
+                    console.log(data);
+                    let dataArray = JSON.parse(data);
+
+                    if(dataArray.status == 'success'){
+                        document.getElementById('name').value = dataArray.data.patient_name;
+                        document.getElementById('dob').value = dataArray.data.dob;
+                        document.getElementById('age').value = dataArray.data.age;
+                        document.getElementById('initiation_date').value = dataArray.data.dateinitiatedontreatment;
+                        document.getElementById('patient_phone_no').value = dataArray.data.patient_phone_no;
+                        
+                        // document.getElementById('age').value = dataArray.data.age;
+                        // document.getElementById('sex').options.selectedIndex = dataArray.data.sex-1;
+
+                        // var sex = document.getElementById('sex');
+                        // var option;
+                        
+                        // for (var i=0; i<sex.options.length; i++) {
+                        // option = sex.options[i];
+                        
+                        // if (option.value == ''+dataArray.data.sex) {
+                        // // or
+                        // // if (option.text == 'Malaysia') {
+                        //     option.setAttribute('selected', true);
+                        
+                        //     // For a single select, the job's done
+                        //     return; 
+                        //     } 
+                        // }
+                        // alert(dataArray.data.sex);
+                        $('#sex option[value='+ dataArray.data.sex + ']').attr('selected','selected').change();
+                        
+                        $("input[name=preferred_language][value=" + dataArray.data.preferred_language + "]").prop('checked', true);
+
+
+
+
+
+
+
+                    }
+                    if(dataArray.status == 'error'){
+                        
+                        document.getElementById('name').value = '';
+                        document.getElementById('dob').value = '';
+                        document.getElementById('age').value = '';
+                        document.getElementById('initiation_date').value = '';
+                        $('#sex option[value=""]').attr('selected','selected').change();
+                        document.getElementById('patient_phone_no').value = '';
+                        $("input[name=preferred_language][value=1]").prop('unchecked', true);
+                        $("input[name=preferred_language][value=2]").prop('unchecked', true);
+
+                    }
+                }
+            });
+
+
+
+    }
+
+    function showFacilityCode(facilityCode){
+        document.getElementById('patient').value = facilityCode+'-';
+    }
+    function showSerial(serialCode){
+        let facilityCode =  document.getElementById('patient_facility_id').value
+        document.getElementById('patient').value =facilityCode+'-'+serialCode
+    }
+</script>
