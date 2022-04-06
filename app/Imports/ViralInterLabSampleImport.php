@@ -136,7 +136,9 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
                 $sample->regimenline = $samplevalue['regimenline'];
                 $sample->prophylaxis = $lookups['prophylaxis']->where('code', $samplevalue['currentregimen'])->first()->id ?? 15;
                 $sample->justification = $lookups['justifications']->where('rank_id', $samplevalue['justification'])->first()->id ?? 8;
-                $sample->sampletype = $samplevalue['sampletype'];   
+                $sample->sampletype = $samplevalue['sampletype'];
+		//uncommet if you want to capture recency number
+ 		//$sample->recency_number = $samplevalue['recencyno'];  
                 if($worksheet_counter < 94) $sample->worksheet_id = $worksheet->id;             
                 $sample->save();
 
@@ -199,6 +201,8 @@ class ViralInterLabSampleImport implements ToCollection, WithHeadingRow
             $newsample->prophylaxis = $lookups['prophylaxis']->where('code', $sample['currentregimen'])->first()->id ?? $sample['currentregimen'] ?? 15;
             $newsample->justification = $lookups['justifications']->where('rank_id', $sample['justification'])->first()->id ?? 8;
             $newsample->sampletype = $sample['sampletype'];
+	//uncommet if you want to capture recency number	
+	//$newsample->recency_number = $sample['recencyno'];
             $newsample->save();
 
             $sample['sample'] = $newsample;
