@@ -14,13 +14,8 @@ use App\Lookup;
 use App\Machine;
 use App\MiscViral;
 use App\User;
-use App\Viralbatch;
-use App\Viralpatient;
-use App\Viralsample;
-use App\ViralsampleView;
 use Illuminate\Support\Facades\DB;
 
-use App\Imports\ViralInterLabSampleImport;
 
 use Excel;
 use Illuminate\Http\Request;

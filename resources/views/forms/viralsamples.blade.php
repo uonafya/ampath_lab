@@ -122,7 +122,7 @@
                             <input type="hidden" name="facility_id" value="{{$batch->facility_id}}" id="facility_id">
                         @endif
                         
-                        {{-- @if(auth()->user()->user_type_id != 5 && in_array(env('APP_LAB'), [2, 3, 4])) --}}
+                        @if(auth()->user()->user_type_id != 5 && in_array(env('APP_LAB'), [2, 3, 4]))
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">High Priority</label>
                                 <div class="col-sm-8">
@@ -134,7 +134,7 @@
                                  />
                                 </div>
                             </div>
-                        {{-- @endif --}}
+                        @endif
 
                         <div class="form-group ampath-div">
                             <label class="col-sm-4 control-label">(*for Ampath Sites only) AMRS Location</label>
@@ -162,14 +162,14 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Specimen Label ID </label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" name="label_id" type="text" value="{{ $viralsample->label_id ?? '' }}" id="label_id" required>
+                                    <input class="form-control" name="label_id" type="text" value="{{ $viralsample->label_id ?? '' }}" id="label_id">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="col-sm-4 control-label">Area Name </label>
                                 <div class="col-sm-8">
-                                    <input class="form-control" name="areaname" type="text" value="{{ $viralsample->areaname ?? '' }}" id="areaname" required>
+                                    <input class="form-control" name="areaname" type="text" value="{{ $viralsample->areaname ?? '' }}" id="areaname">
                                 </div>
                             </div>
 
@@ -211,7 +211,7 @@
                                     <label class="col-sm-1 control-label">CCC No.
                                     </label>  <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                     <div class="col-sm-3">
-                                    <input class="form-control " id="patient" onKeyUp="fetchPatientDetails(this.value)"  name="patient" type="text" value="{{ $viralsample->patient->patient ?? '' }}" id="patient" disabled>
+                                    <input class="form-control " id="patient" onKeyUp="fetchPatientDetails(this.value)"  name="patient" type="text" value="{{ $viralsample->patient->patient ?? '' }}" id="patient" readonly>
                                 </div>
                             {{-- </div> --}}
                         </div>
@@ -478,11 +478,11 @@
                             <div class="col-sm-8">
                                 <div class="input-group date date-art">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" id="initiation_date" name="initiation_date" class="form-control lockable requirable" value="{{ $viralsample->patient->initiation_date ?? '' }}"
+                                    <input type="text" id="initiation_date" 
                                     @if(!isset($viralsample) || ($viralsample && $viralsample->patient->initiation_date))
                                         required 
                                     @endif
-                                    >
+                                    class="form-control lockable requirable" value="{{ $viralsample->patient->initiation_date ?? '' }}" name="initiation_date">
                                 </div>
                             </div>                            
                         </div>

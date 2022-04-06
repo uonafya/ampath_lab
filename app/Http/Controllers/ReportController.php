@@ -771,9 +771,7 @@ class ReportController extends Controller
             $model = $model->where("$table.receivedstatus", "<>", '2');
             $report .= 'tested outcomes ';
 
-        $report = ($testtype == 'Viralload') ? 'VL ' : 'EID ';
-
-        if ($request->input('types') == 'recency_report') {
+         } elseif($request->input('types') == 'recency_report') {
             $model = $model->where("$table.justification", "=", '12');
             $report .= 'Recency report ';
         } else if ($request->input('types') == 'rejected') {
