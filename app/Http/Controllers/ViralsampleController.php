@@ -626,9 +626,6 @@ class ViralsampleController extends Controller
         }
         $batch->pre_update();
 
-        return json_encode($batch);
-        
-
         $data = $request->only($viralsamples_arrays['patient']);
 
         /*$new_patient = $request->input('new_patient');
@@ -715,48 +712,7 @@ class ViralsampleController extends Controller
 
         if($viralpatient->sex == 1) $viralsample->pmtct = 3;
 
-       /* parent::boot();
-        $changes=array();
-
-        foreach ($viralsample->getDirty() as $key =>$value)
-        {
-            $original = $viralsample->getOriginal($key);
-            $changes[$key] = [
-                'old' => $original,
-                'new' => $value,
-            ];
-
-        }
-
-        return $changes;*/
-
-        $changes=array();
-        $dirtySample= $viralsample->getDirty();
-        $trailDescription = '';
-        foreach ($dirtySample as $key =>$value)
-        {
-            $original = $viralsample->getOriginal($key);
-            $changes[]= [
-                'field' => $key,
-                'old' => $original,
-                'new' => $value,
-            ];
-
-            $trailDescription.=nl2br($key." was changed from ".$original.' to '.$value.''.PHP_EOL);
-           
-
-        }
-
-
-
         $viralsample->pre_update();
-     //   return strcmp(['old'],);
-
-       record_log::save_log($viralsample->id,$viralsample->patient_id,$batch->id,'edit',$trailDescription);
-
-
-
-           //return $changes;
 
         if(isset($transfer)){
             $url = $batch->transfer_samples([$viralsample->id], 'new_facility', true);
@@ -786,9 +742,6 @@ class ViralsampleController extends Controller
                 }
             }
         }
-
-        $changes = $viralsample->getChanges();
-        error_log('Changed '.json_encode($changes));
 
         MiscViral::check_batch($batch->id); 
 
