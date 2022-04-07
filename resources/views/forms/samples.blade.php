@@ -492,7 +492,7 @@
                                 </label>
 
                                 <div class="col-sm-3">
-                                    <select class="form-control requirable "
+                                    <select class="form-control  "
                                             name="patient_facility_id" id="patient_facility_id">
 
                                         @isset($sample)
