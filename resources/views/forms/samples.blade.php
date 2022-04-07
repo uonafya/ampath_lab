@@ -656,11 +656,11 @@
                                        @if(isset($sample) && is_numeric($sample->mother_last_result))
                                        value="{{ $sample->mother_last_result ?? '' }}"
                                        @endif
-                                       required>
+                                       >
                             </div>
 
                             <div class="col-sm-3">
-                                <label> <input type="checkbox" class="i-checks" name="last_result"
+                                <label> <input type="checkbox" class="i-checks" name="last_result" id="last_result"
                                                value="< LDL copies/ml"
                                                @if(isset($sample) && $sample->mother_last_rcategory == 1)
                                                checked
@@ -1040,6 +1040,11 @@ set_select_facility("lab_id", "{{ url('/facility/search') }}", 3, "Search for fa
 $(document).ready(function () {
 $("#rejection").hide();
 
+document.getElementById('patient_facility_id').value = '';
+document.getElementById('heiMfl').value = '';
+document.getElementById('mother_facility_id').value = '';
+
+
 @if(env('APP_LAB') == 8 && auth()->user()->is_lab_user() && !isset($sample))
 $("#samples_form input,select").change(function () {
 var frm = $('#samples_form');
@@ -1062,6 +1067,18 @@ var facility = $("#facility_id").val();
 check_new_patient(patient, facility);
 });
 @endif
+
+
+$("#last_result").change(function () {
+if (document.getElementById('last_result').checked){
+    $('mother_last_result').removeAttr("required");
+}else{
+    $('mother_last_result').attr("required", "required");
+} 
+})
+
+
+
 
 $("#facility_id").change(function () {
 var val = $(this).val();
