@@ -581,7 +581,7 @@
 
                                     @isset($sample)
                                         <option value="{{ $sample->batch->facility->id }}"
-                                                selected>{{ $sample->batch->facility->facilitycode }} {{ $sample->batch->facility->name }}</option>
+                                                selected></option>
                                     @endisset
 
                                 </select>
