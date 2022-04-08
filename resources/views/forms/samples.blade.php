@@ -602,7 +602,7 @@
                             <div class="col-sm-3"><input class="form-control" id="ccc_no"
                                                          name="ccc_no" type="text"
                                                          value="{{ $sample->patient->mother->ccc_no ?? '' }}"
-                                                         required readonly></div>
+                                                          readonly></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Mother's Age
@@ -614,7 +614,7 @@
                             <div class="col-sm-8">
                                 <input class="form-control" id="mother_age" name="mother_age"
                                        type="text" value="{{ $sample->mother_age ?? '' }}"
-                                       number="number" min=10 max=70 required>
+                                       number="number" min=10 max=70 >
                             </div>
                         </div>
                         <div class="form-group">
@@ -623,7 +623,7 @@
                                     <div style='color: #ff0000; display: inline;'>*</div>
                                 </strong>
                             </label>
-                            <div class="col-sm-8"><select class="form-control requirable" required
+                            <div class="col-sm-8"><select class="form-control requirable" 
                                                           name="mother_prophylaxis">
 
                                     <option></option>
