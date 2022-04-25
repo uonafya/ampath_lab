@@ -599,7 +599,7 @@
 
                             <div class="col-sm-3">
                                 <select class="form-control "
-                                        name="mother_facility_id" id="mother_facility_id" required >
+                                        name="mother_facility_id" id="mother_facility_id"  >
 
                                     @isset($sample)
                                         <option value="{{ $sample->batch->facility->id }}"
@@ -614,7 +614,7 @@
                                     <div style='color: #ff0000; display: inline;'>*</div>
                                 </label>
                                 <div class="col-sm-3">
-                                    <input class="form-control " id="mother_serial"   name="mother_serial" onChange="showSerialMother(this.value)" type="text"   maxlength="5" value="" id="mother_serial" required>
+                                    <input class="form-control " id="mother_serial"   name="mother_serial" onChange="showSerialMother(this.value)" type="text"   maxlength="5" value="" id="mother_serial" >
                                 </div>
                             <label class="col-sm-1 control-label">CCC No
                                 <strong>
@@ -625,7 +625,7 @@
                             <div class="col-sm-2"><input class="form-control" id="ccc_no"
                                                          name="ccc_no" type="text"
                                                          value="{{ $sample->patient->mother->ccc_no ?? '' }}"
-                                                          readonly ></div>
+                                                          readonly required ></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Mother's Age
@@ -1155,18 +1155,15 @@ $("#enrollment_ccc_no").attr("disabled", "disabled");
 
 $("#childcaregiver").change(function () {
 var val = $(this).val();
-console.log('val',val)
 if (val == "mother"){
-    console.log('am mother')
-    $("#mother_facility_id").attr("required", "required");
-    $("#mother_serial").attr("required", "required");
+    // $("#mother_facility_id").attr("required", "required");
+    // $("#mother_serial").attr("required", "required");
     $("#ccc_no").attr("required", "required");
     $("#mother_age").attr("required", "required");
     $("#mother_prophylaxis").attr("required", "required");
 }else{
-    console.log('not mum')
-    $("#mother_facility_id").removeAttr("required");
-    $("#mother_serial").removeAttr("required");
+    // $("#mother_facility_id").removeAttr("required");
+    // $("#mother_serial").removeAttr("required");
     $("#ccc_no").removeAttr("required");
     $("#mother_age").removeAttr("required");
     $("#mother_prophylaxis").removeAttr("required");
@@ -1279,6 +1276,10 @@ document.getElementById('enrollment_ccc_no').value =facilityCode+'-'+serialCode
 function showSerialMother(serialCode){
 let facilityCode =  document.getElementById('mother_facility_id').value
 document.getElementById('ccc_no').value =facilityCode+'-'+serialCode
+let ccc_no = document.getElementById('ccc_no').value
+if(ccc_no.length != 11){
+            alert("Please enter a valid ccc number.")
+        }
 }
 function showHeiNumberId(heiMfl){
 document.getElementById('patient').value = heiMfl + "-";
@@ -1290,6 +1291,10 @@ document.getElementById('patient').value = heiMfl + '-'+ heiYear
 function showHeiNoPatientSerial(heiNoPatientSerial){
 let n = document.getElementById('patient').value
 document.getElementById('patient').value = n + '-' + heiNoPatientSerial ;
+let hei_no = document.getElementById('patient').value
+if(hei_no.length != 16){
+            alert("Please enter a valid Hei number.")
+        }
 }
 
 $(function () {

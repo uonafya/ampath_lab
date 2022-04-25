@@ -194,7 +194,7 @@
                             </label>
                             {{-- <div class="col-sm-8"> --}}
                                 <div class="col-sm-3">
-                                    <select class="form-control "  name="patient_facility_id" onChange="showFacilityCode(this.value)" id="patient_facility_id" required>
+                                    <select class="form-control "  name="patient_facility_id" onChange="showFacilityCode(this.value)" id="patient_facility_id" >
                                         @isset($viralsample)
                                         <option value="{{ $viralsample->batch->facility->id }}" selected></option>
                                         @endisset
@@ -204,7 +204,7 @@
                                     <label class="col-sm-1 control-label">Patient serial No. <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                     </label> </label>  
                                     <div class="col-sm-3">
-                                        <input class="form-control " id="patient_serial"   name="patient_serial" onChange="showSerial(this.value)" type="text"            maxlength="5" value="" id="patient_serial" required>
+                                        <input class="form-control " id="patient_serial"   name="patient_serial" onChange="showSerial(this.value)" type="text"            maxlength="5" value="" id="patient_serial" >
                                     </div>
                                 {{-- </div> --}}
                                 {{-- <div class="col-sm-3 "> --}}
@@ -1209,5 +1209,9 @@
     function showSerial(serialCode){
         let facilityCode =  document.getElementById('patient_facility_id').value
         document.getElementById('patient').value =facilityCode+'-'+serialCode
+        let ccc_no = document.getElementById('patient').value 
+        if(ccc_no.length != 11){
+            alert("Please enter a valid CCC number.")
+        }
     }
 </script>
