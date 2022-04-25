@@ -190,21 +190,21 @@
                     <div class="panel-body">
                         
                     <div class="form-group">
-                            <label class="col-sm-1 control-label">Patient Facility MFL
+                            <label class="col-sm-1 control-label">Patient Facility MFL <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                             </label>
                             {{-- <div class="col-sm-8"> --}}
                                 <div class="col-sm-3">
-                                    <select class="form-control "  name="patient_facility_id" onChange="showFacilityCode(this.value)" id="patient_facility_id">
+                                    <select class="form-control "  name="patient_facility_id" onChange="showFacilityCode(this.value)" id="patient_facility_id" required>
                                         @isset($viralsample)
                                         <option value="{{ $viralsample->batch->facility->id }}" selected></option>
                                         @endisset
                                     </select>
                                 </div>
                                 {{-- <div class="col-sm-8"> --}}
-                                    <label class="col-sm-1 control-label">Patient serial No.
-                                    </label>
+                                    <label class="col-sm-1 control-label">Patient serial No. <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
+                                    </label> </label>  
                                     <div class="col-sm-3">
-                                        <input class="form-control " id="patient_serial"   name="patient_serial" onChange="showSerial(this.value)" type="text"            maxlength="5" value="" id="patient_serial">
+                                        <input class="form-control " id="patient_serial"   name="patient_serial" onChange="showSerial(this.value)" type="text"            maxlength="5" value="" id="patient_serial" required>
                                     </div>
                                 {{-- </div> --}}
                                 {{-- <div class="col-sm-3 "> --}}
@@ -982,7 +982,10 @@
                 if(val == 12){
                     $("#recency_number").attr("required", "required");
                     $("#recency_number").removeAttr("disabled");
-
+                    $("#patient_serial").removeAttr("required");
+                    $("#initiation_date").removeAttr("required");
+                    $("#prophylaxis").removeAttr("required");
+                    $("#dateinitiatedonregimen").removeAttr("required");      
                     $("#patient").removeAttr("required");
                     $("#patient_facility_id").removeAttr("required");
 
@@ -990,7 +993,10 @@
                 else{
                     $("#recency_number").removeAttr("required");
                     $("#recency_number").attr("disabled", "disabled");
-
+                    $("#patient_serial").attr("required");
+                    $("#initiation_date").attr("required");
+                    $("#prophylaxis").attr("required");
+                    $("#dateinitiatedonregimen").attr("required");
                     $("#patient").attr("required","required");
                     $("#patient_facility_id").attr("required","required");
                 }

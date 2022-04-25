@@ -271,7 +271,7 @@
                             </label>
                             <div class="col-sm-3">
                                 <input class="form-control "  maxlength="5"   name="heiNoPatientSerial"
-                                       type="number"  onchange=showHeiNoPatientSerial(this.value) id="heiNoPatientSerial">
+                                       type="text"  onchange=showHeiNoPatientSerial(this.value) id="heiNoPatientSerial">
                             </div>
 
                         </div>
