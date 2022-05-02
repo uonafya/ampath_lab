@@ -1306,8 +1306,7 @@ $(function () {
                 }
             });
         });
-</script>
 
-
+    </script>
 
 @endsection

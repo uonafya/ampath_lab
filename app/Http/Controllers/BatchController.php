@@ -36,13 +36,13 @@ class BatchController extends Controller
         if($user->user_type_id == 5) $facility_user=true;
 
         $s_facility_id = session()->pull('facility_search');
-        if($s_facility_id){ 
-            $myurl = url("batch/facility/{$facility_id}/{$batch_complete}"); 
-            $myurl2 = url("batch/facility/{$facility_id}"); 
+        if($s_facility_id){
+            $myurl = url("batch/facility/{$facility_id}/{$batch_complete}");
+            $myurl2 = url("batch/facility/{$facility_id}");
         }
-        else{ 
-            $myurl =  url('batch/index/' . $batch_complete); 
-            $myurl2 = url('batch/index'); 
+        else{
+            $myurl =  url('batch/index/' . $batch_complete);
+            $myurl2 = url('batch/index');
         }
 
         $string = "(user_id='{$user->id}' OR batches.facility_id='{$user->facility_id}')";
@@ -108,14 +108,15 @@ class BatchController extends Controller
             'partner_id' => $partner_id, 'subcounty_id' => $subcounty_id, 'facility' => $fac])
                 ->with('pageTitle', 'Samples by Batch');
 
+
         // if($batch_complete == 1){
         //     $p = Lookup::get_partners();
         //     $fac = false;
         //     if($facility_id) $fac = Facility::find($facility_id);
         //     return view('tables.dispatched_batches', [
-        //         'batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => '', 
-        //         'batch_complete' => $batch_complete, 
-        //         'partners' => $p['partners'], 'subcounties' => $p['subcounties'], 
+        //         'batches' => $batches, 'myurl' => $myurl, 'myurl2' => $myurl2, 'pre' => '',
+        //         'batch_complete' => $batch_complete,
+        //         'partners' => $p['partners'], 'subcounties' => $p['subcounties'],
         //         'partner_id' => $partner_id, 'subcounty_id' => $subcounty_id, 'facility' => $fac])
         //             ->with('pageTitle', 'Samples by Batch');
         // }
@@ -277,6 +278,12 @@ class BatchController extends Controller
         $data['batch'] = $batch;
         $data['samples'] = $samples;
 
+        if (!$batch->dateviewed){
+            $batch->dateviewed = date('Y-m-d');
+            $batch->pre_update();
+        }
+
+
         return view('tables.batch_details', $data)->with('pageTitle', 'Batches');
     }
 
@@ -310,7 +317,7 @@ class BatchController extends Controller
         }
 
         $new_batch = new Batch;
-        $new_batch->fill($batch->replicate(['synched', 'batch_full', 'national_batch_id', 'sent_email', 'dateindividualresultprinted', 'datebatchprinted', 'dateemailsent'])->toArray());
+        $new_batch->fill($batch->replicate(['synched', 'batch_full', 'national_batch_id', 'sent_email', 'dateindividualresultprinted', 'datebatchprinted', 'dateemailsent','dateviewed'])->toArray());
         if($submit_type != "new_facility"){
             $new_batch->id = (int) $batch->id + 0.5;
             $new_id = $batch->id + 0.5;
@@ -928,6 +935,7 @@ class BatchController extends Controller
             $data[$key]['Date Email Sent'] = $sample->my_date_format('dateemailsent');
             $data[$key]['Date Individual Results Printed'] = $sample->my_date_format('dateindividualresultprinted');
             $data[$key]['Date Batch Printed'] = $sample->my_date_format('datebatchprinted');
+            $data[$key]['Date Viewed'] = $sample->my_date_format('dateviewed');
             $data[$key]['Lab TAT'] = $sample->tat5;
             $data[$key]['Time Dispatched'] = '';
             $data[$key]['Dispatched By'] = '';
@@ -1026,6 +1034,7 @@ class BatchController extends Controller
             $batch->datecreated = $batch->my_date_format('created_at');
             $batch->datereceived = $batch->my_date_format('datereceived');
             $batch->datedispatched = $batch->my_date_format('datedispatched');
+            $batch->dateviewed = $batch->my_date_format('dateviewed');
             $batch->total = $total;
             $batch->rejected = $rej;
             $batch->result = $result;
