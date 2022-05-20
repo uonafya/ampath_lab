@@ -1211,6 +1211,9 @@
         document.getElementById('patient').value =facilityCode+'-'+serialCode
         let ccc_no = document.getElementById('patient').value 
         if(ccc_no.length != 11){
+            document.getElementById('patient_facility_id').value  = "" 
+            document.getElementById('patient_serial').value = ""
+            document.getElementById('patient').value = ""
             alert("Please enter a valid CCC number.")
         }
     }

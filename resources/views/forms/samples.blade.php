@@ -1290,10 +1290,17 @@ document.getElementById('patient').value = heiMfl + '-'+ heiYear
 }
 function showHeiNoPatientSerial(heiNoPatientSerial){
 let n = document.getElementById('patient').value
+n = n.substring(0,10)
 document.getElementById('patient').value = n + '-' + heiNoPatientSerial ;
 let hei_no = document.getElementById('patient').value
 if(hei_no.length != 16){
+    // document.getElementById('patient').value = n   ;
+            document.getElementById('heiMfl').value  = "" 
+            document.getElementById('heiNoYear').value = ""
+            document.getElementById('heiNoPatientSerial').value  = ""
+            document.getElementById('patient').value = ""
             alert("Please enter a valid Hei number.")
+            
         }
 }
 
