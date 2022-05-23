@@ -413,7 +413,7 @@ class ReportController extends Controller
         }
 
         if ($request->input('types') == 'remoteentry')
-            $model = $model->where('site_entry', '=', 1)->whereNull('datereceived');
+            $model = $model->where("$table.site_entry", '=', 1)->whereNull('datereceived');
         if ($request->input('types') == 'failed'){
             $model = $model->when($testtype, function($query) use ($testtype){
                 if ($testtype == 'EID')
@@ -430,7 +430,7 @@ class ReportController extends Controller
             $facility_id = auth()->user()->facility_id;
             $user_id = auth()->user()->id;
             if ($request->input('types') == 'manifest')
-                $model = $model->where('site_entry', '=', 1)->whereRaw("(($table.user_id = " . auth()->user()->id . ") or ($table.facility_id = " . auth()->user()->facility_id . "))")->orderBy('created_at', 'asc');
+                $model = $model->where("$table.site_entry", '=', 1)->whereRaw("(($table.user_id = " . auth()->user()->id . ") or ($table.facility_id = " . auth()->user()->facility_id . "))")->orderBy('created_at', 'asc');
             else
                 $model = $model->whereRaw("(($table.facility_id = {$facility_id}) OR ($table.lab_id = {$facility_id}) OR ($table.user_id = {$user_id}))");
         } else {
