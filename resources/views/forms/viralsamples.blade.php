@@ -204,7 +204,7 @@
                                     <label class="col-sm-1 control-label">Patient serial No. <strong><div style='color: #ff0000; display: inline;'>*</div></strong>
                                     </label> </label>  
                                     <div class="col-sm-3">
-                                        <input class="form-control " id="patient_serial"   name="patient_serial" onChange="showSerial(this.value)" type="text"            maxlength="5" value="" id="patient_serial" >
+                                        <input class="form-control " id="patient_serial"   name="patient_serial" onChange="showSerial(this.value)" type="text"       maxlength="5" value="" id="patient_serial"  >
                                     </div>
                                 {{-- </div> --}}
                                 {{-- <div class="col-sm-3 "> --}}
@@ -1205,7 +1205,9 @@
 
     function showFacilityCode(facilityCode){
         document.getElementById('patient').value = facilityCode+'-';
-    }
+        let serial =  document.getElementById('patient_serial')
+        serial.setAttribute('required', '');
+        }
     function showSerial(serialCode){
         let facilityCode =  document.getElementById('patient_facility_id').value
         document.getElementById('patient').value =facilityCode+'-'+serialCode
