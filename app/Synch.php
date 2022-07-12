@@ -223,25 +223,27 @@ class Synch
 	public static function login()
 	{
 		Cache::store('file')->forget('api_token');
-		$client = new Client(['base_uri' => self::$base]);
-
+		$client = new Client(['base_uri' => self::$base,'verify' => false]);
+		//dd($client);
 		$response = $client->request('post', 'auth/login', [
+		'verify' => false,
             'http_errors' => false,
             'debug' => false,
 			'headers' => [
 				'Accept' => 'application/json',
 			],
 			'json' => [
-				'email' => env('MASTER_USERNAME', null),
-				'password' => env('MASTER_PASSWORD', null),
+				'email' => 'joelkith@gmail.com',
+				'password' => 12345678,
 			],
 		]);
+		//dd($response);
 		$status_code = $response->getStatusCode();
 		if($status_code > 399)
 			return json_decode($response->getBody());
 
 		$body = json_decode($response->getBody());
-		// dd($body);
+		// dd($response);
 		Cache::store('file')->put('api_token', $body->token, (60*60));
 		return true;
 	}
@@ -278,10 +280,11 @@ class Synch
 
 	public static function get_token()
 	{
-		if(Cache::store('file')->has('api_token')){}
-		else{
+		//if(Cache::store('file')->has('api_token')){dd('has token'); }
+		//else{
+		//	dd('no token');
 			self::login();
-		}
+		//}	
 		return Cache::store('file')->get('api_token');
 	}
 
@@ -1028,6 +1031,7 @@ class Synch
 
 		$response = $client->request('post', 'lablogs', [
             'http_errors' => false,
+			'verify' => false,
 			'headers' => [
 				'Accept' => 'application/json',
 				'Authorization' => 'Bearer ' . self::get_token(),
@@ -1068,10 +1072,12 @@ class Synch
 
     	$samples = $sample_model::whereIn('id', $sample_ids)->with($with_array)->get();
 
-		$client = new Client(['base_uri' => self::$base]);
-
+		//$client = new Client(['base_uri' => self::$base]);
+		$client = new Client(['base_uri' => self::$base,'verify' => false]);
+		//dd($client);
 		$response = $client->request('post', 'transfer', [
-            'debug' => false,
+            'debug' => true,
+			'verify' => false,
             'http_errors' => false,
 			'headers' => [
 				'Accept' => 'application/json',
@@ -1085,12 +1091,12 @@ class Synch
 			],
 		]);
 
-		// dd(json_decode($response->getBody()));
+		 //dd($response);
 
 		$body = json_decode($response->getBody());
 
 		$status_code = $response->getStatusCode();
-
+		//dd($status_code);
 		if($status_code < 400){
 			$ok = $body->ok ?? null;
 
