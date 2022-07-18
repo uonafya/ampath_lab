@@ -311,6 +311,7 @@ class Synch
 					'Accept' => 'application/json',
 					'Authorization' => 'Bearer ' . self::get_token(),
 				],
+				'verify' => false,
 				'json' => [
 					'patients' => $patients->toJson(),
 					'lab_id' => env('APP_LAB', null),
@@ -348,6 +349,7 @@ class Synch
 					'Accept' => 'application/json',
 					'Authorization' => 'Bearer ' . self::get_token(),
 				],
+				'verify' => false,
 				'json' => [
 					'patients' => $patients->toJson(),
 					'lab_id' => env('APP_LAB', null),
@@ -397,6 +399,7 @@ class Synch
 					'Accept' => 'application/json',
 					'Authorization' => 'Bearer ' . self::get_token(),
 				],
+				'verify' => false,
 				'json' => [
 					'batches' => $batches->toJson(),
 					'lab_id' => env('APP_LAB', null),
@@ -467,6 +470,7 @@ class Synch
 					'Accept' => 'application/json',
 					'Authorization' => 'Bearer ' . self::get_token(),
 				],
+				'verify' => false,
 				'json' => [
 					'batches' => $batches->toJson(),
 					'lab_id' => env('APP_LAB', null),
