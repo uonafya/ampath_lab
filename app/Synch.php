@@ -280,11 +280,10 @@ class Synch
 
 	public static function get_token()
 	{
-		//if(Cache::store('file')->has('api_token')){dd('has token'); }
-		//else{
-		//	dd('no token');
+		if(Cache::store('file')->has('api_token')){ }
+		else{
 			self::login();
-		//}	
+		}	
 		return Cache::store('file')->get('api_token');
 	}
 
@@ -521,6 +520,7 @@ class Synch
 					'Accept' => 'application/json',
 					'Authorization' => 'Bearer ' . self::get_token(),
 				],
+				'verify' => false,
 				'json' => [
 					'worksheets' => $worksheets->toJson(),
 					'lab_id' => env('APP_LAB', null),
